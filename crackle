@@ -1,0 +1,17 @@
+#!/bin/bash
+[ "$1" = "clean" ] && {
+    sudo apt $1;
+    sudo find -L /home/pkg/bin -wholename /home/pkg/bin -o -type d -prune -o -type l -exec rm {} +;
+    sudo find -L /home/pkg/lib -wholename /home/pkg/lib -o -type d -prune -o -type l -exec rm {} +;
+    exit 0;
+}
+[ "$1" = "install" ] && {
+[ -d "/home/pkg" ] || mkdir /home/pkg
+sudo apt clean;
+sudo apt $1 --download-only $2;
+readarray -t packages < <(ls /var/cache/apt/archives/*.deb);
+for package in "${packages[@]}"
+    do
+        dpkg-deb -xv $package /home/pkg;
+    done;
+}
