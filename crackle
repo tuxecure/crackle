@@ -1,17 +1,19 @@
 #!/bin/bash
+PKG_PATH=/home/pkgs;
 [ "$1" = "clean" ] && {
     sudo apt $1;
-    sudo find -L /home/pkg/bin -wholename /home/pkg/bin -o -type d -prune -o -type l -exec rm {} +;
-    sudo find -L /home/pkg/lib -wholename /home/pkg/lib -o -type d -prune -o -type l -exec rm {} +;
+    sudo find -L $PKG_PATH/bin -wholename $PKG_PATH/bin -o -type d -prune -o -type l -exec rm {} +;
+    sudo find -L $PKG_PATH/lib -wholename $PKG_PATH/lib -o -type d -prune -o -type l -exec rm {} +;
     exit 0;
 }
-[ "$1" = "install" ] && {
-[ -d "/home/pkg" ] || mkdir /home/pkg
+[[ "$1" = "install" || "$1" = "crack" ]] && {
+[ -d "$PKG_PATH" ] || mkdir $PKG_PATH;
+[[ "$1" = "crack" ]] && { op="install"; dir="packages/$2"; } || { op="$1"; dir="$PKG_PATH"; }
 sudo apt clean;
-sudo apt $1 --download-only $2;
+sudo apt $op --download-only $2;
 readarray -t packages < <(ls /var/cache/apt/archives/*.deb);
 for package in "${packages[@]}"
     do
-        dpkg-deb -xv $package /home/pkg;
+        dpkg-deb -xv $package $dir;
     done;
 }
