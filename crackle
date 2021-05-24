@@ -1,7 +1,7 @@
 #!/bin/bash
 PKG_PATH=${PKG_PATH:-/home/pkgs};
 [ "$1" = "clean" ] && {
-    apt $1;
+    apt-get $1;
     find -L $PKG_PATH/bin -wholename $PKG_PATH/bin -o -type d -prune -o -type l -exec rm {} +;
     find -L $PKG_PATH/lib -wholename $PKG_PATH/lib -o -type d -prune -o -type l -exec rm {} +;
     exit 0;
@@ -9,8 +9,8 @@ PKG_PATH=${PKG_PATH:-/home/pkgs};
 [[ "$1" = "install" || "$1" = "crack" ]] && {
 [ "$1" = "install" ] && { [ -d "$PKG_PATH" ] || mkdir $PKG_PATH; }
 [[ "$1" = "crack" ]] && { op="install"; dir="packages/$2"; } || { op="$1"; dir="$PKG_PATH"; }
-apt clean;
-apt $op --download-only $2;
+apt-get clean;
+apt-get $op --download-only $2;
 readarray -t packages < <(ls /var/cache/apt/archives/*.deb);
 for package in "${packages[@]}"
     do
