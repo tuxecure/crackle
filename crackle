@@ -31,15 +31,15 @@ SCRP_DIR=$(dirname "${BASH_SOURCE[0]}")
 }
 
 [[ "$1" = "install" || "$1" = "crack" ]] && {
-[[ "$1" = "crack" ]] && { op="install"; dir="$HOME/packages/$2"; } || { op="$1"; dir="$PKG_PATH"; }
-[ "$1" = "install" ] && {
-	[ -d "$PKG_PATH" ] || { echo "$PKG_PATH does not exist, please run crackle setup first"; exit 1; }
-}
-apt-get clean;
-apt-get "$op" --download-only "$2";
-readarray -t packages < <(ls /var/cache/apt/archives/*.deb);
-for package in "${packages[@]}"
-    do
-        dpkg-deb -xv "$package" "$dir";
-    done;
+    [[ "$1" = "crack" ]] && { op="install"; dir="$HOME/packages/$2"; } || { op="$1"; dir="$PKG_PATH"; }
+    [ "$1" = "install" ] && {
+            [ -d "$PKG_PATH" ] || { echo "$PKG_PATH does not exist, please run crackle setup first"; exit 1; }
+    }
+    apt-get clean;
+    apt-get "$op" --download-only "$2";
+    readarray -t packages < <(ls /var/cache/apt/archives/*.deb);
+    for package in "${packages[@]}"
+        do
+            dpkg-deb -xv "$package" "$dir";
+        done;
 }
