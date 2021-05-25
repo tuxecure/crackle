@@ -9,11 +9,14 @@ SCRP_DIR=$(dirname "${BASH_SOURCE[0]}")
 }
 
 [ "$1" = "setup" ] && {
-    [ -d "$PKG_PATH" ] && { echo "crackle is already set up"; exit 0; }
-    mkdir $PKG_PATH;
+    bashrc=$(grep crackle ~/.bashrc);
+    profile=$(grep crackle ~/.profile);
+    [[ -d "$PKG_PATH" && -n "$bashrc" && -n "$profile" ]] && { echo "crackle is already set up"; exit 0; }
+    [[ -d "$PKG_PATH" ]] || mkdir $PKG_PATH;
     echo "PKG_PATH=$PKG_PATH" > ~/.cracklerc
     cat $SCRP_DIR/cracklerc >> ~/.cracklerc;
-    echo '. "$HOME/.cracklerc"' >> ~/.bashrc;
+    [[ -z "$bashrc" ]] && echo '. "$HOME/.cracklerc"' >> ~/.bashrc;
+    [[ -z "$profile" ]] && echo '. "$HOME/.cracklerc"' >> ~/.profile;
     source ~/.bashrc
 }
 
