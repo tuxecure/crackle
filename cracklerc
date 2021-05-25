@@ -1,0 +1,3 @@
+PKG_PATH=/home/pkgs
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PKG_PATH/usr/lib/arm-linux-gnueabihf:$PKG_PATH/usr/lib:$PKG_PATH/lib/arm-linux-gnueabihf:$PKG_PATH/lib
+export PATH=$PATH:$PKG_PATH/usr/bin:$PKG_PATH/sbin:$PKG_PATH/bin
