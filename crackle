@@ -31,7 +31,7 @@ SCRP_DIR=$(dirname "${BASH_SOURCE[0]}")
 }
 
 [[ "$1" = "install" || "$1" = "crack" ]] && {
-[[ "$1" = "crack" ]] && { op="install"; dir="packages/$2"; } || { op="$1"; dir="$PKG_PATH"; }
+[[ "$1" = "crack" ]] && { op="install"; dir="$HOME/packages/$2"; } || { op="$1"; dir="$PKG_PATH"; }
 [ "$1" = "install" ] && {
 	[ -d "$PKG_PATH" ] || { echo "$PKG_PATH does not exist, please run crackle setup first"; exit 1; }
 }
