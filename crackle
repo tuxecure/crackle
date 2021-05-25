@@ -20,6 +20,16 @@ SCRP_DIR=$(dirname "${BASH_SOURCE[0]}")
     source ~/.bashrc
 }
 
+[ "$1" = "update" ] && {
+	apt-get $1;
+        exit 0;
+}
+
+[ "$1" = "download" ] && {
+	apt-get $1 $2;
+        exit 0;
+}
+
 [[ "$1" = "install" || "$1" = "crack" ]] && {
 [[ "$1" = "crack" ]] && { op="install"; dir="packages/$2"; } || { op="$1"; dir="$PKG_PATH"; }
 [ "$1" = "install" ] && {
