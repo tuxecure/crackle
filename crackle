@@ -2,31 +2,31 @@
 PKG_PATH=${PKG_PATH:-/home/pkgs};
 SCRP_DIR=$(dirname "${BASH_SOURCE[0]}")
 [ "$1" = "clean" ] && {
-    apt-get $1;
-    find -L $PKG_PATH/bin -wholename $PKG_PATH/bin -o -type d -prune -o -type l -exec rm {} +;
-    find -L $PKG_PATH/lib -wholename $PKG_PATH/lib -o -type d -prune -o -type l -exec rm {} +;
+    apt-get "$1";
+    find -L "$PKG_PATH"/bin -wholename "$PKG_PATH"/bin -o -type d -prune -o -type l -exec rm {} +;
+    find -L "$PKG_PATH"/lib -wholename "$PKG_PATH"/lib -o -type d -prune -o -type l -exec rm {} +;
     exit 0;
 }
 
 [ "$1" = "setup" ] && {
-    bashrc=$(grep crackle ~/.bashrc);
-    profile=$(grep crackle ~/.profile);
+    bashrc=$(grep crackle "$HOME"/.bashrc);
+    profile=$(grep crackle "$HOME"/.profile);
     [[ -d "$PKG_PATH" && -n "$bashrc" && -n "$profile" ]] && { echo "crackle is already set up"; exit 0; }
-    [[ -d "$PKG_PATH" ]] || mkdir $PKG_PATH;
-    echo "PKG_PATH=$PKG_PATH" > ~/.cracklerc
-    cat $SCRP_DIR/cracklerc >> ~/.cracklerc;
-    [[ -z "$bashrc" ]] && echo '. "$HOME/.cracklerc"' >> ~/.bashrc;
-    [[ -z "$profile" ]] && echo '. "$HOME/.cracklerc"' >> ~/.profile;
-    source ~/.bashrc
+    [[ -d "$PKG_PATH" ]] || mkdir "$PKG_PATH";
+    echo "PKG_PATH=$PKG_PATH" > "$HOME"/.cracklerc
+    cat "$SCRP_DIR"/cracklerc >> "$HOME"/.cracklerc;
+    [[ -z "$bashrc" ]] && echo '. "$HOME/.cracklerc"' >> "$HOME"/.bashrc;
+    [[ -z "$profile" ]] && echo '. "$HOME/.cracklerc"' >> "$HOME"/.profile;
+    source "$HOME"/.bashrc
 }
 
 [ "$1" = "update" ] && {
-	apt-get $1;
+	apt-get "$1";
         exit 0;
 }
 
 [ "$1" = "download" ] && {
-	apt-get $1 $2;
+	apt-get "$1" "$2";
         exit 0;
 }
 
@@ -36,10 +36,10 @@ SCRP_DIR=$(dirname "${BASH_SOURCE[0]}")
 	[ -d "$PKG_PATH" ] || { echo "$PKG_PATH does not exist, please run crackle setup first"; exit 1; }
 }
 apt-get clean;
-apt-get $op --download-only $2;
+apt-get "$op" --download-only "$2";
 readarray -t packages < <(ls /var/cache/apt/archives/*.deb);
 for package in "${packages[@]}"
     do
-        dpkg-deb -xv $package $dir;
+        dpkg-deb -xv "$package" "$dir";
     done;
 }
