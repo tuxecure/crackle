@@ -11,7 +11,8 @@ SCRP_DIR=$(dirname "${BASH_SOURCE[0]}")
 [ "$1" = "setup" ] && {
     [ -d "$PKG_PATH" ] && { echo "crackle is already set up"; exit 0; }
     mkdir $PKG_PATH;
-    mv $SCRP_DIR/cracklerc ~/.cracklerc;
+    echo "PKG_PATH=$PKG_PATH" > ~/.cracklerc
+    cat $SCRP_DIR/cracklerc >> ~/.cracklerc;
     echo '. "$HOME/.cracklerc"' >> ~/.bashrc;
     source ~/.bashrc
 }
