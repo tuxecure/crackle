@@ -47,14 +47,19 @@ SCRP_DIR=$(dirname "${BASH_SOURCE[0]}")
     [ "$1" = "install" ] && {
             [ -d "$PKG_PATH" ] || { echo "$PKG_PATH does not exist, please run crackle setup first"; exit 1; }
     }
-    [ -d "$dir$PKGS_DIR/$2" ] && { echo $2 is already installed; exit 0; }
+    [ -d "$dir$PKGS_DIR/$2" ] && { echo "$2" is already installed; exit 0; }
     apt-get clean;
     apt-get "$op" --download-only "$2" || exit 1;
     readarray -t packages < <(ls /var/cache/apt/archives/*.deb);
     for package in "${packages[@]}"
         do
+            pkg="$(basename $package)";
+            pkgname="${pkg%%_*}";
+            pkgversion="${pkg%_*}";
+            pkgversion="${pkgversion#*_}";
             dpkg-deb -xv "$package" "$dir";
-	    [ -d "$dir$PKGS_DIR/$2" ] || mkdir "$dir$PKGS_DIR/$2";
-            dpkg -c "$package" | awk '{print $6}' > "$dir$PKGS_DIR/$2/pkgs.list";
+	    [ -d "$dir$PKGS_DIR/$pkgname" ] || mkdir "$dir$PKGS_DIR/$pkgname";
+            dpkg -c "$package" | awk '{print $6}' > "$dir$PKGS_DIR/$pkgname/pkgs.list";
+            echo $pkgversion > "$dir$PKGS_DIR/$pkgname/pkgs.version";
         done;
 }
