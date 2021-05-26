@@ -46,7 +46,7 @@ SCRP_DIR=$(dirname "${BASH_SOURCE[0]}")
             [ -d "$PKG_PATH" ] || { echo "$PKG_PATH does not exist, please run crackle setup first"; exit 1; }
     }
     apt-get clean;
-    apt-get "$op" --download-only "$2";
+    apt-get "$op" --download-only "$2" || exit 1;
     readarray -t packages < <(ls /var/cache/apt/archives/*.deb);
     for package in "${packages[@]}"
         do
