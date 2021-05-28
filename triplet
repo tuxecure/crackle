@@ -1,4 +1,5 @@
 #!/bin/sh
+# pulled out of https://sh.rustup.rs/
 check_proc() {
     # Check for /proc by looking for the /proc/self/exe link
     # This is only run on Linux
