@@ -1,6 +1,7 @@
 #!/bin/bash
 PKG_PATH=${PKG_PATH:-/home/pkgs};
 PKGS_DIR=${PKGS_DIR:-/var/log};
+CRACKDIR=$HOME/packages/$2;
 SCRP_DIR=$(dirname "${BASH_SOURCE[0]}")
 [ "$1" = "clean" ] && {
     apt-get "$1";
@@ -43,10 +44,11 @@ SCRP_DIR=$(dirname "${BASH_SOURCE[0]}")
 [[ "$1" = "install" || "$1" = "crack" ]] && {
     op="install";
     if [[ "$1" = "crack" ]]; then
-	    dir="$HOME/packages/$2";
+	    dir="$CRACKDIR";
     else
 	    dir="$PKG_PATH";
     fi
+    [[ "$1" = "crack" && ! -d "$dir" ]] && mkdir "$dir";
     [ "$1" = "install" ] && {
             [ -d "$PKG_PATH" ] || { echo "$PKG_PATH does not exist, please run crackle setup first"; exit 1; }
     }
