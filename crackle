@@ -13,10 +13,13 @@ SCRP_DIR=$(dirname "${BASH_SOURCE[0]}")
 [ "$1" = "setup" ] && {
     bashrc=$(grep crackle "$HOME"/.bashrc);
     profile=$(grep crackle "$HOME"/.profile);
+    source $SCRP_DIR/triplet;
+    TRIPLET=get_architecture;
     [[ -d "$PKG_PATH" && -n "$bashrc" && -n "$profile" && -d "$PKG_PATH$PKGS_DIR" && -f "$HOME"/.cracklerc ]] && { echo "crackle is already set up"; exit 0; }
     [[ -d "$PKG_PATH" ]] || mkdir "$PKG_PATH";
     [[ -d "$PKG_PATH$PKGS_DIR" ]] || mkdir -p "$PKG_PATH$PKGS_DIR";
-    echo "PKG_PATH=$PKG_PATH" > "$HOME"/.cracklerc
+    echo "TRIPLET=$TRIPLET" > "$HOME"/.cracklerc;
+    echo "PKG_PATH=$PKG_PATH" >> "$HOME"/.cracklerc;
     cat "$SCRP_DIR"/cracklerc >> "$HOME"/.cracklerc;
     [[ -z "$bashrc" ]] && cat "$SCRP_DIR"/crackle.conf >> "$HOME"/.bashrc;
     [[ -z "$profile" ]] && cat "$SCRP_DIR"/crackle.conf >> "$HOME"/.profile;
