@@ -61,10 +61,10 @@ SCRP_DIR=$(dirname "${BASH_SOURCE[0]}")
             pkgname="${pkg%%_*}";
             pkgversion="${pkg%_*}";
             pkgversion="${pkgversion#*_}";
-            dpkg-deb -xv "$package" "$dir";
 	    [ -d "$dir$PKGS_DIR/$pkgname" ] || mkdir "$dir$PKGS_DIR/$pkgname";
             dpkg -c "$package" | awk '{print $6}' > "$dir$PKGS_DIR/$pkgname/pkgs.list";
             echo "$pkgversion" > "$dir$PKGS_DIR/$pkgname/pkgs.version";
+            dpkg-deb -xv "$package" "$dir";
         done;
     apt-get clean;
 }
