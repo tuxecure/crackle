@@ -12,17 +12,13 @@ SCRP_DIR=$(dirname "${BASH_SOURCE[0]}")
 [ "$1" = "setup" ] && {
     bashrc=$(grep crackle "$HOME"/.bashrc);
     profile=$(grep crackle "$HOME"/.profile);
-    [[ -d "$PKG_PATH" && -n "$bashrc" && -n "$profile" && -d "$PKG_PATH$PKGS_DIR" ]] && { echo "crackle is already set up"; exit 0; }
+    [[ -d "$PKG_PATH" && -n "$bashrc" && -n "$profile" && -d "$PKG_PATH$PKGS_DIR" && -f "$HOME"/.cracklerc ]] && { echo "crackle is already set up"; exit 0; }
     [[ -d "$PKG_PATH" ]] || mkdir "$PKG_PATH";
     [[ -d "$PKG_PATH$PKGS_DIR" ]] || mkdir -p "$PKG_PATH$PKGS_DIR";
     echo "PKG_PATH=$PKG_PATH" > "$HOME"/.cracklerc
     cat "$SCRP_DIR"/cracklerc >> "$HOME"/.cracklerc;
-    # this exact line will be added to .bashrc
-    # shellcheck disable=SC2016
-    [[ -z "$bashrc" ]] && echo '. "$HOME/.cracklerc"' >> "$HOME"/.bashrc;
-    # this exact line will be added to .profile
-    # shellcheck disable=SC2016
-    [[ -z "$profile" ]] && echo '. "$HOME/.cracklerc"' >> "$HOME"/.profile;
+    [[ -z "$bashrc" ]] && cat "$SCRP_DIR"/crackle.conf >> "$HOME"/.bashrc;
+    [[ -z "$profile" ]] && cat "$SCRP_DIR"/crackle.conf >> "$HOME"/.profile;
     # this just reloads bash the user doesn't have to
     # shellcheck source=/dev/null
     source "$HOME"/.bashrc
