@@ -252,13 +252,9 @@ get_architecture() {
     # and fall back to arm.
     # See https://github.com/rust-lang/rustup.rs/issues/587.
     if [ "$_ostype" = "unknown-linux-gnueabihf" ] && [ "$_cputype" = armv7 ]; then
-        if ensure grep '^Features' /proc/cpuinfo | grep -q -v neon; then
-            # At least one processor does not have NEON.
             _cputype=arm
-        fi
     fi
-    _ostype="${_ostype#*-}"
-    _arch="${_cputype}-${_ostype}"
+    _arch="${_cputype}-${_ostype#*-}"
 
    echo "$_arch"
 }
