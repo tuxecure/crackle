@@ -1,10 +1,12 @@
 #!/bin/bash
 PKG_PATH=${PKG_PATH:-/home/pkgs};
 PKGS_DIR=${PKGS_DIR:-/var/log};
+APTCACHE=${APTCACHE:-/apt/cache};
 CRACKDIR=$HOME/packages/$2;
 SCRP_DIR=$(dirname "${BASH_SOURCE[0]}")
+APT="apt-get -o Dir::Cache=$PKG_PATH$APTCACHE -o Dir::State=$PKG_PATH$APTCACHE 
 [ "$1" = "clean" ] && {
-    apt-get "$1";
+    $APT "$1";
     find -L "$PKG_PATH"/bin -wholename "$PKG_PATH"/bin -o -type d -prune -o -type l -exec rm {} +;
     find -L "$PKG_PATH"/lib -wholename "$PKG_PATH"/lib -o -type d -prune -o -type l -exec rm {} +;
     exit 0;
@@ -18,6 +20,7 @@ SCRP_DIR=$(dirname "${BASH_SOURCE[0]}")
     [[ -d "$PKG_PATH" && -n "$bashrc" && -n "$profile" && -d "$PKG_PATH$PKGS_DIR" && -f "$HOME"/.cracklerc ]] && { echo "crackle is already set up"; exit 0; }
     [[ -d "$PKG_PATH" ]] || mkdir "$PKG_PATH";
     [[ -d "$PKG_PATH$PKGS_DIR" ]] || mkdir -p "$PKG_PATH$PKGS_DIR";
+    [[ -d "$PKG_PATH$APTCACHE" ]] || mkdir -p "$PKG_PATH$APTCACHE";
     echo "TRIPLET=$TRIPLET" > "$HOME"/.cracklerc;
     echo "PKG_PATH=$PKG_PATH" >> "$HOME"/.cracklerc;
     cat "$SCRP_DIR"/cracklerc >> "$HOME"/.cracklerc;
@@ -30,12 +33,12 @@ SCRP_DIR=$(dirname "${BASH_SOURCE[0]}")
 }
 
 [ "$1" = "update" ] && {
-	apt-get "$1";
+	$APT "$1";
         exit 0;
 }
 
 [ "$1" = "download" ] && {
-	apt-get "$1" "$2";
+	$APT "$1" "$2";
         exit 0;
 }
 
@@ -56,8 +59,8 @@ SCRP_DIR=$(dirname "${BASH_SOURCE[0]}")
             [ -d "$PKG_PATH" ] || { echo "$PKG_PATH does not exist, please run crackle setup first"; exit 1; }
     }
     [ -d "$dir$PKGS_DIR/$2" ] && { echo "$2" is already installed; exit 0; }
-    apt-get "$op" --download-only "$2" || exit 1;
-    readarray -t packages < <(ls /var/cache/apt/archives/*.deb);
+    $APT "$op" --download-only "$2" || exit 1;
+    readarray -t packages < <(ls $PKG_PATH/apt/cache/archives/*.deb);
     for package in "${packages[@]}"
         do
             pkg="$(basename "$package")";
@@ -69,5 +72,5 @@ SCRP_DIR=$(dirname "${BASH_SOURCE[0]}")
             echo "$pkgversion" > "$dir$PKGS_DIR/$pkgname/pkgs.version";
             dpkg-deb -xv "$package" "$dir";
         done;
-    apt-get clean;
+    $APT clean;
 }
