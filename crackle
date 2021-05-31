@@ -4,7 +4,7 @@ PKGS_DIR=${PKGS_DIR:-/var/log};
 APTCACHE=${APTCACHE:-/apt/cache};
 CRACKDIR=$HOME/packages/$2;
 SCRP_DIR=$(dirname "${BASH_SOURCE[0]}")
-APT="apt-get -o Dir::Cache=$PKG_PATH$APTCACHE -o Dir::State=$PKG_PATH$APTCACHE 
+APT="apt-get -o Dir::Cache=$PKG_PATH$APTCACHE -o Dir::State=$PKG_PATH$APTCACHE"
 [ "$1" = "clean" ] && {
     $APT "$1";
     find -L "$PKG_PATH"/bin -wholename "$PKG_PATH"/bin -o -type d -prune -o -type l -exec rm {} +;
