@@ -72,3 +72,16 @@ APT_CACHE="apt-cache -o Dir::Cache=$PKG_PATH$APTCACHE -o Dir::State=$PKG_PATH$AP
     $APT_GET clean;
     exit 0;
 }
+
+[[ "$1" = "remove" ]] && {
+    readarray -t packages < <($APT_CACHE depends "$2"| awk '/Depends/{print $2}');
+    cat "$PKG_PATH$PKGS_DIR/$2/pkgs.list";
+    rm -r "${PKG_PATH:?}$PKGS_DIR/$2";
+    for package in "${packages[@]}"
+    do
+        [ -d "$PKG_PATH$PKGS_DIR/$package" ] && {
+            cat "$PKG_PATH$PKGS_DIR/$package/pkgs.list";
+            rm -r "${PKG_PATH:?}$PKGS_DIR/$package";
+        }
+    done;
+}
