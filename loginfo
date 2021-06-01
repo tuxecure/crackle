@@ -1,0 +1,10 @@
+#!/bin/bash
+function log_pkg_info () {
+    pkg="$(basename "$2")";
+    pkgname="${pkg%%_*}";
+    pkgversion="${pkg%_*}";
+    pkgversion="${pkgversion#*_}";
+    [ -d "$1$PKGS_DIR/$pkgname" ] || mkdir "$1$PKGS_DIR/$pkgname";
+    dpkg -c "$2" | awk '{print $6}' > "$1$PKGS_DIR/$pkgname/pkgs.list";
+    echo "$pkgversion" > "$1$PKGS_DIR/$pkgname/pkgs.version";
+}

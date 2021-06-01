@@ -65,13 +65,8 @@ APT_CACHE="apt-cache -o Dir::Cache=$PKG_PATH$APTCACHE -o Dir::State=$PKG_PATH$AP
     readarray -t packages < <(ls "$PKG_PATH$APTCACHE"/archives/*.deb);
     for package in "${packages[@]}"
         do
-            pkg="$(basename "$package")";
-            pkgname="${pkg%%_*}";
-            pkgversion="${pkg%_*}";
-            pkgversion="${pkgversion#*_}";
-	    [ -d "$dir$PKGS_DIR/$pkgname" ] || mkdir "$dir$PKGS_DIR/$pkgname";
-            dpkg -c "$package" | awk '{print $6}' > "$dir$PKGS_DIR/$pkgname/pkgs.list";
-            echo "$pkgversion" > "$dir$PKGS_DIR/$pkgname/pkgs.version";
+            . "$SCRP_DIR/loginfo";
+            log_pkg_info "$dir" "$package";
             dpkg-deb -xv "$package" "$dir";
         done;
     $APT_GET clean;
