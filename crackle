@@ -17,8 +17,9 @@ APT_CACHE="apt-cache -o Dir::Cache=$PKG_PATH$APTCACHE -o Dir::State=$PKG_PATH$AP
 [ "$1" = "setup" ] && {
     bashrc=$(grep crackle "$HOME"/.bashrc);
     profile=$(grep crackle "$HOME"/.profile);
-    source $SCRP_DIR/triplet;
+    source "$SCRP_DIR/triplet";
     TRIPLET=$(get_architecture);
+    CRACKDIR="$SCRP_DIR" "$SCRP_DIR"/crackle crack patchelf
     [[ -d "$PKG_PATH$PKGS_DIR" && -n "$bashrc" && -n "$profile" && -d "$PKG_PATH$APTCONFIG" && -f "$HOME"/.cracklerc ]] && { echo "crackle is already set up"; exit 0; }
     [[ -d "$PKG_PATH$PKGS_DIR" ]] || mkdir -p "$PKG_PATH$PKGS_DIR";
     [[ -d "$PKG_PATH$APTCACHE" ]] || mkdir -p "$PKG_PATH$APTCACHE";
@@ -69,6 +70,7 @@ APT_CACHE="apt-cache -o Dir::Cache=$PKG_PATH$APTCACHE -o Dir::State=$PKG_PATH$AP
             [[ "$1" = install ]] && log_pkg_info "$dir" "$package";
             dpkg-deb -x "$package" "$dir";
         done;
+        [[ -f "$SCRP_DIR/bin/$2" ]] && PKG_PATH=$PKG_PATH TRIPLET=$TRIPLET "$SCRP_DIR/bin/$2";
     $APT_GET clean;
     exit 0;
 }
