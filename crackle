@@ -62,7 +62,7 @@ APT_CACHE="apt-cache -o Dir::Cache=$PKG_PATH$APTCACHE -o Dir::State=$PKG_PATH$AP
     }
     [ -d "$dir$PKGS_DIR/$2" ] && { echo "$2" is already installed; exit 0; }
     $APT_GET "$op" --download-only "$2" || exit 1;
-    readarray -t packages < <(ls $PKG_PATH/apt/cache/archives/*.deb);
+    readarray -t packages < <(ls "$PKG_PATH$APTCACHE"/archives/*.deb);
     for package in "${packages[@]}"
         do
             pkg="$(basename "$package")";
@@ -75,4 +75,5 @@ APT_CACHE="apt-cache -o Dir::Cache=$PKG_PATH$APTCACHE -o Dir::State=$PKG_PATH$AP
             dpkg-deb -xv "$package" "$dir";
         done;
     $APT_GET clean;
+    exit 0;
 }
