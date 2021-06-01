@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # pulled out of https://sh.rustup.rs/
 check_proc() {
     # Check for /proc by looking for the /proc/self/exe link
