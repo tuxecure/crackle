@@ -3,7 +3,7 @@ PKG_PATH=${PKG_PATH:-/home/pkgs};
 PKGS_DIR=${PKGS_DIR:-/var/log};
 APTCACHE=${APTCACHE:-/apt/cache};
 APTCONFIG=${APTCONFIG:-/etc/apt};
-CRACKDIR=$HOME/packages/$2;
+CRACKDIR=${CRACKDIR:-$HOME/packages/$2};
 SCRP_DIR=$(dirname "${BASH_SOURCE[0]}")
 APT_GET="apt-get -o Dir::Cache=$PKG_PATH$APTCACHE -o Dir::State=$PKG_PATH$APTCACHE -o Dir::Etc::SourceParts=$PKG_PATH$APTCONFIG"
 APT_CACHE="apt-cache -o Dir::Cache=$PKG_PATH$APTCACHE -o Dir::State=$PKG_PATH$APTCACHE -o Dir::Etc::SourceParts=$PKG_PATH$APTCONFIG"
@@ -66,7 +66,7 @@ APT_CACHE="apt-cache -o Dir::Cache=$PKG_PATH$APTCACHE -o Dir::State=$PKG_PATH$AP
     for package in "${packages[@]}"
         do
             . "$SCRP_DIR/loginfo";
-            log_pkg_info "$dir" "$package";
+            [[ "$1" = install ]] && log_pkg_info "$dir" "$package";
             dpkg-deb -x "$package" "$dir";
         done;
     $APT_GET clean;
