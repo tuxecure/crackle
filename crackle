@@ -67,7 +67,7 @@ APT_CACHE="apt-cache -o Dir::Cache=$PKG_PATH$APTCACHE -o Dir::State=$PKG_PATH$AP
         do
             . "$SCRP_DIR/loginfo";
             log_pkg_info "$dir" "$package";
-            dpkg-deb -xv "$package" "$dir";
+            dpkg-deb -x "$package" "$dir";
         done;
     $APT_GET clean;
     exit 0;
