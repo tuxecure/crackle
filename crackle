@@ -2,11 +2,13 @@
 PKG_PATH=${PKG_PATH:-/home/pkgs};
 PKGS_DIR=${PKGS_DIR:-/var/log};
 APTCACHE=${APTCACHE:-/apt/cache};
+APTCONFIG=${APTCONFIG:-/etc/apt};
 CRACKDIR=$HOME/packages/$2;
 SCRP_DIR=$(dirname "${BASH_SOURCE[0]}")
-APT="apt-get -o Dir::Cache=$PKG_PATH$APTCACHE -o Dir::State=$PKG_PATH$APTCACHE"
+APT_GET="apt-get -o Dir::Cache=$PKG_PATH$APTCACHE -o Dir::State=$PKG_PATH$APTCACHE -o Dir::Etc::SourceParts=$PKG_PATH$APTCONFIG"
+APT_CACHE="apt-cache -o Dir::Cache=$PKG_PATH$APTCACHE -o Dir::State=$PKG_PATH$APTCACHE -o Dir::Etc::SourceParts=$PKG_PATH$APTCONFIG"
 [ "$1" = "clean" ] && {
-    $APT "$1";
+    $APT_GET "$1";
     find -L "$PKG_PATH"/bin -wholename "$PKG_PATH"/bin -o -type d -prune -o -type l -exec rm {} +;
     find -L "$PKG_PATH"/lib -wholename "$PKG_PATH"/lib -o -type d -prune -o -type l -exec rm {} +;
     exit 0;
@@ -17,10 +19,10 @@ APT="apt-get -o Dir::Cache=$PKG_PATH$APTCACHE -o Dir::State=$PKG_PATH$APTCACHE"
     profile=$(grep crackle "$HOME"/.profile);
     source $SCRP_DIR/triplet;
     TRIPLET=$(get_architecture);
-    [[ -d "$PKG_PATH" && -n "$bashrc" && -n "$profile" && -d "$PKG_PATH$PKGS_DIR" && -f "$HOME"/.cracklerc ]] && { echo "crackle is already set up"; exit 0; }
-    [[ -d "$PKG_PATH" ]] || mkdir "$PKG_PATH";
+    [[ -d "$PKG_PATH$PKGS_DIR" && -n "$bashrc" && -n "$profile" && -d "$PKG_PATH$APTCONFIG" && -f "$HOME"/.cracklerc ]] && { echo "crackle is already set up"; exit 0; }
     [[ -d "$PKG_PATH$PKGS_DIR" ]] || mkdir -p "$PKG_PATH$PKGS_DIR";
     [[ -d "$PKG_PATH$APTCACHE" ]] || mkdir -p "$PKG_PATH$APTCACHE";
+    [[ -d "$PKG_PATH$APTCONFIG" ]] || mkdir -p "$PKG_PATH$APTCONFIG";
     echo "TRIPLET=$TRIPLET" > "$HOME"/.cracklerc;
     echo "PKG_PATH=$PKG_PATH" >> "$HOME"/.cracklerc;
     cat "$SCRP_DIR"/cracklerc >> "$HOME"/.cracklerc;
@@ -33,17 +35,17 @@ APT="apt-get -o Dir::Cache=$PKG_PATH$APTCACHE -o Dir::State=$PKG_PATH$APTCACHE"
 }
 
 [ "$1" = "update" ] && {
-	$APT "$1";
+	$APT_GET "$1";
         exit 0;
 }
 
 [ "$1" = "download" ] && {
-	$APT "$1" "$2";
+	$APT_GET "$1" "$2";
         exit 0;
 }
 
 [[ "$1" = "search" || "$1" = "show" ]] && {
-	apt-cache "$1" "$2";
+	$APT_CACHE "$1" "$2";
         exit 0;
 }
 
@@ -59,7 +61,7 @@ APT="apt-get -o Dir::Cache=$PKG_PATH$APTCACHE -o Dir::State=$PKG_PATH$APTCACHE"
             [ -d "$PKG_PATH" ] || { echo "$PKG_PATH does not exist, please run crackle setup first"; exit 1; }
     }
     [ -d "$dir$PKGS_DIR/$2" ] && { echo "$2" is already installed; exit 0; }
-    $APT "$op" --download-only "$2" || exit 1;
+    $APT_GET "$op" --download-only "$2" || exit 1;
     readarray -t packages < <(ls $PKG_PATH/apt/cache/archives/*.deb);
     for package in "${packages[@]}"
         do
@@ -72,5 +74,5 @@ APT="apt-get -o Dir::Cache=$PKG_PATH$APTCACHE -o Dir::State=$PKG_PATH$APTCACHE"
             echo "$pkgversion" > "$dir$PKGS_DIR/$pkgname/pkgs.version";
             dpkg-deb -xv "$package" "$dir";
         done;
-    $APT clean;
+    $APT_GET clean;
 }
