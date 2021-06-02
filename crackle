@@ -2,12 +2,12 @@
 PKG_PATH=${PKG_PATH:-$HOME/.local/share/crackle};
 PKGS_DIR=${PKGS_DIR:-/var/log};
 APTCACHE=${APTCACHE:-$HOME/.cache/crackle};
-APTCONFIG=${APTCONFIG:-/etc/apt};
-CRACKLERC=$HOME/.config/crackle/cracklerc;
+APTCONFIG=${APTCONFIG:-$HOME/.config/crackle};
+CRACKLERC=$APTCONFIG/cracklerc;
 CRACKDIR=${CRACKDIR:-$HOME/packages/$2};
 SCRP_DIR=$(dirname "${BASH_SOURCE[0]}")
-APT_GET="apt-get -o Dir::Cache=$APTCACHE -o Dir::State=$APTCACHE -o Dir::Etc::SourceParts=$PKG_PATH$APTCONFIG"
-APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTCACHE -o Dir::Etc::SourceParts=$PKG_PATH$APTCONFIG"
+APT_GET="apt-get -o Dir::Cache=$APTCACHE -o Dir::State=$APTCACHE -o Dir::Etc=$APTCONFIG"
+APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTCACHE -o Dir::Etc=$APTCONFIG"
 source "$SCRP_DIR/triplet";
 TRIPLET=$(get_architecture);
 [ "$1" = "clean" ] && {
@@ -20,12 +20,11 @@ TRIPLET=$(get_architecture);
 [ "$1" = "setup" ] && {
     bashrc=$(grep crackle "$HOME"/.bashrc);
     profile=$(grep crackle "$HOME"/.profile);
-    [[ -d "$PKG_PATH$PKGS_DIR" && -d "$APTCACHE" && -n "$bashrc" && -n "$profile" && -d "$PKG_PATH$APTCONFIG" && -f "$CRACKLERC" ]] && { echo "crackle is already set up"; exit 0; }
+    [[ -d "$PKG_PATH$PKGS_DIR" && -d "$APTCACHE" && -n "$bashrc" && -n "$profile" && -d "$APTCONFIG" && -f "$CRACKLERC" ]] && { echo "crackle is already set up"; exit 0; }
     [[ -d "$PKG_PATH$PKGS_DIR" ]] || mkdir -p "$PKG_PATH$PKGS_DIR";
     [[ -d "$PKG_PATH/bin" ]] || mkdir -p "$PKG_PATH/bin";
     [[ -d "$APTCACHE" ]] || mkdir -p "$APTCACHE";
-    [[ -d "${CRACKLERC%/*}" ]] || mkdir -p "${CRACKLERC%/*}";
-    [[ -d "$PKG_PATH$APTCONFIG" ]] || mkdir -p "$PKG_PATH$APTCONFIG";
+    [[ -d "$APTCONFIG" ]] || { mkdir -p "$APTCONFIG"; ln -s /etc/apt/sources.list $APTCONFIG; mkdir $APTCONFIG/sources.list.d; }
     echo "TRIPLET=$TRIPLET" > "$CRACKLERC";
     echo "PKG_PATH=$PKG_PATH" >> "$CRACKLERC";
     cat "$SCRP_DIR"/cracklerc >> "$CRACKLERC";
