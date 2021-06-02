@@ -78,6 +78,7 @@ TRIPLET=$(get_architecture);
     }
     $APT_GET install --download-only "$2" || exit 1;
     readarray -t packages < <(ls "$APTCACHE"/archives/*.deb);
+    echo "extracting......"
     for package in "${packages[@]}"
     do
         . "$SCRP_DIR/loginfo";
