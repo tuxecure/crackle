@@ -24,7 +24,7 @@ TRIPLET=$(get_architecture);
     [[ -d "$PKG_PATH$PKGS_DIR" ]] || mkdir -p "$PKG_PATH$PKGS_DIR";
     [[ -d "$PKG_PATH/bin" ]] || mkdir -p "$PKG_PATH/bin";
     [[ -d "$APTCACHE" ]] || mkdir -p "$APTCACHE";
-    [[ -d "$APTCONFIG" ]] || { mkdir -p "$APTCONFIG"; ln -s /etc/apt/sources.list $APTCONFIG; mkdir $APTCONFIG/sources.list.d; }
+    [[ -d "$APTCONFIG" ]] || { mkdir -p $APTCONFIG/sources.list.d $APTCONFIG/preferences.d; ln -s /etc/apt/sources.list $APTCONFIG; }
     echo "TRIPLET=$TRIPLET" > "$CRACKLERC";
     echo "PKG_PATH=$PKG_PATH" >> "$CRACKLERC";
     cat "$SCRP_DIR"/cracklerc >> "$CRACKLERC";
