@@ -1,6 +1,6 @@
 #!/bin/bash
 PKG_PATH=${PKG_PATH:-$HOME/.local/share/crackle};
-PKGS_DIR=${PKGS_DIR:-/var/log};
+PKGS_DIR=${PKGS_DIR:-$PKG_PATH/var/log};
 APTCACHE=${APTCACHE:-$HOME/.cache/crackle};
 APTCONFIG=${APTCONFIG:-$HOME/.config/crackle};
 CRACKLERC=$APTCONFIG/cracklerc;
@@ -20,8 +20,8 @@ TRIPLET=$(get_architecture);
 [ "$1" = "setup" ] && {
     bashrc=$(grep crackle "$HOME"/.bashrc);
     profile=$(grep crackle "$HOME"/.profile);
-    [[ -d "$PKG_PATH$PKGS_DIR" && -d "$APTCACHE" && -n "$bashrc" && -n "$profile" && -d "$APTCONFIG" && -f "$CRACKLERC" ]] && { echo "crackle is already set up"; exit 0; }
-    [[ -d "$PKG_PATH$PKGS_DIR" ]] || mkdir -p "$PKG_PATH$PKGS_DIR";
+    [[ -d "$PKGS_DIR" && -d "$APTCACHE" && -n "$bashrc" && -n "$profile" && -d "$APTCONFIG" && -f "$CRACKLERC" ]] && { echo "crackle is already set up"; exit 0; }
+    [[ -d "$PKGS_DIR" ]] || mkdir -p "$PKGS_DIR";
     [[ -d "$PKG_PATH/bin" ]] || mkdir -p "$PKG_PATH/bin";
     [[ -d "$APTCACHE" ]] || mkdir -p "$APTCACHE";
     [[ -d "$APTCONFIG" ]] || { mkdir -p $APTCONFIG/sources.list.d $APTCONFIG/preferences.d; ln -s /etc/apt/sources.list $APTCONFIG; }
@@ -65,13 +65,13 @@ TRIPLET=$(get_architecture);
     [ "$1" = "install" ] && {
             [ -d "$PKG_PATH" ] || { echo "$PKG_PATH does not exist, please run crackle setup first"; exit 1; }
     }
-    [ -d "$dir$PKGS_DIR/$2" ] && { echo "$2" is already installed; exit 0; }
+    [[ -d "$PKGS_DIR/$2" && "$1" = "install" ]] && { echo "$2" is already installed; exit 0; }
     $APT_GET install --download-only "$2" || exit 1;
     readarray -t packages < <(ls "$APTCACHE"/archives/*.deb);
     for package in "${packages[@]}"
         do
             . "$SCRP_DIR/loginfo";
-            [[ "$1" = install ]] && log_pkg_info "$dir" "$package";
+            [[ "$1" = "install" ]] && log_pkg_info "$dir" "$package";
             dpkg-deb -x "$package" "$dir";
         done;
         [[ -f "$SCRP_DIR/scripts/$2" ]] && PKG_PATH=$PKG_PATH TRIPLET=$TRIPLET CRACKLERC=$CRACKLERC "$SCRP_DIR/scripts/$2";
@@ -81,13 +81,13 @@ TRIPLET=$(get_architecture);
 
 [[ "$1" = "remove" ]] && {
     readarray -t packages < <($APT_CACHE depends "$2"| awk '/Depends/{print $2}');
-    cat "$PKG_PATH$PKGS_DIR/$2/pkgs.list";
-    rm -r "${PKG_PATH:?}$PKGS_DIR/$2";
+    cat "$PKGS_DIR/$2/pkgs.list";
+    rm -r "${PKGS_DIR:?}/$2";
     for package in "${packages[@]}"
     do
-        [ -d "$PKG_PATH$PKGS_DIR/$package" ] && {
-            cat "$PKG_PATH$PKGS_DIR/$package/pkgs.list";
-            rm -r "${PKG_PATH:?}$PKGS_DIR/$package";
+        [ -d "$PKGS_DIR/$package" ] && {
+            cat "$PKGS_DIR/$package/pkgs.list";
+            rm -r "${PKGS_DIR:?}/$package";
         }
     done;
 }
