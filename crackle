@@ -35,10 +35,12 @@ TRIPLET=$(get_architecture);
     [[ -z "$profile" ]] && cat "$SCRP_DIR"/crackle.conf >> "$HOME"/.profile;
     cp $SCRP_DIR/crackle $SCRP_DIR/triplet $SCRP_DIR/loginfo $PKG_PATH/bin
     [[ -d "$PKG_PATH/bin/scripts" ]] || mkdir "$PKG_PATH/bin/scripts";
-    cp "$SCRP_DIR"/bin/* "$PKG_PATH/bin/scripts"
     # this just reloads bash the user doesn't have to
     # shellcheck source=/dev/null
     source "$HOME"/.bashrc
+    "$SCRP_DIR"/crackle install git
+    [[ -d "$SCRP_DIR"/bin/* ]] || { cd $SCRP_DIR;git submodule update --init; }
+    cp "$SCRP_DIR"/bin/* "$PKG_PATH/bin/scripts"
     "$SCRP_DIR"/crackle install patchelf
     exit 0;
 }
