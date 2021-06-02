@@ -1,12 +1,13 @@
 #!/bin/bash
-PKG_PATH=${PKG_PATH:-/home/pkgs};
+PKG_PATH=${PKG_PATH:-$HOME/.local/share/crackle};
 PKGS_DIR=${PKGS_DIR:-/var/log};
-APTCACHE=${APTCACHE:-/apt/cache};
+APTCACHE=${APTCACHE:-$HOME/.cache/crackle};
 APTCONFIG=${APTCONFIG:-/etc/apt};
+CRACKLERC=$HOME/.config/crackle/cracklerc;
 CRACKDIR=${CRACKDIR:-$HOME/packages/$2};
 SCRP_DIR=$(dirname "${BASH_SOURCE[0]}")
-APT_GET="apt-get -o Dir::Cache=$PKG_PATH$APTCACHE -o Dir::State=$PKG_PATH$APTCACHE -o Dir::Etc::SourceParts=$PKG_PATH$APTCONFIG"
-APT_CACHE="apt-cache -o Dir::Cache=$PKG_PATH$APTCACHE -o Dir::State=$PKG_PATH$APTCACHE -o Dir::Etc::SourceParts=$PKG_PATH$APTCONFIG"
+APT_GET="apt-get -o Dir::Cache=$APTCACHE -o Dir::State=$APTCACHE -o Dir::Etc::SourceParts=$PKG_PATH$APTCONFIG"
+APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTCACHE -o Dir::Etc::SourceParts=$PKG_PATH$APTCONFIG"
 source "$SCRP_DIR/triplet";
 TRIPLET=$(get_architecture);
 [ "$1" = "clean" ] && {
@@ -19,19 +20,24 @@ TRIPLET=$(get_architecture);
 [ "$1" = "setup" ] && {
     bashrc=$(grep crackle "$HOME"/.bashrc);
     profile=$(grep crackle "$HOME"/.profile);
-    CRACKDIR="$SCRP_DIR" "$SCRP_DIR"/crackle crack patchelf
-    [[ -d "$PKG_PATH$PKGS_DIR" && -n "$bashrc" && -n "$profile" && -d "$PKG_PATH$APTCONFIG" && -f "$HOME"/.cracklerc ]] && { echo "crackle is already set up"; exit 0; }
+    [[ -d "$PKG_PATH$PKGS_DIR" && -d "$APTCACHE" && -n "$bashrc" && -n "$profile" && -d "$PKG_PATH$APTCONFIG" && -f "$CRACKLERC" ]] && { echo "crackle is already set up"; exit 0; }
     [[ -d "$PKG_PATH$PKGS_DIR" ]] || mkdir -p "$PKG_PATH$PKGS_DIR";
-    [[ -d "$PKG_PATH$APTCACHE" ]] || mkdir -p "$PKG_PATH$APTCACHE";
+    [[ -d "$PKG_PATH/bin" ]] || mkdir -p "$PKG_PATH/bin";
+    [[ -d "$APTCACHE" ]] || mkdir -p "$APTCACHE";
+    [[ -d "${CRACKLERC%/*}" ]] || mkdir -p "${CRACKLERC%/*}";
     [[ -d "$PKG_PATH$APTCONFIG" ]] || mkdir -p "$PKG_PATH$APTCONFIG";
-    echo "TRIPLET=$TRIPLET" > "$HOME"/.cracklerc;
-    echo "PKG_PATH=$PKG_PATH" >> "$HOME"/.cracklerc;
-    cat "$SCRP_DIR"/cracklerc >> "$HOME"/.cracklerc;
+    echo "TRIPLET=$TRIPLET" > "$CRACKLERC";
+    echo "PKG_PATH=$PKG_PATH" >> "$CRACKLERC";
+    cat "$SCRP_DIR"/cracklerc >> "$CRACKLERC";
     [[ -z "$bashrc" ]] && cat "$SCRP_DIR"/crackle.conf >> "$HOME"/.bashrc;
     [[ -z "$profile" ]] && cat "$SCRP_DIR"/crackle.conf >> "$HOME"/.profile;
+    cp $SCRP_DIR/crackle $SCRP_DIR/triplet $SCRP_DIR/loginfo $PKG_PATH/bin
+    [[ -d "$PKG_PATH/bin/scripts" ]] || mkdir "$PKG_PATH/bin/scripts";
+    cp "$SCRP_DIR"/bin/* "$PKG_PATH/bin/scripts"
     # this just reloads bash the user doesn't have to
     # shellcheck source=/dev/null
     source "$HOME"/.bashrc
+    "$SCRP_DIR"/crackle install patchelf
     exit 0;
 }
 
@@ -62,14 +68,14 @@ TRIPLET=$(get_architecture);
     }
     [ -d "$dir$PKGS_DIR/$2" ] && { echo "$2" is already installed; exit 0; }
     $APT_GET install --download-only "$2" || exit 1;
-    readarray -t packages < <(ls "$PKG_PATH$APTCACHE"/archives/*.deb);
+    readarray -t packages < <(ls "$APTCACHE"/archives/*.deb);
     for package in "${packages[@]}"
         do
             . "$SCRP_DIR/loginfo";
             [[ "$1" = install ]] && log_pkg_info "$dir" "$package";
             dpkg-deb -x "$package" "$dir";
         done;
-        [[ -f "$SCRP_DIR/bin/$2" ]] && PKG_PATH=$PKG_PATH TRIPLET=$TRIPLET "$SCRP_DIR/bin/$2";
+        [[ -f "$SCRP_DIR/scripts/$2" ]] && PKG_PATH=$PKG_PATH TRIPLET=$TRIPLET CRACKLERC=$CRACKLERC "$SCRP_DIR/scripts/$2";
     $APT_GET clean;
     exit 0;
 }
