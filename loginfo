@@ -1,10 +1,11 @@
 #!/bin/bash
+function urldecode() { : "${*//+/ }"; echo -e "${_//%/\\x}"; }
 function log_pkg_info () {
-    pkg="$(basename "$2")";
+    pkg="$(basename "$1")";
     pkgname="${pkg%%_*}";
     pkgversion="${pkg%_*}";
     pkgversion="${pkgversion#*_}";
-    [ -d "$1$PKGS_DIR/$pkgname" ] || mkdir "$1$PKGS_DIR/$pkgname";
-    dpkg -c "$2" | awk '{print $6}' > "$1$PKGS_DIR/$pkgname/pkgs.list";
-    echo "$pkgversion" > "$1$PKGS_DIR/$pkgname/pkgs.version";
+    [ -d "$PKGS_DIR/$pkgname" ] || mkdir "$PKGS_DIR/$pkgname";
+    dpkg -c "$1" | awk '{print $6}' > "$PKGS_DIR/$pkgname/pkgs.list";
+    urldecode "$pkgversion" > "$PKGS_DIR/$pkgname/pkgs.version";
 }

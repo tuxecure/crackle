@@ -10,6 +10,7 @@ APT_GET="apt-get -o Dir::Cache=$APTCACHE -o Dir::State=$APTCACHE -o Dir::Etc=$AP
 APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTCACHE -o Dir::Etc=$APTCONFIG"
 source "$SCRP_DIR/triplet";
 TRIPLET=$(get_architecture);
+
 [ "$1" = "clean" ] && {
     $APT_GET "$1";
     find -L "$PKG_PATH"/bin -wholename "$PKG_PATH"/bin -o -type d -prune -o -type l -exec rm {} +;
@@ -25,9 +26,11 @@ TRIPLET=$(get_architecture);
     [[ -d "$PKG_PATH/bin" ]] || mkdir -p "$PKG_PATH/bin";
     [[ -d "$APTCACHE" ]] || mkdir -p "$APTCACHE";
     [[ -d "$APTCONFIG" ]] || { mkdir -p $APTCONFIG/sources.list.d $APTCONFIG/preferences.d; ln -s /etc/apt/sources.list $APTCONFIG; }
-    echo "TRIPLET=$TRIPLET" > "$CRACKLERC";
-    echo "PKG_PATH=$PKG_PATH" >> "$CRACKLERC";
-    cat "$SCRP_DIR"/cracklerc >> "$CRACKLERC";
+    [[ -f "$CRACKLERC" ]] || {
+        echo "TRIPLET=$TRIPLET" > "$CRACKLERC";
+        echo "PKG_PATH=$PKG_PATH" >> "$CRACKLERC";
+        cat "$SCRP_DIR"/cracklerc >> "$CRACKLERC";
+    }
     [[ -z "$bashrc" ]] && cat "$SCRP_DIR"/crackle.conf >> "$HOME"/.bashrc;
     [[ -z "$profile" ]] && cat "$SCRP_DIR"/crackle.conf >> "$HOME"/.profile;
     cp $SCRP_DIR/crackle $SCRP_DIR/triplet $SCRP_DIR/loginfo $PKG_PATH/bin
@@ -41,40 +44,45 @@ TRIPLET=$(get_architecture);
 }
 
 [ "$1" = "update" ] && {
-	$APT_GET "$1";
+        $APT_GET "$1";
         exit 0;
 }
 
 [ "$1" = "download" ] && {
-	$APT_GET "$1" "$2";
+        $APT_GET "$1" "$2";
         exit 0;
 }
 
 [[ "$1" = "search" || "$1" = "show" ]] && {
-	$APT_CACHE "$1" "$2";
+        $APT_CACHE "$1" "$2";
         exit 0;
 }
 
 [[ "$1" = "install" || "$1" = "crack" ]] && {
     if [[ "$1" = "crack" ]]; then
-	    dir="$CRACKDIR";
+        dir="$CRACKDIR";
     else
-	    dir="$PKG_PATH";
+        dir="$PKG_PATH";
     fi
     [[ "$1" = "crack" && ! -d "$dir" ]] && mkdir "$dir";
     [ "$1" = "install" ] && {
             [ -d "$PKG_PATH" ] || { echo "$PKG_PATH does not exist, please run crackle setup first"; exit 1; }
     }
-    [[ -d "$PKGS_DIR/$2" && "$1" = "install" ]] && { echo "$2" is already installed; exit 0; }
+    [[ -d "$PKGS_DIR/$2" && "$1" = "install" ]] && {
+        echo "checking packages.....";
+        installed=$(cat $PKGS_DIR/$2/pkgs.version);
+        candidate=$($APT_CACHE policy $2|awk '/Candidate/{print $2}');
+        [[ "$installed" = "$candidate" ]] && { echo "$2" is already the newest version \($installed\); exit 0; }
+    }
     $APT_GET install --download-only "$2" || exit 1;
     readarray -t packages < <(ls "$APTCACHE"/archives/*.deb);
     for package in "${packages[@]}"
-        do
-            . "$SCRP_DIR/loginfo";
-            [[ "$1" = "install" ]] && log_pkg_info "$dir" "$package";
-            dpkg-deb -x "$package" "$dir";
-        done;
-        [[ -f "$SCRP_DIR/scripts/$2" ]] && PKG_PATH=$PKG_PATH TRIPLET=$TRIPLET CRACKLERC=$CRACKLERC "$SCRP_DIR/scripts/$2";
+    do
+        . "$SCRP_DIR/loginfo";
+        [[ "$1" = "install" ]] && PKGS_DIR=$PKGS_DIR log_pkg_info "$package";
+        dpkg-deb -x "$package" "$dir";
+    done;
+    [[ -f "$SCRP_DIR/scripts/$2" ]] && PKG_PATH=$PKG_PATH TRIPLET=$TRIPLET CRACKLERC=$CRACKLERC "$SCRP_DIR/scripts/$2";
     $APT_GET clean;
     exit 0;
 }
