@@ -40,7 +40,7 @@ TRIPLET=$(get_architecture);
     source "$HOME"/.bashrc
     if ! check_cmd git; then "$SCRP_DIR"/crackle install git; fi
     [[ -d "$SCRP_DIR"/bin/* ]] || { cd $SCRP_DIR;git submodule update --init; }
-    cp "$SCRP_DIR"/bin/* "$PKG_PATH/bin/scripts"
+    cp -r "$SCRP_DIR"/bin/* "$PKG_PATH/bin/scripts"
     if ! check_cmd patchelf; then "$SCRP_DIR"/crackle install patchelf; fi
     echo "setup complete";
     exit 0;
