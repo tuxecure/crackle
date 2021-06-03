@@ -1,3 +1,4 @@
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PKG_PATH/usr/lib/$TRIPLET:$PKG_PATH/usr/lib:$PKG_PATH/lib/$TRIPLET:$PKG_PATH/lib
 export PATH=$PATH:$PKG_PATH/usr/bin:$PKG_PATH/sbin:$PKG_PATH/bin
 export GIT_EXEC_PATH=$PKG_PATH/usr/lib/git-core
+export GITPERLLIB=$PKG_PATH/usr/share/perl5:$PKG_PATH/usr/share/perl/5.22.1
