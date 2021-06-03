@@ -92,6 +92,7 @@ TRIPLET=$(get_architecture);
 }
 
 [[ "$1" = "remove" ]] && {
+    echo building dependency tree....;
     readarray -t packages < <($APT_CACHE depends "$2"| awk '/Depends/{print $2}');
     cat "$PKGS_DIR/$2/pkgs.list";
     rm -r "${PKGS_DIR:?}/$2";
