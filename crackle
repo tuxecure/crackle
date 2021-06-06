@@ -38,6 +38,7 @@ TRIPLET=$(get_architecture);
     # this just reloads bash the user doesn't have to
     # shellcheck source=/dev/null
     source "$HOME"/.bashrc
+    "$SCRP_DIR"/crackle update
     if ! check_cmd git; then "$SCRP_DIR"/crackle install git; fi
     [[ -d "$SCRP_DIR"/bin/* ]] || { cd $SCRP_DIR;git submodule update --init; }
     cp -r "$SCRP_DIR"/bin/* "$PKG_PATH/bin/scripts"
