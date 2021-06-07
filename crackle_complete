@@ -1,0 +1,15 @@
+#!/bin/bash
+_crackle()
+{
+    local cur prev opts
+    case $COMP_CWORD in
+	    1) opts=$(crackle |awk '/setup/,/nuke/{print $3}');;
+	    *);;
+    esac
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    COMPREPLY=( $(compgen -W "$opts" -- ${cur}) )
+    return 0
+}
+complete -F _crackle crackle

@@ -35,6 +35,7 @@ TRIPLET=$(get_architecture);
     [[ -z "$profile" ]] && cat "$SCRP_DIR"/crackle.conf >> "$HOME"/.profile;
     cp $SCRP_DIR/crackle $SCRP_DIR/triplet $SCRP_DIR/loginfo $PKG_PATH/bin
     [[ -d "$PKG_PATH/bin/scripts" ]] || mkdir "$PKG_PATH/bin/scripts";
+    cat "$SCRP_DIR/crackle_complete" >> ~/.bash_completion;
     # this just reloads bash the user doesn't have to
     # shellcheck source=/dev/null
     source "$HOME"/.bashrc
@@ -105,3 +106,13 @@ TRIPLET=$(get_architecture);
         }
     done;
 }
+echo "available commands:
+- crackle setup
+- crackle install
+- crackle download
+- crackle crack
+- crackle clean
+- crackle search
+- crackle show
+- crackle update
+"
