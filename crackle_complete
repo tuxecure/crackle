@@ -1,15 +1,16 @@
 #!/bin/bash
 _crackle()
 {
-    local cur prev opts
-    case $COMP_CWORD in
-	    1) opts=$(crackle |awk '/setup/,/nuke/{print $3}');;
-	    *);;
-    esac
-    COMPREPLY=()
+    local cur prev
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
-    COMPREPLY=( $(compgen -W "$opts" -- ${cur}) )
+    case $COMP_CWORD in
+	    1) COMPREPLY=( $(compgen -W "$(crackle |awk '/setup/,/nuke/{print $3}')" -- ${cur}) );;
+	    *);;
+    esac
+    [ "$prev" = "install" ] && COMPREPLY=( $( apt-cache --no-generate pkgnames "$cur" \
+                    2> /dev/null ) )
+
     return 0
 }
 complete -F _crackle crackle
