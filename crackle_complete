@@ -8,8 +8,9 @@ _crackle()
 	    1) COMPREPLY=( $(compgen -W "$(crackle |awk '/setup/,/nuke/{print $3}')" -- ${cur}) );;
 	    *);;
     esac
-    [ "$prev" = "install" ] && COMPREPLY=( $( apt-cache --no-generate pkgnames "$cur" \
-                    2> /dev/null ) )
+    case $prev in
+	    install|download|crack) COMPREPLY=( $( apt-cache --no-generate pkgnames "$cur" 2> /dev/null ) )
+    esac
 
     return 0
 }

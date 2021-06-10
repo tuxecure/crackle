@@ -21,6 +21,7 @@ TRIPLET=$(get_architecture);
 [ "$1" = "setup" ] && {
     bashrc=$(grep crackle "$HOME"/.bashrc);
     profile=$(grep crackle "$HOME"/.profile);
+    bashcompletion=$(grep crackle "$HOME"/.bash_completion);
     [[ -d "$PKGS_DIR" && -d "$APTCACHE" && -n "$bashrc" && -n "$profile" && -d "$APTCONFIG" && -f "$CRACKLERC" ]] && { echo "crackle is already set up"; exit 0; }
     [[ -d "$PKGS_DIR" ]] || mkdir -p "$PKGS_DIR";
     [[ -d "$PKG_PATH/bin" ]] || mkdir -p "$PKG_PATH/bin";
@@ -35,7 +36,8 @@ TRIPLET=$(get_architecture);
     [[ -z "$profile" ]] && cat "$SCRP_DIR"/crackle.conf >> "$HOME"/.profile;
     cp $SCRP_DIR/crackle $SCRP_DIR/triplet $SCRP_DIR/loginfo $PKG_PATH/bin
     [[ -d "$PKG_PATH/bin/scripts" ]] || mkdir "$PKG_PATH/bin/scripts";
-    cat "$SCRP_DIR/crackle_complete" >> ~/.bash_completion;
+    cat "$SCRP_DIR/crackle_complete" > ~/.config/crackle/crackle_completion;
+    echo ". ~/.config/crackle/crackle_completion" >> ~/.bash_completion
     # this just reloads bash the user doesn't have to
     # shellcheck source=/dev/null
     source "$HOME"/.bashrc
