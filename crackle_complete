@@ -9,7 +9,7 @@ _crackle()
 	    *);;
     esac
     case $prev in
-	    install|download|crack) COMPREPLY=( $( apt-cache --no-generate pkgnames "$cur" 2> /dev/null ) );;
+	    install|download|crack|show) COMPREPLY=( $( apt-cache --no-generate pkgnames "$cur" 2> /dev/null ) );;
     esac
 
     return 0
