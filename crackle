@@ -91,7 +91,7 @@ TRIPLET=$(get_architecture);
         [[ "$1" = "install" ]] && PKGS_DIR=$PKGS_DIR log_pkg_info "$package";
         dpkg-deb -x "$package" "$dir";
     done;
-    [[ -f "$SCRP_DIR/scripts/$2" ]] && PKG_PATH=$PKG_PATH TRIPLET=$TRIPLET CRACKLERC=$CRACKLERC "$SCRP_DIR/scripts/$2";
+    [[ -f "$PKG_PATH/bin/scripts/$2" ]] && PKG_PATH=$PKG_PATH TRIPLET=$TRIPLET CRACKLERC=$CRACKLERC "$PKG_PATH/bin/scripts/$2";
     $APT_GET clean;
     exit 0;
 }
