@@ -15,3 +15,9 @@ _crackle()
     return 0
 }
 complete -F _crackle crackle
+
+readarray -t completions < <(ls ~/.local/share/crackle/etc/bash_completion.d/* ~/.local/share/crackle/usr/share/bash-completion/completions/*);
+for completion in ${completions[@]}
+do
+. $completion
+done;
