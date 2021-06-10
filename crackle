@@ -4,6 +4,7 @@ PKGS_DIR=${PKGS_DIR:-$PKG_PATH/var/log};
 APTCACHE=${APTCACHE:-$HOME/.cache/crackle};
 APTCONFIG=${APTCONFIG:-$HOME/.config/crackle};
 CRACKLERC=$APTCONFIG/cracklerc;
+CRACKLECMP=$APTCONFIG/crackle_completion;
 CRACKDIR=${CRACKDIR:-$HOME/packages/$2};
 SCRP_DIR=$(dirname "${BASH_SOURCE[0]}")
 APT_GET="apt-get -o Dir::Cache=$APTCACHE -o Dir::State=$APTCACHE -o Dir::Etc=$APTCONFIG"
@@ -36,11 +37,10 @@ TRIPLET=$(get_architecture);
     [[ -z "$profile" ]] && cat "$SCRP_DIR"/crackle.conf >> "$HOME"/.profile;
     cp $SCRP_DIR/crackle $SCRP_DIR/triplet $SCRP_DIR/loginfo $PKG_PATH/bin
     [[ -d "$PKG_PATH/bin/scripts" ]] || mkdir "$PKG_PATH/bin/scripts";
-    cat "$SCRP_DIR/crackle_complete" > ~/.config/crackle/crackle_completion;
-    echo ". ~/.config/crackle/crackle_completion" >> ~/.bash_completion
+    echo "PKG_PATH=$PKG_PATH" > $CRACKLECMP;
+    cat "$SCRP_DIR/crackle_complete" >> $CRACKLECMP;
+    [[ -z "$bashcompletion" ]] && echo ". $CRACKLECMP" >> ~/.bash_completion;
     # this just reloads bash the user doesn't have to
-    # shellcheck source=/dev/null
-    source "$HOME"/.bashrc
     "$SCRP_DIR"/crackle update || exit 1;
     if ! check_cmd git; then "$SCRP_DIR"/crackle install git; fi
     [[ -d "$SCRP_DIR"/bin/* ]] || { cd $SCRP_DIR;git submodule update --init; }

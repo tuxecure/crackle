@@ -16,7 +16,7 @@ _crackle()
 }
 complete -F _crackle crackle
 
-readarray -t completions < <(ls ~/.local/share/crackle/etc/bash_completion.d/* ~/.local/share/crackle/usr/share/bash-completion/completions/*);
+readarray -t completions < <(ls "$PKG_PATH"/etc/bash_completion.d/* "$PKG_PATH"/usr/share/bash-completion/completions/*);
 for completion in ${completions[@]}
 do
 . $completion
