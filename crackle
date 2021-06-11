@@ -4,6 +4,7 @@ PKGS_DIR=${PKGS_DIR:-$PKG_PATH/var/log};
 APTCACHE=${APTCACHE:-$HOME/.cache/crackle};
 APTCONFIG=${APTCONFIG:-$HOME/.config/crackle};
 CRACKLERC=$APTCONFIG/cracklerc;
+CRACKLEENV=$APTCONFIG/crackle_environment;
 CRACKLECMP=$APTCONFIG/crackle_completion;
 CRACKDIR=${CRACKDIR:-$HOME/packages/$2};
 SCRP_DIR=$(dirname "${BASH_SOURCE[0]}")
@@ -32,6 +33,7 @@ TRIPLET=$(get_architecture);
         echo "TRIPLET=$TRIPLET" > "$CRACKLERC";
         echo "PKG_PATH=$PKG_PATH" >> "$CRACKLERC";
         cat "$SCRP_DIR"/cracklerc >> "$CRACKLERC";
+	echo ". $CRACKLEENV" >> "$CRACKLERC";
     }
     [[ -z "$bashrc" ]] && cat "$SCRP_DIR"/crackle.conf >> "$HOME"/.bashrc;
     [[ -z "$profile" ]] && cat "$SCRP_DIR"/crackle.conf >> "$HOME"/.profile;
@@ -90,15 +92,17 @@ TRIPLET=$(get_architecture);
 	    exit 100;
     };
     readarray -t packages < <(ls "$APTCACHE"/archives/*.deb);
-    echo "extracting......"
     for package in "${packages[@]}"
     do
         . "$SCRP_DIR/loginfo";
         [[ "$1" = "install" ]] && PKGS_DIR=$PKGS_DIR log_pkg_info "$package";
+	echo Unpacking $pkgname "("$pkgversion")"
         dpkg-deb -x "$package" "$dir";
     done;
-    [[ -f "$PKG_PATH/bin/scripts/$2" ]] && PKG_PATH=$PKG_PATH TRIPLET=$TRIPLET CRACKLERC=$CRACKLERC "$PKG_PATH/bin/scripts/$2";
+    [[ -f "$PKG_PATH/bin/scripts/$2" ]] && { echo setting up $pkgname; PKG_PATH=$PKG_PATH TRIPLET=$TRIPLET CRACKLEENV=$CRACKLEENV "$PKG_PATH/bin/scripts/$2"; };
+    echo cleaning packaging.....
     $APT_GET clean;
+    echo done!
     exit 0;
 }
 
