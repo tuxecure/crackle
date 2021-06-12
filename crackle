@@ -95,7 +95,8 @@ TRIPLET=$(get_architecture);
     for package in "${packages[@]}"
     do
         . "$SCRP_DIR/loginfo";
-        [[ "$1" = "install" ]] && PKGS_DIR=$PKGS_DIR log_pkg_info "$package";
+        get_pkg_info $package;
+        [[ "$1" = "install" ]] && log_pkg_info "$package";
 	echo Unpacking $pkgname "("$pkgversion")"
         dpkg-deb -x "$package" "$dir";
     done;
