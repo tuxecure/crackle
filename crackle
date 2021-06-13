@@ -42,7 +42,7 @@ TRIPLET=$(get_architecture);
     echo "PKG_PATH=$PKG_PATH" > $CRACKLECMP;
     cat "$SCRP_DIR/crackle_complete" >> $CRACKLECMP;
     [[ -z "$bashcompletion" ]] && echo ". $CRACKLECMP" >> ~/.bash_completion;
-    "$SCRP_DIR"/crackle update || exit 1;
+    "$SCRP_DIR"/crackle update || exit 100;
     if ! check_cmd git; then "$SCRP_DIR"/crackle install git; fi
     [[ -d "$SCRP_DIR"/bin/* ]] || { cd $SCRP_DIR;git submodule update --init; }
     cp -r bin/* "$PKG_PATH/bin/scripts"
@@ -52,8 +52,8 @@ TRIPLET=$(get_architecture);
 }
 
 [ "$1" = "update" ] && {
-        wget -q --spider https://ubports.com || { echo no internet connection, please run crackle update later to fetch the latest package lists; exit 1; }
-        $APT_GET "$1"|| { echo "crackle works best with a readonly rootfs please remount your rootfs"; exit 1; }
+        wget -q --spider https://ubports.com || err "no internet connection, please run crackle update later to fetch the latest package lists";
+        $APT_GET "$1"|| err "crackle works best with a readonly rootfs please remount your rootfs";
         exit 0;
 }
 
@@ -75,7 +75,7 @@ TRIPLET=$(get_architecture);
     fi
     [[ "$1" = "crack" && ! -d "$dir" ]] && mkdir "$dir";
     [ "$1" = "install" ] && {
-            [ -d "$PKG_PATH" ] || { echo "$PKG_PATH does not exist, please run crackle setup first"; exit 1; }
+            [ -d "$PKG_PATH" ] || err "$PKG_PATH does not exist, please run crackle setup first";
     }
     [[ -d "$PKGS_DIR/$2" && "$1" = "install" ]] && {
         echo "fetching installed version.....";
@@ -87,8 +87,7 @@ TRIPLET=$(get_architecture);
     }
     $APT_GET install --download-only "$2" || {
             [ $? = 1 ] && exit 1;
-	    echo if the above error is complaining about permission denied, do not run with sudo crackle doesn\'t require root! please remount your rootfs as readonly instead;
-	    exit 100;
+	    err "if the above error is complaining about permission denied, do not run with sudo crackle doesn't require root! please remount your rootfs as readonly instead";
     };
     readarray -t packages < <(ls "$APTCACHE"/archives/*.deb);
     for package in "${packages[@]}"

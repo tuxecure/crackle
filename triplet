@@ -37,9 +37,13 @@ check_cmd() {
     command -v "$1" > /dev/null 2>&1
 }
 
+say() {
+    printf 'crackle: %s\n' "$1"
+}
+
 err() {
     say "$1" >&2
-    exit 1
+    exit 100
 }
 
 # Run a command that should never fail. If the command fails execution
