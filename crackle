@@ -42,11 +42,10 @@ TRIPLET=$(get_architecture);
     echo "PKG_PATH=$PKG_PATH" > $CRACKLECMP;
     cat "$SCRP_DIR/crackle_complete" >> $CRACKLECMP;
     [[ -z "$bashcompletion" ]] && echo ". $CRACKLECMP" >> ~/.bash_completion;
-    # this just reloads bash the user doesn't have to
     "$SCRP_DIR"/crackle update || exit 1;
     if ! check_cmd git; then "$SCRP_DIR"/crackle install git; fi
     [[ -d "$SCRP_DIR"/bin/* ]] || { cd $SCRP_DIR;git submodule update --init; }
-    cp -r "$SCRP_DIR"/bin/* "$PKG_PATH/bin/scripts"
+    cp -r bin/* "$PKG_PATH/bin/scripts"
     if ! check_cmd patchelf; then "$SCRP_DIR"/crackle install patchelf; fi
     echo "setup complete";
     exit 0;
