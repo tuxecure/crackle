@@ -1,4 +1,13 @@
 #!/bin/bash
+operation=$1;
+pkg=$2
+SCRP_DIR=$(dirname "${BASH_SOURCE[0]}")
+source "$SCRP_DIR/triplet";
+
+case $operation in
+	"install"|"download"|"crack"|"remove"|"search"|"show")[ -z "$pkg" ] && err "missing argument";;
+esac
+
 PKG_PATH=${PKG_PATH:-$HOME/.local/share/crackle};
 PKGS_DIR=${PKGS_DIR:-$PKG_PATH/var/log};
 APTCACHE=${APTCACHE:-$HOME/.cache/crackle};
@@ -6,21 +15,19 @@ APTCONFIG=${APTCONFIG:-$HOME/.config/crackle};
 CRACKLERC=$APTCONFIG/cracklerc;
 CRACKLEENV=$APTCONFIG/crackle_environment;
 CRACKLECMP=$APTCONFIG/crackle_completion;
-CRACKDIR=${CRACKDIR:-$HOME/packages/$2};
-SCRP_DIR=$(dirname "${BASH_SOURCE[0]}")
+CRACKDIR=${CRACKDIR:-$HOME/packages/$pkg};
 APT_GET="apt-get -o Dir::Cache=$APTCACHE -o Dir::State=$APTCACHE -o Dir::Etc=$APTCONFIG"
 APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTCACHE -o Dir::Etc=$APTCONFIG"
-source "$SCRP_DIR/triplet";
 TRIPLET=$(get_architecture);
 
-[ "$1" = "clean" ] && {
-    $APT_GET "$1";
+[ "$operation" = "clean" ] && {
+    $APT_GET "$operation";
     find -L "$PKG_PATH"/bin -wholename "$PKG_PATH"/bin -o -type d -prune -o -type l -exec rm {} +;
     find -L "$PKG_PATH"/lib -wholename "$PKG_PATH"/lib -o -type d -prune -o -type l -exec rm {} +;
     exit 0;
 }
 
-[ "$1" = "setup" ] && {
+[ "$operation" = "setup" ] && {
     bashrc=$(grep crackle "$HOME"/.bashrc);
     profile=$(grep crackle "$HOME"/.profile);
     bashcompletion=$(grep crackle "$HOME"/.bash_completion);
@@ -51,41 +58,41 @@ TRIPLET=$(get_architecture);
     exit 0;
 }
 
-[ "$1" = "update" ] && {
+[ "$operation" = "update" ] && {
         wget -q --spider https://ubports.com || err "no internet connection, please run crackle update later to fetch the latest package lists";
-        $APT_GET "$1"|| err "crackle works best with a readonly rootfs please remount your rootfs";
+        $APT_GET "$operation"|| err "crackle works best with a readonly rootfs please remount your rootfs";
         exit 0;
 }
 
-[ "$1" = "download" ] && {
-        $APT_GET "$1" "$2";
+[ "$operation" = "download" ] && {
+        $APT_GET "$operation" "$pkg";
         exit 0;
 }
 
-[[ "$1" = "search" || "$1" = "show" ]] && {
-        $APT_CACHE "$1" "$2";
+[[ "$operation" = "search" || "$operation" = "show" ]] && {
+        $APT_CACHE "$operation" "$pkg";
         exit 0;
 }
 
-[[ "$1" = "install" || "$1" = "crack" ]] && {
-    if [[ "$1" = "crack" ]]; then
+[[ "$operation" = "install" || "$operation" = "crack" ]] && {
+    if [[ "$operation" = "crack" ]]; then
         dir="$CRACKDIR";
     else
         dir="$PKG_PATH";
     fi
-    [[ "$1" = "crack" && ! -d "$dir" ]] && mkdir "$dir";
-    [ "$1" = "install" ] && {
+    [[ "$operation" = "crack" && ! -d "$dir" ]] && mkdir "$dir";
+    [ "$operation" = "install" ] && {
             [ -d "$PKG_PATH" ] || err "$PKG_PATH does not exist, please run crackle setup first";
     }
-    [[ -d "$PKGS_DIR/$2" && "$1" = "install" ]] && {
+    [[ -d "$PKGS_DIR/$pkg" && "$operation" = "install" ]] && {
         echo "fetching installed version.....";
-        installed=$(cat $PKGS_DIR/$2/pkgs.version);
+        installed=$(cat $PKGS_DIR/$pkg/pkgs.version);
         echo "fetching candidate version.....";
-        candidate=$($APT_CACHE policy $2|awk '/Candidate/{print $2}');
+        candidate=$($APT_CACHE policy $pkg|awk '/Candidate/{print $2}');
         echo "comparing.....";
-        [[ "$installed" = "$candidate" ]] && { echo "$2" is already the newest version \($installed\); exit 0; }
+        [[ "$installed" = "$candidate" ]] && { echo "$pkg" is already the newest version \($installed\); exit 0; }
     }
-    $APT_GET install --download-only "$2" || {
+    $APT_GET install --download-only "$pkg" || {
             [ $? = 1 ] && exit 1;
 	    err "if the above error is complaining about permission denied, do not run with sudo crackle doesn't require root! please remount your rootfs as readonly instead";
     };
@@ -94,22 +101,22 @@ TRIPLET=$(get_architecture);
     do
         . "$SCRP_DIR/loginfo";
         get_pkg_info $package;
-        [[ "$1" = "install" ]] && log_pkg_info "$package";
+        [[ "$operation" = "install" ]] && log_pkg_info "$package";
 	echo Unpacking $pkgname "("$pkgversion")"
         dpkg-deb -x "$package" "$dir";
     done;
-    [[ -f "$PKG_PATH/bin/scripts/$2" ]] && { echo setting up $pkgname; PKG_PATH=$PKG_PATH TRIPLET=$TRIPLET CRACKLEENV=$CRACKLEENV "$PKG_PATH/bin/scripts/$2"; };
+    [[ -f "$PKG_PATH/bin/scripts/$pkg" ]] && { echo setting up $pkg; PKG_PATH=$PKG_PATH TRIPLET=$TRIPLET CRACKLEENV=$CRACKLEENV "$PKG_PATH/bin/scripts/$pkg"; };
     echo cleaning packaging.....
     $APT_GET clean;
     echo done!
     exit 0;
 }
 
-[[ "$1" = "remove" ]] && {
+[[ "$operation" = "remove" ]] && {
     echo building dependency tree....;
-    readarray -t packages < <($APT_CACHE depends "$2"| awk '/Depends/{print $2}');
-    cat "$PKGS_DIR/$2/pkgs.list";
-    rm -r "${PKGS_DIR:?}/$2";
+    readarray -t packages < <($APT_CACHE depends "$pkg"| awk '/Depends/{print $2}');
+    cat "$PKGS_DIR/$pkg/pkgs.list";
+    rm -r "${PKGS_DIR:?}/$pkg";
     for package in "${packages[@]}"
     do
         [ -d "$PKGS_DIR/$package" ] && {
