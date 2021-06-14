@@ -42,13 +42,13 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTCACHE -o Dir::Etc
 	[ -d $CRACKLEENV ] || mkdir $CRACKLEENV;
         cat "$SCRP_DIR"/cracklerc >> "$CRACKLERC";
     }
-    [[ -z "$bashrc" ]] && cat "$SCRP_DIR"/crackle.conf >> "$HOME"/.bashrc;
-    [[ -z "$profile" ]] && cat "$SCRP_DIR"/crackle.conf >> "$HOME"/.profile;
-    cp $SCRP_DIR/crackle $SCRP_DIR/triplet $SCRP_DIR/loginfo $PKG_PATH/bin
+    [[ -z "$bashrc" ]] && awk '/#cracklerc/{flag=1;next}/###/{flag=0}flag' "$SCRP_DIR"/crackle.conf >> "$HOME"/.bashrc;
+    [[ -z "$profile" ]] && awk '/#cracklerc/{flag=1;next}/###/{flag=0}flag' "$SCRP_DIR"/crackle.conf >> "$HOME"/.profile;
+    cp $SCRP_DIR/crackle $PKG_PATH/bin
     [[ -d "$PKG_PATH/bin/scripts" ]] || mkdir "$PKG_PATH/bin/scripts";
     echo "PKG_PATH=$PKG_PATH" > $CRACKLECMP;
     cat "$SCRP_DIR/crackle_complete" >> $CRACKLECMP;
-    [[ -z "$bashcompletion" ]] && echo ". $CRACKLECMP" >> ~/.bash_completion;
+    [[ -z "$bashcompletion" ]] && awk '/#cracklecmp/{flag=1;next}/###/{flag=0}flag' "$SCRP_DIR"/crackle.conf >> ~/.bash_completion;
     "$SCRP_DIR"/crackle update || exit 100;
     if ! check_cmd git; then "$SCRP_DIR"/crackle install git; fi
     [[ -d "$SCRP_DIR"/bin/* ]] || { cd $SCRP_DIR;git submodule update --init; }
