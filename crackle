@@ -1,14 +1,15 @@
 #!/bin/bash
 operation=$1;
 PKG=$2
+PKG_PATH=${PKG_PATH:-$HOME/.local/share/crackle};
 SCRP_DIR=$(dirname "${BASH_SOURCE[0]}")
-source "$SCRP_DIR/triplet";
+[ -f "$PKG_PATH/lib/triplet" ] || cp $SCRP_DIR/lib/* $PKG_PATH/lib;
+source "$PKG_PATH/lib/triplet";
 
 case $operation in
 	"install"|"download"|"crack"|"remove"|"search"|"show")[ -z "$PKG" ] && err "missing argument";;
 esac
 
-PKG_PATH=${PKG_PATH:-$HOME/.local/share/crackle};
 PKGS_DIR=${PKGS_DIR:-$PKG_PATH/var/log};
 APTCACHE=${APTCACHE:-$HOME/.cache/crackle};
 APTCONFIG=${APTCONFIG:-$HOME/.config/crackle};
@@ -18,7 +19,6 @@ CRACKLECMP=$APTCONFIG/crackle_completion;
 CRACKDIR=${CRACKDIR:-$HOME/packages/$PKG};
 APT_GET="apt-get -o Dir::Cache=$APTCACHE -o Dir::State=$APTCACHE -o Dir::Etc=$APTCONFIG"
 APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTCACHE -o Dir::Etc=$APTCONFIG"
-TRIPLET=$(get_architecture);
 
 [ "$operation" = "clean" ] && {
     $APT_GET "$operation";
@@ -99,12 +99,13 @@ TRIPLET=$(get_architecture);
     readarray -t packages < <(ls "$APTCACHE"/archives/*.deb);
     for package in "${packages[@]}"
     do
-        . "$SCRP_DIR/loginfo";
+        . "$PKG_PATH/lib/loginfo";
         get_pkg_info $package;
         [[ "$operation" = "install" ]] && log_pkg_info "$package";
 	echo Unpacking $pkgname "("$pkgversion")"
         dpkg-deb -x "$package" "$dir";
     done;
+    TRIPLET=$(get_architecture);
     [[ -f "$PKG_PATH/bin/scripts/$PKG" ]] && { echo setting up $PKG; PKG_PATH=$PKG_PATH TRIPLET=$TRIPLET CRACKLEENV=$CRACKLEENV/$PKG "$PKG_PATH/bin/scripts/$PKG"; };
     echo cleaning packaging.....
     $APT_GET clean;
