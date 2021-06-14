@@ -115,7 +115,12 @@ TRIPLET=$(get_architecture);
 [[ "$operation" = "remove" ]] && {
     echo building dependency tree....;
     readarray -t packages < <($APT_CACHE depends "$pkg"| awk '/Depends/{print $2}');
-    cat "$PKGS_DIR/$pkg/pkgs.list";
+    readarray -t files < <(cat "$PKGS_DIR/$pkg/pkgs.list");
+    for file in "${files[@]}"
+    do
+	    [ -f "$PKG_PATH/$file" ] && rm "$PKG_PATH/$file";
+    done
+    find $PKG_PATH -empty -type d -delete;
     rm -r "${PKGS_DIR:?}/$pkg";
     for package in "${packages[@]}"
     do
