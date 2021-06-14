@@ -42,19 +42,23 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTCACHE -o Dir::Etc
 	[ -d $CRACKLEENV ] || mkdir $CRACKLEENV;
         cat "$SCRP_DIR"/cracklerc >> "$CRACKLERC";
     }
+    echo Amending .bashrc...;
     [[ -z "$bashrc" ]] && awk '/#cracklerc/{flag=1;next}/###/{flag=0}flag' "$SCRP_DIR"/crackle.conf >> "$HOME"/.bashrc;
+    echo Amending .profile...;
     [[ -z "$profile" ]] && awk '/#cracklerc/{flag=1;next}/###/{flag=0}flag' "$SCRP_DIR"/crackle.conf >> "$HOME"/.profile;
     cp $SCRP_DIR/crackle $PKG_PATH/bin
     [[ -d "$PKG_PATH/bin/scripts" ]] || mkdir "$PKG_PATH/bin/scripts";
+    echo Setting up bash_completions...;
     echo "PKG_PATH=$PKG_PATH" > $CRACKLECMP;
     cat "$SCRP_DIR/crackle_complete" >> $CRACKLECMP;
     [[ -z "$bashcompletion" ]] && awk '/#cracklecmp/{flag=1;next}/###/{flag=0}flag' "$SCRP_DIR"/crackle.conf >> ~/.bash_completion;
+    echo Fetching package lists...;
     "$SCRP_DIR"/crackle update || exit 100;
     if ! check_cmd git; then "$SCRP_DIR"/crackle install git; fi
     [[ -d "$SCRP_DIR"/bin/* ]] || { cd $SCRP_DIR;git submodule update --init; }
     cp -r bin/* "$PKG_PATH/bin/scripts"
     if ! check_cmd patchelf; then "$SCRP_DIR"/crackle install patchelf; fi
-    echo "setup complete";
+    echo "Setup complete!";
     exit 0;
 }
 
@@ -85,11 +89,11 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTCACHE -o Dir::Etc
             [ -d "$PKG_PATH" ] || err "$PKG_PATH does not exist, please run crackle setup first";
     }
     [[ -d "$PKGS_DIR/$PKG" && "$operation" = "install" ]] && {
-        echo "fetching installed version.....";
+        echo "Fetching installed version...";
         installed=$(cat $PKGS_DIR/$PKG/pkgs.version);
-        echo "fetching candidate version.....";
+        echo "Fetching candidate version...";
         candidate=$($APT_CACHE policy $PKG|awk '/Candidate/{print $2}');
-        echo "comparing.....";
+        echo "Comparing...";
         [[ "$installed" = "$candidate" ]] && { echo "$PKG" is already the newest version \($installed\); exit 0; }
     }
     $APT_GET install --download-only "$PKG" || {
@@ -106,15 +110,15 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTCACHE -o Dir::Etc
         dpkg-deb -x "$package" "$dir";
     done;
     TRIPLET=$(get_architecture);
-    [[ -f "$PKG_PATH/bin/scripts/$PKG" ]] && { echo setting up $PKG; PKG_PATH=$PKG_PATH TRIPLET=$TRIPLET CRACKLEENV=$CRACKLEENV/$PKG "$PKG_PATH/bin/scripts/$PKG"; };
-    echo cleaning packaging.....
+    [[ -f "$PKG_PATH/bin/scripts/$PKG" ]] && { echo Setting up $PKG; PKG_PATH=$PKG_PATH TRIPLET=$TRIPLET CRACKLEENV=$CRACKLEENV/$PKG "$PKG_PATH/bin/scripts/$PKG"; };
+    echo Cleaning packages...
     $APT_GET clean;
-    echo done!
+    echo Done!
     exit 0;
 }
 
 [[ "$operation" = "remove" ]] && {
-    echo building dependency tree....;
+    echo Building dependency tree...;
     readarray -t files < <(cat "$PKGS_DIR/$PKG/pkgs.list");
     for file in "${files[@]}"
     do
