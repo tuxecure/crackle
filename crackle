@@ -115,7 +115,6 @@ TRIPLET=$(get_architecture);
 
 [[ "$operation" = "remove" ]] && {
     echo building dependency tree....;
-    readarray -t packages < <($APT_CACHE depends "$PKG"| awk '/Depends/{print $2}');
     readarray -t files < <(cat "$PKGS_DIR/$PKG/pkgs.list");
     for file in "${files[@]}"
     do
@@ -123,6 +122,8 @@ TRIPLET=$(get_architecture);
     done
     find $PKG_PATH -empty -type d -delete;
     rm -r "${PKGS_DIR:?}/$PKG";
+    [ -f "$CRACKLEENV/$PKG" ] && rm $CRACKLEENV/$PKG;
+    readarray -t packages < <($APT_CACHE depends "$PKG"| awk '/Depends/{print $2}');
     for package in "${packages[@]}"
     do
         [ -d "$PKGS_DIR/$package" ] && {
@@ -130,6 +131,7 @@ TRIPLET=$(get_architecture);
             rm -r "${PKGS_DIR:?}/$package";
         }
     done;
+    exit 0;
 }
 echo "available commands:
 - crackle setup
