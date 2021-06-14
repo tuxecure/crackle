@@ -35,7 +35,10 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTCACHE -o Dir::Etc
     [[ -d "$PKGS_DIR" ]] || mkdir -p "$PKGS_DIR";
     [[ -d "$PKG_PATH/bin" ]] || mkdir -p "$PKG_PATH/bin";
     [[ -d "$APTCACHE" ]] || mkdir -p "$APTCACHE";
-    [[ -d "$APTCONFIG" ]] || { mkdir -p $APTCONFIG/sources.list.d $APTCONFIG/preferences.d; ln -s /etc/apt/sources.list $APTCONFIG; }
+    [[ -d "$APTCONFIG" ]] || {
+        mkdir -p $APTCONFIG/sources.list.d $APTCONFIG/preferences.d;
+        ln -s /etc/apt/sources.list $APTCONFIG;
+    }
     [[ -f "$CRACKLERC" ]] || {
         echo "PKG_PATH=$PKG_PATH" >> "$CRACKLERC";
         echo "CRACKLEENV=$CRACKLEENV" >> "$CRACKLERC";
