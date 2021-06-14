@@ -1,11 +1,11 @@
 #!/bin/bash
 operation=$1;
-pkg=$2
+PKG=$2
 SCRP_DIR=$(dirname "${BASH_SOURCE[0]}")
 source "$SCRP_DIR/triplet";
 
 case $operation in
-	"install"|"download"|"crack"|"remove"|"search"|"show")[ -z "$pkg" ] && err "missing argument";;
+	"install"|"download"|"crack"|"remove"|"search"|"show")[ -z "$PKG" ] && err "missing argument";;
 esac
 
 PKG_PATH=${PKG_PATH:-$HOME/.local/share/crackle};
@@ -13,9 +13,9 @@ PKGS_DIR=${PKGS_DIR:-$PKG_PATH/var/log};
 APTCACHE=${APTCACHE:-$HOME/.cache/crackle};
 APTCONFIG=${APTCONFIG:-$HOME/.config/crackle};
 CRACKLERC=$APTCONFIG/cracklerc;
-CRACKLEENV=$APTCONFIG/crackle_environment;
+CRACKLEENV=$APTCONFIG/environment;
 CRACKLECMP=$APTCONFIG/crackle_completion;
-CRACKDIR=${CRACKDIR:-$HOME/packages/$pkg};
+CRACKDIR=${CRACKDIR:-$HOME/packages/$PKG};
 APT_GET="apt-get -o Dir::Cache=$APTCACHE -o Dir::State=$APTCACHE -o Dir::Etc=$APTCONFIG"
 APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTCACHE -o Dir::Etc=$APTCONFIG"
 TRIPLET=$(get_architecture);
@@ -39,8 +39,9 @@ TRIPLET=$(get_architecture);
     [[ -f "$CRACKLERC" ]] || {
         echo "TRIPLET=$TRIPLET" > "$CRACKLERC";
         echo "PKG_PATH=$PKG_PATH" >> "$CRACKLERC";
+        echo "CRACKLEENV=$CRACKLEENV" >> "$CRACKLERC";
+	[ -d $CRACKLEENV ] || mkdir $CRACKLEENV;
         cat "$SCRP_DIR"/cracklerc >> "$CRACKLERC";
-	echo ". $CRACKLEENV" >> "$CRACKLERC";
     }
     [[ -z "$bashrc" ]] && cat "$SCRP_DIR"/crackle.conf >> "$HOME"/.bashrc;
     [[ -z "$profile" ]] && cat "$SCRP_DIR"/crackle.conf >> "$HOME"/.profile;
@@ -65,12 +66,12 @@ TRIPLET=$(get_architecture);
 }
 
 [ "$operation" = "download" ] && {
-        $APT_GET "$operation" "$pkg";
+        $APT_GET "$operation" "$PKG";
         exit 0;
 }
 
 [[ "$operation" = "search" || "$operation" = "show" ]] && {
-        $APT_CACHE "$operation" "$pkg";
+        $APT_CACHE "$operation" "$PKG";
         exit 0;
 }
 
@@ -84,15 +85,15 @@ TRIPLET=$(get_architecture);
     [ "$operation" = "install" ] && {
             [ -d "$PKG_PATH" ] || err "$PKG_PATH does not exist, please run crackle setup first";
     }
-    [[ -d "$PKGS_DIR/$pkg" && "$operation" = "install" ]] && {
+    [[ -d "$PKGS_DIR/$PKG" && "$operation" = "install" ]] && {
         echo "fetching installed version.....";
-        installed=$(cat $PKGS_DIR/$pkg/pkgs.version);
+        installed=$(cat $PKGS_DIR/$PKG/pkgs.version);
         echo "fetching candidate version.....";
-        candidate=$($APT_CACHE policy $pkg|awk '/Candidate/{print $2}');
+        candidate=$($APT_CACHE policy $PKG|awk '/Candidate/{print $2}');
         echo "comparing.....";
-        [[ "$installed" = "$candidate" ]] && { echo "$pkg" is already the newest version \($installed\); exit 0; }
+        [[ "$installed" = "$candidate" ]] && { echo "$PKG" is already the newest version \($installed\); exit 0; }
     }
-    $APT_GET install --download-only "$pkg" || {
+    $APT_GET install --download-only "$PKG" || {
             [ $? = 1 ] && exit 1;
 	    err "if the above error is complaining about permission denied, do not run with sudo crackle doesn't require root! please remount your rootfs as readonly instead";
     };
@@ -105,7 +106,7 @@ TRIPLET=$(get_architecture);
 	echo Unpacking $pkgname "("$pkgversion")"
         dpkg-deb -x "$package" "$dir";
     done;
-    [[ -f "$PKG_PATH/bin/scripts/$pkg" ]] && { echo setting up $pkg; PKG_PATH=$PKG_PATH TRIPLET=$TRIPLET CRACKLEENV=$CRACKLEENV "$PKG_PATH/bin/scripts/$pkg"; };
+    [[ -f "$PKG_PATH/bin/scripts/$PKG" ]] && { echo setting up $PKG; PKG_PATH=$PKG_PATH TRIPLET=$TRIPLET CRACKLEENV=$CRACKLEENV/$PKG "$PKG_PATH/bin/scripts/$PKG"; };
     echo cleaning packaging.....
     $APT_GET clean;
     echo done!
@@ -114,14 +115,14 @@ TRIPLET=$(get_architecture);
 
 [[ "$operation" = "remove" ]] && {
     echo building dependency tree....;
-    readarray -t packages < <($APT_CACHE depends "$pkg"| awk '/Depends/{print $2}');
-    readarray -t files < <(cat "$PKGS_DIR/$pkg/pkgs.list");
+    readarray -t packages < <($APT_CACHE depends "$PKG"| awk '/Depends/{print $2}');
+    readarray -t files < <(cat "$PKGS_DIR/$PKG/pkgs.list");
     for file in "${files[@]}"
     do
 	    [ -f "$PKG_PATH/$file" ] && rm "$PKG_PATH/$file";
     done
     find $PKG_PATH -empty -type d -delete;
-    rm -r "${PKGS_DIR:?}/$pkg";
+    rm -r "${PKGS_DIR:?}/$PKG";
     for package in "${packages[@]}"
     do
         [ -d "$PKGS_DIR/$package" ] && {
