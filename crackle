@@ -20,6 +20,13 @@ CRACKDIR=${CRACKDIR:-$HOME/packages/$PKG};
 APT_GET="apt-get -o Dir::Cache=$APTCACHE -o Dir::State=$APTCACHE -o Dir::Etc=$APTCONFIG"
 APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTCACHE -o Dir::Etc=$APTCONFIG"
 
+mount -o remount,ro / 2>/dev/null && err "please don't run me with sudo";
+
+[ "$?" = "32" ] && {
+    echo "crackle currently only works with a readonly rootfs";
+    exit 32;
+}
+
 [ "$operation" = "clean" ] && {
     $APT_GET "$operation";
     find -L "$PKG_PATH"/bin -wholename "$PKG_PATH"/bin -o -type d -prune -o -type l -exec rm {} +;
@@ -121,6 +128,7 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTCACHE -o Dir::Etc
 }
 
 [[ "$operation" = "remove" ]] && {
+    [ -d "$PKGS_DIR/$PKG" ] || err "$PKG is not installed";
     echo Building dependency tree...;
     readarray -t files < <(cat "$PKGS_DIR/$PKG/pkgs.list");
     for file in "${files[@]}"
