@@ -3,8 +3,11 @@ operation=$1;
 PKG=$2
 PKG_PATH=${PKG_PATH:-$HOME/.local/share/crackle};
 SCRP_DIR=$(dirname "${BASH_SOURCE[0]}")
-[ -f "$PKG_PATH/lib/triplet" ] || cp $SCRP_DIR/lib/* $PKG_PATH/lib;
-source "$PKG_PATH/lib/triplet";
+if [[ -f "$PKG_PATH/lib/triplet" ]]; then
+    source "$PKG_PATH/lib/triplet";
+else
+    source "$SCRP_DIR/lib/triplet";
+fi
 
 case $operation in
 	"install"|"download"|"crack"|"remove"|"search"|"show")[ -z "$PKG" ] && err "missing argument";;
@@ -38,32 +41,51 @@ mount -o remount,ro / 2>/dev/null && err "please don't run me with sudo";
     bashrc=$(grep crackle "$HOME"/.bashrc);
     profile=$(grep crackle "$HOME"/.profile);
     bashcompletion=$(grep crackle "$HOME"/.bash_completion);
-    [[ -d "$PKGS_DIR" && -d "$APTCACHE" && -n "$bashrc" && -n "$profile" && -d "$APTCONFIG" && -f "$CRACKLERC" ]] && { echo "crackle is already set up"; exit 0; }
+    diff -q $PKG_PATH/lib/triplet $SCRP_DIR/lib/triplet || {
+        source $SCRP_DIR/lib/triplet
+        upd $SCRP_DIR/lib/triplet $PKG_PATH/lib
+    }
     [[ -d "$PKGS_DIR" ]] || mkdir -p "$PKGS_DIR";
-    [[ -d "$PKG_PATH/bin" ]] || mkdir -p "$PKG_PATH/bin";
+    [[ -d "$PKG_PATH/bin" ]] || {
+        mkdir -p "$PKG_PATH/bin";
+        cp $SCRP_DIR/crackle $PKG_PATH/bin
+    }
+    [[ -d "$PKG_PATH/lib" ]] || {
+        mkdir -p "$PKG_PATH/lib";
+        cp $SCRP_DIR/lib/* $PKG_PATH/lib;
+    }
     [[ -d "$APTCACHE" ]] || mkdir -p "$APTCACHE";
     [[ -d "$APTCONFIG" ]] || {
         mkdir -p $APTCONFIG/sources.list.d $APTCONFIG/preferences.d;
         ln -s /etc/apt/sources.list $APTCONFIG;
     }
     [[ -f "$CRACKLERC" ]] || {
-        echo "PKG_PATH=$PKG_PATH" >> "$CRACKLERC";
+        echo "PKG_PATH=$PKG_PATH" > "$CRACKLERC";
         echo "CRACKLEENV=$CRACKLEENV" >> "$CRACKLERC";
 	[ -d $CRACKLEENV ] || mkdir $CRACKLEENV;
         cat "$SCRP_DIR"/cracklerc >> "$CRACKLERC";
     }
-    echo Amending .bashrc...;
-    [[ -z "$bashrc" ]] && awk '/#cracklerc/{flag=1;next}/###/{flag=0}flag' "$SCRP_DIR"/crackle.conf >> "$HOME"/.bashrc;
-    echo Amending .profile...;
-    [[ -z "$profile" ]] && awk '/#cracklerc/{flag=1;next}/###/{flag=0}flag' "$SCRP_DIR"/crackle.conf >> "$HOME"/.profile;
-    cp $SCRP_DIR/crackle $PKG_PATH/bin
+    [[ -z "$bashrc" ]] && {
+        echo Amending .bashrc...;
+        awk '/#cracklerc/{flag=1;next}/###/{flag=0}flag' "$SCRP_DIR"/crackle.conf >> "$HOME"/.bashrc;
+    }
+    [[ -z "$profile" ]] && {
+        echo Amending .profile...;
+        awk '/#cracklerc/{flag=1;next}/###/{flag=0}flag' "$SCRP_DIR"/crackle.conf >> "$HOME"/.profile;
+    }
+    diff -q $PKG_PATH/bin/crackle $SCRP_DIR/crackle || upd $SCRP_DIR/crackle $PKG_PATH/bin
+    diff -q $PKG_PATH/lib/loginfo $SCRP_DIR/lib/loginfo || upd $SCRP_DIR/lib/loginfo $PKG_PATH/lib
     [[ -d "$PKG_PATH/bin/scripts" ]] || mkdir "$PKG_PATH/bin/scripts";
-    echo Setting up bash_completions...;
-    echo "PKG_PATH=$PKG_PATH" > $CRACKLECMP;
-    cat "$SCRP_DIR/crackle_complete" >> $CRACKLECMP;
+    [[ -f "$CRACKLECMP" ]] || {
+        echo Setting up bash_completions...;
+        echo "PKG_PATH=$PKG_PATH" > $CRACKLECMP;
+        cat "$SCRP_DIR/crackle_complete" >> $CRACKLECMP;
+    }
     [[ -z "$bashcompletion" ]] && awk '/#cracklecmp/{flag=1;next}/###/{flag=0}flag' "$SCRP_DIR"/crackle.conf >> ~/.bash_completion;
-    echo Fetching package lists...;
-    "$SCRP_DIR"/crackle update || exit 100;
+    [ -d "$APTCACHE/lists" ] || {
+        echo Fetching package lists...;
+        "$SCRP_DIR"/crackle update || exit 100;
+    }
     if ! check_cmd git; then "$SCRP_DIR"/crackle install git; fi
     [[ -d "$SCRP_DIR"/bin/* ]] || { cd $SCRP_DIR;git submodule update --init; }
     cp -r bin/* "$PKG_PATH/bin/scripts"

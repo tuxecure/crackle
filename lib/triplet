@@ -46,6 +46,11 @@ err() {
     exit 100
 }
 
+upd() {
+    say "updating" >&2
+    cp $1 $2
+}
+
 # Run a command that should never fail. If the command fails execution
 # will immediately terminate with an error showing the failing
 # command.
