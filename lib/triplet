@@ -38,7 +38,7 @@ check_cmd() {
 }
 
 say() {
-    printf 'crackle: %s\n' "$1"
+    printf 'Crackle: %s\n' "$1"
 }
 
 err() {
@@ -47,7 +47,8 @@ err() {
 }
 
 upd() {
-    say "updating" >&2
+    lib=$(basename $1)
+    say "updating $lib..." >&2
     cp $1 $2
 }
 
