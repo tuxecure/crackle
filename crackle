@@ -32,8 +32,7 @@ mount -o remount,ro / 2>/dev/null && err "please don't run me with sudo";
 
 [ "$operation" = "clean" ] && {
     $APT_GET "$operation";
-    find -L "$PKG_PATH"/bin -wholename "$PKG_PATH"/bin -o -type d -prune -o -type l -exec rm {} +;
-    find -L "$PKG_PATH"/lib -wholename "$PKG_PATH"/lib -o -type d -prune -o -type l -exec rm {} +;
+    find "$PKG_PATH" -xtype l -exec rm {} +;
     exit 0;
 }
 
