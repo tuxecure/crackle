@@ -12,3 +12,16 @@ function log_pkg_info () {
     dpkg -c "$1" | awk '{print $6}' > "$PKGS_DIR/$pkgname/pkgs.list";
     echo "$pkgversion" > "$PKGS_DIR/$pkgname/pkgs.version";
 }
+function rmpkgtree() {
+    [ -d "$PKGS_DIR/$1" ] && {
+        echo Removing $1;
+        readarray -t files < <(cat "$PKGS_DIR/$1/pkgs.list");
+        for file in "${files[@]}"
+        do
+                [ -f "$PKG_PATH/$file" ] && rm "$PKG_PATH/$file";
+        done
+        find $PKG_PATH -empty -type d -delete;
+        find "$PKG_PATH" -xtype l -exec rm {} +;
+        rm -r "${PKGS_DIR:?}/$1";
+    }
+}

@@ -151,22 +151,13 @@ mount -o remount,ro / 2>/dev/null && err "please don't run me with sudo";
 
 [[ "$operation" = "remove" ]] && {
     [ -d "$PKGS_DIR/$PKG" ] || err "$PKG is not installed";
-    echo Building dependency tree...;
-    readarray -t files < <(cat "$PKGS_DIR/$PKG/pkgs.list");
-    for file in "${files[@]}"
-    do
-	    [ -f "$PKG_PATH/$file" ] && rm "$PKG_PATH/$file";
-    done
-    find $PKG_PATH -empty -type d -delete;
-    rm -r "${PKGS_DIR:?}/$PKG";
+    . "$PKG_PATH/lib/loginfo";
+    rmpkgtree $PKG;
     [ -f "$CRACKLEENV/$PKG" ] && rm $CRACKLEENV/$PKG;
     readarray -t packages < <($APT_CACHE depends "$PKG"| awk '/Depends/{print $2}');
     for package in "${packages[@]}"
     do
-        [ -d "$PKGS_DIR/$package" ] && {
-            cat "$PKGS_DIR/$package/pkgs.list";
-            rm -r "${PKGS_DIR:?}/$package";
-        }
+            rmpkgtree $package;
     done;
     exit 0;
 }
@@ -175,6 +166,7 @@ echo "available commands:
 - crackle install
 - crackle download
 - crackle crack
+- crackle remove
 - crackle clean
 - crackle search
 - crackle show
