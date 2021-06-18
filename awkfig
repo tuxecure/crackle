@@ -1,0 +1,2 @@
+#!/usr/bin/awk -f
+$0~start{flag=1;next}/###/{flag=0}flag

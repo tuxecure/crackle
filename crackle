@@ -65,12 +65,12 @@ mount -o remount,ro / 2>/dev/null && err "please don't run me with sudo";
         cat "$SCRP_DIR"/cracklerc >> "$CRACKLERC";
     }
     [[ -z "$bashrc" ]] && {
-        echo Amending .bashrc...;
-        awk '/#cracklerc/{flag=1;next}/###/{flag=0}flag' "$SCRP_DIR"/crackle.conf >> "$HOME"/.bashrc;
+        echo Amending ~/.bashrc...;
+        $SCRP_DIR/awkfig -v start="#cracklerc" "$SCRP_DIR"/crackle.conf >> "$HOME"/.bashrc;
     }
     [[ -z "$profile" ]] && {
-        echo Amending .profile...;
-        awk '/#cracklerc/{flag=1;next}/###/{flag=0}flag' "$SCRP_DIR"/crackle.conf >> "$HOME"/.profile;
+        echo Amending ~/.profile...;
+        $SCRP_DIR/awkfig -v start="#cracklerc" "$SCRP_DIR"/crackle.conf >> "$HOME"/.profile;
     }
     diff -q $PKG_PATH/bin/crackle $SCRP_DIR/crackle || upd $SCRP_DIR/crackle $PKG_PATH/bin
     diff -q $PKG_PATH/lib/loginfo $SCRP_DIR/lib/loginfo || upd $SCRP_DIR/lib/loginfo $PKG_PATH/lib
@@ -80,7 +80,10 @@ mount -o remount,ro / 2>/dev/null && err "please don't run me with sudo";
         echo "PKG_PATH=$PKG_PATH" > $CRACKLECMP;
         cat "$SCRP_DIR/crackle_complete" >> $CRACKLECMP;
     }
-    [[ -z "$bashcompletion" ]] && awk '/#cracklecmp/{flag=1;next}/###/{flag=0}flag' "$SCRP_DIR"/crackle.conf >> ~/.bash_completion;
+    [[ -z "$bashcompletion" ]] && {
+        echo Amending ~/.bash_completion...
+        $SCRP_DIR/awkfig -v start="#cracklecmp" "$SCRP_DIR"/crackle.conf >> ~/.bash_completion;
+    }
     [ -d "$APTCACHE/lists" ] || {
         echo Fetching package lists...;
         "$SCRP_DIR"/crackle update || exit 100;
