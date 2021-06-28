@@ -23,7 +23,7 @@ CRACKDIR=${CRACKDIR:-$HOME/packages/$PKG};
 APT_GET="apt-get -o Dir::Cache=$APTCACHE -o Dir::State=$APTCACHE -o Dir::Etc=$APTCONFIG"
 APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTCACHE -o Dir::Etc=$APTCONFIG"
 
-mount -o remount,ro / 2>/dev/null && err "please don't run me with sudo";
+mount -o remount,ro / 2>/dev/null && err "please don't run me with sudo or else I'll kill your phone";
 
 [ "$?" = "32" ] && {
     echo "crackle currently only works with a readonly rootfs";
