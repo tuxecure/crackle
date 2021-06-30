@@ -135,6 +135,7 @@ mount -o remount,ro / 2>/dev/null && err "please don't run me with sudo";
 	    err "if the above error is complaining about permission denied, do not run with sudo crackle doesn't require root! please remount your rootfs as readonly instead";
     };
     readarray -t packages < <(ls "$APTCACHE"/archives/*.deb);
+    TRIPLET=$(get_architecture);
     for package in "${packages[@]}"
     do
         . "$PKG_PATH/lib/loginfo";
@@ -142,9 +143,8 @@ mount -o remount,ro / 2>/dev/null && err "please don't run me with sudo";
         [[ "$operation" = "install" ]] && log_pkg_info "$package";
 	echo Unpacking $pkgname "("$pkgversion")"
         dpkg-deb -x "$package" "$dir";
+	[[ -f "$PKG_PATH/bin/scripts/$pkgname" ]] && { echo Setting up $pkgname; PKG_PATH=$PKG_PATH TRIPLET=$TRIPLET CRACKLEENV=$CRACKLEENV/$pkgname "$PKG_PATH/bin/scripts/$pkgname"; };
     done;
-    TRIPLET=$(get_architecture);
-    [[ -f "$PKG_PATH/bin/scripts/$PKG" ]] && { echo Setting up $PKG; PKG_PATH=$PKG_PATH TRIPLET=$TRIPLET CRACKLEENV=$CRACKLEENV/$PKG "$PKG_PATH/bin/scripts/$PKG"; };
     echo Cleaning packages...
     $APT_GET clean;
     echo Done!
