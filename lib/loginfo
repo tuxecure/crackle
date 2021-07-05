@@ -25,3 +25,10 @@ function rmpkgtree() {
         rm -r "${PKGS_DIR:?}/$1";
     }
 }
+function fetch_rdependencies(){
+    readarray -t packages < <($APT_CACHE rdepends "$dependency" | awk '/Depends/{next}/$/{print $1}'|uniq);
+    for package in "${packages[@]}"
+    do
+	    [ -d "$PKGS_DIR/$package" ] || packages=("${packages[@]/$package}");
+    done;
+}

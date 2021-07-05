@@ -154,12 +154,21 @@ mount -o remount,ro / 2>/dev/null && err "please don't run me with sudo";
 [[ "$operation" = "remove" ]] && {
     [ -d "$PKGS_DIR/$PKG" ] || err "$PKG is not installed";
     . "$PKG_PATH/lib/loginfo";
-    rmpkgtree $PKG;
-    [ -f "$CRACKLEENV/$PKG" ] && rm $CRACKLEENV/$PKG;
-    readarray -t packages < <($APT_CACHE depends "$PKG"| awk '/Depends/{print $2}');
-    for package in "${packages[@]}"
+    echo Building dependency tree...;
+    readarray -t dependencies < <($APT_CACHE depends "$PKG"| awk '/Depends/{print $2}'|uniq);
+    for dependency in "${dependencies[@]}"
     do
-            rmpkgtree $package;
+	[ -d "$PKGS_DIR/$dependency" ] || dependencies=(${dependencies[@]/$dependency});
+	[ -d "$PKGS_DIR/$dependency" ] && {
+		fetch_rdependencies
+	}
+    done
+    echo the following packages would be removed: ${packages[@]};
+    exit 0;
+    [ -f "$CRACKLEENV/$PKG" ] && rm $CRACKLEENV/$PKG;
+    for dependency in "${dependencies[@]}"
+    do
+            rmpkgtree $dependency;
     done;
     exit 0;
 }
