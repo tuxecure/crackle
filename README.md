@@ -39,7 +39,8 @@ crackle
 Essentially, what each command does is what you would expect from using apt as usual, but with amendments for installing things locally, instead of system-wide.
 
 Crackle specific commands:
-`setup`: places the files in the correctly paths and appends .profile and .bashrc to read the configuration files
+`setup`: Automagically reads the user configuration and saves it into cracklerc
+`debug`: Shows some debugging information. Doesn't do any changes to the system.
 
 ## Configuration
 
