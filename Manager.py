@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import configparser
-import subprocess as sp
+import subprocess as shell
 
 try:
     from termcolor import colored
@@ -34,7 +34,7 @@ class Manager:
     def has_package(self, pkg_name):
         cmd = self.config.get("Manager", "search").replace("{pkg}", pkg_name)
         self.debug(f"{cmd=}")
-        out = sp.run(cmd.split(" "), capture_output=True).stdout
+        out = shell.run(cmd.split(" "), capture_output=True).stdout
         print(out)
 
     def __str__(self):
