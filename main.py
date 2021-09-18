@@ -27,7 +27,7 @@ class Crackle:
 
         self._read_config(os.path.join(self.config_path, "crackle.conf"))
 
-        self.managers = ( Manager(name, os.path.join(self.config_path, name[1]+".conf"), verbosity=self.verbosity) for name in self.config.items("Managers") )
+        self.managers = ( Manager(name, os.path.join(self.config_path, name[1]), verbosity=self.verbosity) for name in self.config.items("Managers") )
 
     def install(self, pkg_name):
         pkg = None
