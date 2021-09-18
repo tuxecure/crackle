@@ -1,7 +1,0 @@
-export PATH=$PATH:$PKG_PATH/usr/bin:$PKG_PATH/sbin:$PKG_PATH/bin
-
-readarray -t environments < <(ls "$CRACKLEENV"/*);
-for environment in ${environments[@]}
-do
-. $environment
-done;
