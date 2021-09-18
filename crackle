@@ -1,6 +1,7 @@
 #!/bin/bash
 operation=$1;
 PKG=$2
+PKG_PATH=${PKG_PATH:-${XDG_DATA_HOME:-$HOME/.local/share}/crackle};
 PKG_PATH=${PKG_PATH:-$HOME/.local/share/crackle};
 PKG_PREFIX=${PKG_PREFIX:-$HOME/.local}
 SCRP_DIR=$(dirname "${BASH_SOURCE[0]}")
@@ -10,17 +11,19 @@ else
     source "$SCRP_DIR/lib/triplet";
 fi
 
+# Help
 if [ -z "$operation" -o "$operation" = "help" ]; then
-	echo "available commands:
+	echo 'available commands:
 	- crackle setup
-	- crackle install
-	- crackle download
-	- crackle crack
-	- crackle remove
+	- crackle debug
+	- crackle install $PKG
+	- crackle download $PKG
+	- crackle crack $PKG
+	- crackle remove $PKG
 	- crackle clean
-	- crackle search
-	- crackle show
-	- crackle update"
+	- crackle search $PKG
+	- crackle show $PKG
+	- crackle update'
 	exit 0
 fi
 
@@ -28,22 +31,30 @@ case $operation in
 	"install"|"download"|"crack"|"remove"|"search"|"show")[ -z "$PKG" ] && err "missing argument";;
 esac
 
+# Configuration for Apt
 PKGS_DIR=${PKGS_DIR:-$PKG_PATH/var/log};
-APTCACHE=${APTCACHE:-$HOME/.cache/crackle};
-APTCONFIG=${APTCONFIG:-$HOME/.config/crackle};
+
+APTCACHE=${APTCACHE:-${XDG_CACHE_HOME:-$HOME/.cache}/crackle};
+APTSTATE=${APTSTATE:-${XDG_STATE_HOME:-$HOME/.local/state}/crackle};
+APTCONFIG=${APTCONFIG:-${XDG_CONFIG_HOME:-$HOME/.config}/crackle};
+
+# Configuration for Crackle
 CRACKLERC=$APTCONFIG/cracklerc;
 CRACKLEENV=$APTCONFIG/environment;
-#CRACKLECMP=$APTCONFIG/crackle_completion;
 CRACKLECMP=${XDG_DATA_HOME:-$HOME/.local/share}/bash-completion/completions/crackle;
 CRACKDIR=${CRACKDIR:-$HOME/packages/$PKG};
-APT_GET="apt-get -o Dir::Cache=$APTCACHE -o Dir::State=$APTCACHE -o Dir::Etc=$APTCONFIG"
-APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTCACHE -o Dir::Etc=$APTCONFIG"
 
+# Aliases for commands
+APT_GET="apt-get -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc=$APTCONFIG"
+APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc=$APTCONFIG"
+
+# Root check
 [ "$EUID" = "0" ] && {
     echo "Don't run me as root, please"
     exit 32;
 }
 
+# View information about Crackle, don't do anything
 [ "$operation" = "debug" ] && {
 	echo "PKGS_DIR: '$PKGS_DIR'"
 	echo "APT_CACHE: '$APT_CACHE'"
@@ -57,12 +68,14 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTCACHE -o Dir::Etc
 	exit 0;
 }
 
+# Cleans up a package's luggage
 [ "$operation" = "clean" ] && {
     $APT_GET "$operation";
     find "$PKG_PATH" -xtype l -exec rm {} +;
     exit 0;
 }
 
+# Reads configuration for Crackle
 [ "$operation" = "setup" ] && {
     bashrc=$(grep crackle "$HOME"/.bashrc);
     profile=$(grep crackle "$HOME"/.profile);
@@ -132,22 +145,26 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTCACHE -o Dir::Etc
     exit 0;
 }
 
+# Updates the apt repositories
 [ "$operation" = "update" ] && {
         wget -q --spider https://ubports.com || err "no internet connection, please run crackle update later to fetch the latest package lists";
         $APT_GET "$operation"|| err "crackle works best with a readonly rootfs please remount your rootfs";
         exit 0;
 }
 
+# Downloads a package for installation
 [ "$operation" = "download" ] && {
         $APT_GET "$operation" "$PKG";
         exit 0;
 }
 
+# View information about a package
 [[ "$operation" = "search" || "$operation" = "show" ]] && {
         $APT_CACHE "$operation" "$PKG";
         exit 0;
 }
 
+# Install a package for the user
 [[ "$operation" = "install" || "$operation" = "crack" ]] && {
     if [[ "$operation" = "crack" ]]; then
         dir="$CRACKDIR";
@@ -189,6 +206,7 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTCACHE -o Dir::Etc
     exit 0;
 }
 
+# Delete a package from the user path
 [[ "$operation" = "remove" ]] && {
     [ -d "$PKGS_DIR/$PKG" ] || err "$PKG is not installed";
     . "$PKG_PREFIX/lib/loginfo";
