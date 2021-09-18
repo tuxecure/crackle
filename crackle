@@ -10,6 +10,20 @@ else
     source "$SCRP_DIR/lib/triplet";
 fi
 
+if [ -z "$operation" -o "$operation" = "help" ]; then
+	echo "available commands:
+	- crackle setup
+	- crackle install
+	- crackle download
+	- crackle crack
+	- crackle remove
+	- crackle clean
+	- crackle search
+	- crackle show
+	- crackle update"
+	exit 0
+fi
+
 case $operation in
 	"install"|"download"|"crack"|"remove"|"search"|"show")[ -z "$PKG" ] && err "missing argument";;
 esac
@@ -25,11 +39,22 @@ CRACKDIR=${CRACKDIR:-$HOME/packages/$PKG};
 APT_GET="apt-get -o Dir::Cache=$APTCACHE -o Dir::State=$APTCACHE -o Dir::Etc=$APTCONFIG"
 APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTCACHE -o Dir::Etc=$APTCONFIG"
 
-mount -o remount,ro / 2>/dev/null && err "please don't run me with sudo";
-
-[ "$?" = "32" ] && {
-    echo "crackle currently only works with a readonly rootfs";
+[ "$EUID" = "0" ] && {
+    echo "Don't run me as root, please"
     exit 32;
+}
+
+[ "$operation" = "debug" ] && {
+	echo "PKGS_DIR: '$PKGS_DIR'"
+	echo "APT_CACHE: '$APT_CACHE'"
+	echo "APTCONFIG: '$APTCONFIG'"
+	echo "CRACKLERC: '$CRACKLERC'"
+	echo "CRACKLEENV: '$CRACKLEENV'"
+	echo "CRACKLEECMP: '$CRACKLEECMP'"
+	echo "CRACKDIR: '$CRACKDIR'"
+	echo "APT_GET: '$APT_GET'"
+	echo "APT_CACHE: '$APT_CACHE'"
+	exit 0;
 }
 
 [ "$operation" = "clean" ] && {
@@ -185,14 +210,3 @@ mount -o remount,ro / 2>/dev/null && err "please don't run me with sudo";
     done;
     exit 0;
 }
-echo "available commands:
-- crackle setup
-- crackle install
-- crackle download
-- crackle crack
-- crackle remove
-- crackle clean
-- crackle search
-- crackle show
-- crackle update
-"
