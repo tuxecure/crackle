@@ -22,19 +22,19 @@ class Crackle:
 
         # Getting basepaths for Crackle to work with
         # Configuration defaults to ~/.config/crackle
-        self.config_path = kwargs.get("config", os.path.join(xdg.xdg_config_home(), "crackle"))
+        self.config_path = kwargs.get("config") or os.path.join(xdg.xdg_config_home(), "crackle")
         self.debug(f"{self.config_path=}")
 
         # Cache defaults to ~/.cache/crackle. Used to store things we don't want to recalculate
-        self.cache_path = kwargs.get("cache", os.path.join(xdg.xdg_cache_home(), "crackle")) 
+        self.cache_path = kwargs.get("cache") or os.path.join(xdg.xdg_cache_home(), "crackle") 
         self.debug(f"{self.cache_path=}")
 
         # Data files are stored under ~/.local/share/crackle/src by default. We use this for our source code
-        self.src_path = kwargs.get("datapath", os.path.join(xdg.xdg_data_home(), "crackle/src"))
+        self.src_path = kwargs.get("datapath") or os.path.join(xdg.xdg_data_home(), "crackle/src")
         self.debug(f"{self.src_path=}")
 
         # Binary files built from source are found in ~/.local/share/crackle/bin by default. Add this to your $PATH
-        self.bin_path = kwargs.get("binpath", os.path.join(xdg.xdg_data_home(), "crackle/bin"))
+        self.bin_path = kwargs.get("binpath") or os.path.join(xdg.xdg_data_home(), "crackle/bin")
         self.debug(f"{self.bin_path=}")
 
         self._read_config(os.path.join(self.config_path, "crackle.conf"))
