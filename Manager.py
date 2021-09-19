@@ -12,20 +12,25 @@ except ImportError:
 
 
 class Manager:
-    def __init__(self, keyname, configfile_name, verbosity=1):
+    def __init__(self, keyname, configfile_name, verbosity=1, fallback_src_path="~/.local/share/crackle/src", fallback_bin_path="~/.local/share/crackle/bin"):
         self.keyname = keyname
         self.verbosity = verbosity
-        self._read_config(configfile_name)
+        self._read_config(configfile_name, fallback_bin_path=fallback_bin_path, fallback_src_path=fallback_src_path)
 
         self.packages = []
 
     def update_database(self):
         pass
 
-    def _read_config(self, configfile_name):
+    def _read_config(self, configfile_name, fallback_bin_path, fallback_src_path):
         self.debug(f"{configfile_name=}")
         self.config = configparser.RawConfigParser()
         self.config.read(configfile_name)
+
+        self.binary_path = self.config.get("Environment", "binpath", fallback=fallback_bin_path)
+        self.debug(f"{self.binary_path=}")
+        self.src_path = self.config.get("Environment", "srcpath", fallback=fallback_src_path)
+        self.debug(f"{self.src_path=}")
 
     def debug(self, *args, **kwargs):
         if self.verbosity >= kwargs.get("level", 1):
