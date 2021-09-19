@@ -13,10 +13,11 @@ except ImportError:
 
 from Package import *
 from Manager import *
+from helper import IO
 
-
-class Crackle:
+class Crackle(IO):
     def __init__(self, *args, **kwargs):
+        super().__init__()
         self.verbosity = kwargs.get("verbose", 1)
         self.debug(f"{args=}, {kwargs=}")
 
@@ -25,7 +26,10 @@ class Crackle:
         self.config_path = kwargs.get("config") or os.path.join(xdg.XDG_CONFIG_HOME, "crackle")
         self.debug(f"{self.config_path=}")
 
-        self._read_config(os.path.join(self.config_path, "crackle.conf"))
+        try:
+            self._read_config(os.path.join(self.config_path, "crackle.conf"))
+        except FileNotFoundError as err:
+            raise err
 
         # Cache defaults to ~/.cache/crackle. Used to store things we don't want to recalculate
         self.cache_path = kwargs.get("cache") or self.config.get("Options", "CRACKLE_CACHE_DIR") or os.path.join(xdg.XDG_CACHE_HOME, "crackle") 
@@ -53,25 +57,27 @@ class Crackle:
     def install(self, pkg_name):
         pkg = None
         for manager in self.managers:
-            if manager.has_package(pkg_name):
-                pkg = Package(pkg_name, manager)
+            if ( pkg := manager.get_package(pkg_name) ):
+                break
                 
-        print(colored("[INSTALL]", "green"), pkg)
+        self.info(f"Installed {pkg}")
 
     def _read_config(self, configfile_name):
-        self.debug(f"{configfile_name=}")
-        self.config = configparser.RawConfigParser()
-        self.config.read(configfile_name)
-
-    def debug(self, *args, **kwargs):
-        if self.verbosity >= kwargs.get("level", 1):
-            print(colored("[DEBUG]", "yellow"), *args, **kwargs)
-
+        if not os.path.isfile(configfile_name):
+            self.error(f"{configfile_name=} is not a file")
+            raise FileNotFoundError("Configuration file must exist")
+        else:
+            self.debug(f"{configfile_name=}")
+            self.config = configparser.RawConfigParser()
+            self.config.read(configfile_name)
 
 
 def main(*args, **kwargs):
-    crackle = Crackle(*args, **kwargs)
-    crackle.install("test")
+    try:
+        crackle = Crackle(*args, **kwargs)
+        crackle.install("test")
+    except:
+        return -1
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Install applications local to the user")
