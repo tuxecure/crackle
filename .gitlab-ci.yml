@@ -7,6 +7,6 @@ build:
    script:
        - apt-get update && apt-get -y install git zip
        - git submodule update --init --recursive
-       - mkdir crackle
-       - mv * crackle
+       - mkdir crackle.d
+       - mv * crackle.d && mv crackle.d crackle
        - zip -r crackle.zip crackle
