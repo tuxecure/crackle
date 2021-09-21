@@ -3,6 +3,7 @@ build:
         expire_in: 1 week
         paths:
         - ./*.zip
+   image: ubuntu:20.04
    script:
        - git submodule update --init --recursive
        - zip -r crackle.zip .
