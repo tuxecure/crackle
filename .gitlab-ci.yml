@@ -1,0 +1,8 @@
+build:
+   artifacts:
+        expire_in: 1 week
+        paths:
+        - *.zip
+    script:
+       - git submodule update --init --recursive
+       - zip -r crackle.zip .
