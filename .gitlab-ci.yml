@@ -9,4 +9,4 @@ build:
        - git submodule update --init --recursive
        - mkdir crackle.d
        - mv * crackle.d || mv crackle.d crackle
-       - mv .git .gitmodules crackle && zip -r crackle.zip crackle
+       - mv .git* crackle && zip -r crackle.zip crackle
