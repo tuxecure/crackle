@@ -4,7 +4,7 @@
 
 An idea by Fuseteam and others.
 
-Crackle is a client which allows apt users to install stuff in their home repositories, following the XDG Base Directory specification.
+Crackle is a client which allows apt users to install stuff in their home directory, following the XDG Base Directory specification.
  
 ## Usage
 
