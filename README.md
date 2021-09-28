@@ -20,18 +20,16 @@ crackle
 	show $PKG
 	clean
 	setup
-	debug
 ```
 
 Essentially, what each command does is what you would expect from using apt as usual, but with amendments for installing things locally, instead of system-wide.
 
 Crackle specific commands:
-`setup`: Automagically reads the user configuration and saves it into cracklerc
-`debug`: Shows some debugging information. Doesn't do any changes to the system.
+`setup`: places the files in the correctly paths and appends .profile and .bashrc to read the configuration files
 
 ## Configuration
 
-The installed packages will be found under `~/$HOME/packages`, modify the runtime configuration to change this, or pass in the `$CRACKLERC` variable to override.
+The installed packages will be found under `~/$HOME/.local/share/crackle`, modify the runtime configuration to change this, or pass in the `$CRACKLERC` variable to override.
 
 Note that the configuration location for packages by default is in `$XDG_CONFIG_HOME/crackle`, as expected. The same goes for this package, found under `$XDG_CONFIG_HOME/.config/crackle/cracklerc`
 
