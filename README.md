@@ -37,6 +37,7 @@ You need the Rust compiler. And a cup of water which you should be drinking righ
 Download this repository into wherever you want, and build it with make. Make sure you have `$XDG_CONFIG_HOME` set, as it is needed.
 ```sh
 git clone git@github.com:tuxecure/crackle.git
+git checkout rust
 cd crackle/
 make install
 ```
