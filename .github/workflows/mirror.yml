@@ -21,10 +21,12 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
-      - uses: tuxecure/repository-mirroring-action@v1.4.3
+      - uses: tuxecure/repository-mirroring-action@v1.4.4
         with:
           target_repo_url:
             git@gitlab.com:xiaofuse/crackle.git
+          target_branch:
+            bash
           ssh_private_key:
             ${{ secrets.GITLAB_SSH_PRIVATE_KEY }}
           email:
