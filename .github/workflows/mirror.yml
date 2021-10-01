@@ -24,7 +24,7 @@ jobs:
       - uses: tuxecure/repository-mirroring-action@v1.5
         with:
           target_repo_url:
-            git@gitlab.com:xiaofuse/crackle.git
+            git@gitlab.com:tuxecure/crackle.git
           target_branch:
             bash
           ssh_private_key:
