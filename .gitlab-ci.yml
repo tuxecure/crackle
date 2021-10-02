@@ -8,6 +8,7 @@ build:
         expire_in: 1 week
         paths:
         - ./*.zip
+        - CI_JOB_ID.txt
    image: ubuntu:20.04
    script:
        - apt-get update && apt-get -y install git zip python
