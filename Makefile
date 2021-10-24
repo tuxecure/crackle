@@ -29,7 +29,7 @@ install:
 	@# symbolic, force if exists
 	@# Would be nice if XDG actually have a proper ${XDG_USER_BINS} or something
 	mkdir -p ${HOME}/.local/bin
-	ln -s $(shell readlink -f ./build/crackle) ${INSTALL_PATH}/crackle 
+	ln -sf $(shell readlink -f ./build/crackle) ${INSTALL_PATH}/crackle 
 
 config: ${CONF_FILES}
 	@# recursive
