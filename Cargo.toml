@@ -1,0 +1,10 @@
+[package]
+name = "crackle"
+version = "0.0.1"
+authors = ["mazunki <rolferen@gmail.com>", "fuseteam"]
+description = "A useful tool to install applications on a per-user base, out of the rootfs"
+license = "GPL-3.0-or-later"
+license-file = "LICENSE.txt"
+keywords = ["package", "repository", "distribution", "manager", "user"]
+include = ["/src", "/config", "LICENSE.txt", "README.md"]
+exclude = ["/build"]
