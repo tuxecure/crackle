@@ -1,17 +1,17 @@
 
-trait Option<T> {
+pub trait Config<T> {
     fn new(key: &'static str) -> Self;
-    fn add_argument(&self, value: String);
-    fn update_value(&self, value: T);
+    fn add_argument(&self, value: &'static str) -> Self;
+    fn update_value(&self, value: T) -> Self;
     fn describe(&self);
 }
-pub struct BooleanOpt {
+pub struct Lever {
     key: String,
     value: bool,
 }
-impl Option<bool> for BooleanOpt {
+impl Config<bool> for Lever {
     fn new(key: &'static str) -> Self {
-        BooleanOpt{
+        Lever{
             key: key.to_string(),
             value: false,
         }
@@ -19,21 +19,23 @@ impl Option<bool> for BooleanOpt {
     fn describe(&self) {
 
     }
-    fn add_argument(&self, value: String) {
+    fn add_argument(&self, value: &'static str) -> Lever {
 
+        return *self
     }
-    fn update_value(&self, value: bool) {
+    fn update_value(&self, value: bool) -> Lever {
 
+        return *self
     }
 }
 
-pub struct KeywordOpt {
+pub struct TextParameter {
     key: String,
     value: String,
 }
-impl Option<String> for KeywordOpt {
-    fn new(key: &'static str) -> KeywordOpt { 
-        KeywordOpt{
+impl Config<String> for TextParameter {
+    fn new(key: &'static str) -> TextParameter { 
+        TextParameter{
             key: key.to_string(),
             value: "".to_string(),
         }
@@ -41,21 +43,23 @@ impl Option<String> for KeywordOpt {
     fn describe(&self) {
 
     }
-    fn add_argument(&self, value: String) {
+    fn add_argument(&self, value: &'static str) -> TextParameter {
 
+        return *self
     }
-    fn update_value(&self, value: String) {
+    fn update_value(&self, value: String) -> TextParameter {
 
+        return  *self
     }
 }
 
-pub struct NumericOpt {
+pub struct NumericParameter {
     key: String,
     value: i32,
 }
-impl Option<i32> for NumericOpt {
-    fn new(key: &'static str) -> NumericOpt { 
-        NumericOpt{
+impl Config<i32> for NumericParameter {
+    fn new(key: &'static str) -> NumericParameter { 
+        NumericParameter{
             key: key.to_string(),
             value: 0,
         }
@@ -63,10 +67,12 @@ impl Option<i32> for NumericOpt {
     fn describe(&self) {
 
     }
-    fn add_argument(&self, value: String) {
+    fn add_argument(&self, value: &'static str) -> NumericParameter {
 
+        return *self
     }
-    fn update_value(&self, value: i32) {
+    fn update_value(&self, value: i32) -> NumericParameter {
 
+        return *self
     }
 }
