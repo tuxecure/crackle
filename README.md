@@ -1,11 +1,24 @@
 # Crackle
 
-> **NOTE** This project is currently being migrated to Rust. Check that actual branch for development.
+> **NOTE** This project is being migrated to Rust. While the bash version is still maintained, it will eventually™ be superceded by the rust version
 
 An idea by Fuseteam and others.
 
 Crackle is a client which allows apt users to install stuff in their home directory, following the XDG Base Directory specification.
  
+## Installation
+
+The project is currently a bunch of bash scripts, as such installation relatively simple~
+- Download the code
+[![download](https://github.com/Fuseteam/linus-proof/blob/main/images/download.png)](https://github.com/tuxecure/crackle/archive/refs/heads/bash.zip)
+
+- open a terminal
+- run `cd Downloads`
+- run `unzip crackle-bash`
+- run `crackle-bash/crackle setup`
+- ???
+- profit
+
 ## Usage
 
 To run the program, specify the operation, and the package to act on.
