@@ -145,6 +145,7 @@ mount -o remount,ro / 2>/dev/null && err "please don't run me with sudo";
         dpkg-deb -x "$package" "$dir";
 	[[ -f "$PKG_PATH/bin/scripts/$pkgname" ]] && { echo Setting up $pkgname; PKG_PATH=$PKG_PATH TRIPLET=$TRIPLET CRACKLEENV=$CRACKLEENV/$pkgname "$PKG_PATH/bin/scripts/$pkgname"; };
     done;
+    link_bin;
     echo Cleaning packages...
     $APT_GET clean;
     echo Done!

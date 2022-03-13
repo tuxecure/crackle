@@ -32,3 +32,9 @@ function fetch_rdependencies(){
 	    [ -d "$PKGS_DIR/$package" ] || packages=("${packages[@]/$package}");
     done;
 }
+function link_bin(){
+	[ ! -d "$HOME/.local/bin" ] && mkdir-p  "$HOME/.local/bin";
+	ln -s $PKG_PATH/bin/* $HOME/.local/bin
+	ln -s $PKG_PATH/sbin/* $HOME/.local/bin
+	ln -s $PKG_PATH/usr/bin/* $HOME/.local/bin
+}
