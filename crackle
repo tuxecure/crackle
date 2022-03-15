@@ -61,7 +61,7 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
 	echo "APTCONFIG: '$APTCONFIG'"
 	echo "CRACKLERC: '$CRACKLERC'"
 	echo "CRACKLEENV: '$CRACKLEENV'"
-	echo "CRACKLEECMP: '$CRACKLEECMP'"
+	echo "CRACKLECMP: '$CRACKLECMP'"
 	echo "CRACKDIR: '$CRACKDIR'"
 	echo "APT_GET: '$APT_GET'"
 	echo "APT_CACHE: '$APT_CACHE'"

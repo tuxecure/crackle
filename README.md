@@ -34,13 +34,14 @@ crackle
 	show $PKG
 	clean
 	setup
+	debug
 ```
 
 Essentially, what each command does is what you would expect from using apt as usual, but with amendments for installing things locally, instead of system-wide.
 
 Crackle specific commands:
-`setup`: Automagically reads the user configuration and saves it into cracklerc
-`debug`: Shows some debugging information. Doesn't do any changes to the system.
+- `setup`: Automagically reads the user configuration and saves it into cracklerc
+- `debug`: Shows some debugging information. Doesn't do any changes to the system.
 
 ## Configuration
 
