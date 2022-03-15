@@ -2,9 +2,10 @@
 operation=$1;
 PKG=$2
 PKG_PATH=${PKG_PATH:-$HOME/.local/share/crackle};
+PKG_PREFIX=${PKG_PREFIX:-$HOME/.local}
 SCRP_DIR=$(dirname "${BASH_SOURCE[0]}")
-if [[ -f "$PKG_PATH/lib/triplet" ]]; then
-    source "$PKG_PATH/lib/triplet";
+if [[ -f "$PKG_PREFIX/lib/triplet" ]]; then
+    source "$PKG_PREFIX/lib/triplet";
 else
     source "$SCRP_DIR/lib/triplet";
 fi
@@ -18,7 +19,8 @@ APTCACHE=${APTCACHE:-$HOME/.cache/crackle};
 APTCONFIG=${APTCONFIG:-$HOME/.config/crackle};
 CRACKLERC=$APTCONFIG/cracklerc;
 CRACKLEENV=$APTCONFIG/environment;
-CRACKLECMP=$APTCONFIG/crackle_completion;
+#CRACKLECMP=$APTCONFIG/crackle_completion;
+CRACKLECMP=${XDG_DATA_HOME:-$HOME/.local/share}/bash-completion/completions/crackle;
 CRACKDIR=${CRACKDIR:-$HOME/packages/$PKG};
 APT_GET="apt-get -o Dir::Cache=$APTCACHE -o Dir::State=$APTCACHE -o Dir::Etc=$APTCONFIG"
 APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTCACHE -o Dir::Etc=$APTCONFIG"
@@ -39,20 +41,25 @@ mount -o remount,ro / 2>/dev/null && err "please don't run me with sudo";
 [ "$operation" = "setup" ] && {
     bashrc=$(grep crackle "$HOME"/.bashrc);
     profile=$(grep crackle "$HOME"/.profile);
-    bashcompletion=$(grep crackle "$HOME"/.bash_completion);
-    diff -q $PKG_PATH/lib/triplet $SCRP_DIR/lib/triplet || {
-        source $SCRP_DIR/lib/triplet
-        upd $SCRP_DIR/lib/triplet $PKG_PATH/lib
-    }
+
+    [[ -d "$PKG_PATH" ]] || mkdir -p "$PKG_PATH";
     [[ -d "$PKGS_DIR" ]] || mkdir -p "$PKGS_DIR";
-    [[ -d "$PKG_PATH/bin" ]] || {
-        mkdir -p "$PKG_PATH/bin";
-        cp $SCRP_DIR/crackle $PKG_PATH/bin
+    # install crackle in ~/.local
+    mkdir -p "$PKG_PREFIX/bin" "$PKG_PREFIX/lib";
+    #TRANSISTION to the new structure
+    [[ ! -e "$PKG_PREFIX/bin/crackle" ]] && rm "$PKG_PREFIX/bin/crackle" ;
+    cp $SCRP_DIR/crackle $PKG_PREFIX/bin;
+    #TRANSISTION to the new structure
+    [[ -e "$PKG_PATH/bin/crackle" ]] && rm "$PKG_PATH/bin/crackle";
+    cp $SCRP_DIR/lib/* $PKG_PREFIX/lib;
+    #TRANSISTION to the new structure
+    [ -d $PKG_PATH/lib ] && rm -r $PKG_PATH/lib;
+
+    diff -q $PKG_PREFIX/lib/triplet $SCRP_DIR/lib/triplet || {
+        source $SCRP_DIR/lib/triplet
+        upd $SCRP_DIR/lib/triplet $PKG_PREFIX/lib
     }
-    [[ -d "$PKG_PATH/lib" ]] || {
-        mkdir -p "$PKG_PATH/lib";
-        cp $SCRP_DIR/lib/* $PKG_PATH/lib;
-    }
+
     [[ -d "$APTCACHE" ]] || mkdir -p "$APTCACHE";
     [[ -d "$APTCONFIG" ]] || {
         mkdir -p $APTCONFIG/sources.list.d $APTCONFIG/preferences.d;
@@ -72,17 +79,21 @@ mount -o remount,ro / 2>/dev/null && err "please don't run me with sudo";
         echo Amending ~/.profile...;
         $SCRP_DIR/awkfig -v start="#cracklerc" "$SCRP_DIR"/crackle.conf >> "$HOME"/.profile;
     }
-    diff -q $PKG_PATH/bin/crackle $SCRP_DIR/crackle || upd $SCRP_DIR/crackle $PKG_PATH/bin
-    diff -q $PKG_PATH/lib/loginfo $SCRP_DIR/lib/loginfo || upd $SCRP_DIR/lib/loginfo $PKG_PATH/lib
-    [[ -d "$PKG_PATH/bin/scripts" ]] || mkdir "$PKG_PATH/bin/scripts";
+    diff -q $PKG_PREFIX/bin/crackle $SCRP_DIR/crackle || upd $SCRP_DIR/crackle $PKG_PREFIX/bin
+    diff -q $PKG_PREFIX/lib/loginfo $SCRP_DIR/lib/loginfo || upd $SCRP_DIR/lib/loginfo $PKG_PREFIX/lib
+    #TRANSISTION to the new structure
+    [[ -d "$PKG_PATH/bin/scripts" ]] && rm -r "$PKG_PATH/bin/scripts";
+    [[ -d "$PKG_PREFIX/bin/scripts" ]] || mkdir -p "$PKG_PATH/bin/scripts";
     [[ -f "$CRACKLECMP" ]] || {
         echo Setting up bash_completions...;
-        echo "PKG_PATH=$PKG_PATH" > $CRACKLECMP;
-        cat "$SCRP_DIR/crackle_complete" >> $CRACKLECMP;
+	mkdir -p ${XDG_DATA_HOME:-$HOME/.local/share}/bash-completion/completions;
+	#TRANSISTION to the new structure
+	[[ -f "$APTCONFIG/crackle_completion" ]] && rm "$APTCONFIG/crackle_completion";
+        cp "$SCRP_DIR/crackle_complete" $CRACKLECMP;
     }
-    [[ -z "$bashcompletion" ]] && {
-        echo Amending ~/.bash_completion...
-        $SCRP_DIR/awkfig -v start="#cracklecmp" "$SCRP_DIR"/crackle.conf >> ~/.bash_completion;
+    [[ ! "$(grep completions "$HOME"/.bash_completion)" ]] && {
+        echo setting up bash completion.
+        $SCRP_DIR/awkfig -v start="#cracklecmp" "$SCRP_DIR"/crackle.conf >> $HOME/.bash_completion; 
     }
     [ -d "$APTCACHE/lists" ] || {
         echo Fetching package lists...;
@@ -90,7 +101,7 @@ mount -o remount,ro / 2>/dev/null && err "please don't run me with sudo";
     }
     if ! check_cmd git; then "$SCRP_DIR"/crackle install git; fi
     [[ -d "$SCRP_DIR"/bin/* ]] || { cd $SCRP_DIR;git submodule update --init; }
-    cp -r bin/* "$PKG_PATH/bin/scripts"
+    cp -r bin/* "$PKG_PREFIX/bin/scripts"
     if ! check_cmd patchelf; then "$SCRP_DIR"/crackle install patchelf; fi
     echo "Setup complete!";
     exit 0;
@@ -138,14 +149,15 @@ mount -o remount,ro / 2>/dev/null && err "please don't run me with sudo";
     TRIPLET=$(get_architecture);
     for package in "${packages[@]}"
     do
-        . "$PKG_PATH/lib/loginfo";
+        . "$PKG_PREFIX/lib/loginfo";
         get_pkg_info $package;
         [[ "$operation" = "install" ]] && log_pkg_info "$package";
 	echo Unpacking $pkgname "("$pkgversion")"
         dpkg-deb -x "$package" "$dir";
-	[[ -f "$PKG_PATH/bin/scripts/$pkgname" ]] && { echo Setting up $pkgname; PKG_PATH=$PKG_PATH TRIPLET=$TRIPLET CRACKLEENV=$CRACKLEENV/$pkgname "$PKG_PATH/bin/scripts/$pkgname"; };
+	[[ -f "$PKG_PREFIX/bin/scripts/$pkgname" ]] && { echo Setting up $pkgname; PKG_PATH=$PKG_PATH TRIPLET=$TRIPLET CRACKLEENV=$CRACKLEENV/$pkgname "$PKG_PREFIX/bin/scripts/$pkgname"; };
     done;
     link_bin;
+    link_bash-completion;
     echo Cleaning packages...
     $APT_GET clean;
     echo Done!
@@ -154,7 +166,7 @@ mount -o remount,ro / 2>/dev/null && err "please don't run me with sudo";
 
 [[ "$operation" = "remove" ]] && {
     [ -d "$PKGS_DIR/$PKG" ] || err "$PKG is not installed";
-    . "$PKG_PATH/lib/loginfo";
+    . "$PKG_PREFIX/lib/loginfo";
     echo Building dependency tree...;
     readarray -t dependencies < <($APT_CACHE depends "$PKG"| awk '/Depends/{print $2}'|uniq);
     for dependency in "${dependencies[@]}"

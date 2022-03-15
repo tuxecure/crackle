@@ -38,3 +38,7 @@ function link_bin(){
 	ln -s $PKG_PATH/sbin/* $HOME/.local/bin
 	ln -s $PKG_PATH/usr/bin/* $HOME/.local/bin
 }
+function link_bash-completion(){
+        ln -s "$PKG_PATH"/etc/bash_completion.d/* ${XDG_DATA_HOME:-$HOME/.local/share}/bash-completion/completions;
+        ln -s "$PKG_PATH"/usr/share/bash-completion/completions/* ${XDG_DATA_HOME:-$HOME/.local/share}/bash-completion/completions;
+}
