@@ -139,7 +139,7 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
         echo setting up bash completion.
         $SCRP_DIR/awkfig -v start="#cracklecmp" "$SCRP_DIR"/crackle.conf >> $HOME/.bash_completion; 
     }
-    [ -d "$APTCACHE/lists" ] || {
+    [ -d "$APTSTATE/lists" ] || {
         echo Fetching package lists...;
         "$SCRP_DIR"/crackle update || exit 100;
     }
