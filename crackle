@@ -2,7 +2,6 @@
 operation=$1;
 PKG=$2
 PKG_PATH=${PKG_PATH:-${XDG_DATA_HOME:-$HOME/.local/share}/crackle};
-PKG_PATH=${PKG_PATH:-$HOME/.local/share/crackle};
 PKG_PREFIX=${PKG_PREFIX:-$HOME/.local}
 SCRP_DIR=$(dirname "${BASH_SOURCE[0]}")
 if [[ -f "$PKG_PREFIX/lib/triplet" ]]; then
@@ -56,9 +55,13 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
 
 # View information about Crackle, don't do anything
 [ "$operation" = "debug" ] && {
+	echo "PKG_PATH: '$PKG_PATH'"
+	echo "PKG_PREFIX: '$PKG_PREFIX'"
 	echo "PKGS_DIR: '$PKGS_DIR'"
 	echo "APT_CACHE: '$APT_CACHE'"
 	echo "APTCONFIG: '$APTCONFIG'"
+	echo "APTCACHE: '$APTCONFIG'"
+	echo "APTSTATE: '$APTSTATE'"
 	echo "CRACKLERC: '$CRACKLERC'"
 	echo "CRACKLEENV: '$CRACKLEENV'"
 	echo "CRACKLECMP: '$CRACKLECMP'"
