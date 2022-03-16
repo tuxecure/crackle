@@ -29,8 +29,11 @@ jobs:
       - name: Run a multi-line script
         run: |
           git submodule update --init --recursive
+          mkdir build
+          mv * build
+          mv .git* build
       - name: Upload the zip file
         uses: actions/upload-artifact@v2
         with:
           name: crackle
-          path: ./*
+          path: build/*
