@@ -34,3 +34,9 @@ jobs:
           mkdir crackle.d
           mv * crackle.d || mv crackle.d crackle
           mv .git* crackle && zip -r crackle.zip crackle
+          ls
+      - name: Upload the zip file
+        uses: actions/upload-artifact@v2
+        with:
+          name: crackle
+          path: *.zip
