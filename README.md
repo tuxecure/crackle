@@ -35,14 +35,17 @@ crackle
 	clean
 	setup
 	debug
+	nuke
 ```
 
 Essentially, what each command does is what you would expect from using apt as usual, but with amendments for installing things locally, instead of system-wide.
 
 Crackle specific commands:
 - `setup`: Automagically reads the user configuration and saves it into cracklerc
-- `setup`: Automagically reads the user configuration and saves it into cracklerc
+- `debug`: Shows some debugging information. Doesn't do any changes to the system.
 - `crack`: this will extract the package `$PKG` and it's dependencies to `$HOME/packages/$PKG` for easy inspection, usefull to see the file tree or navigate through the various files associated with the package or its dependencies
+- `nuke`: Automagically remove everything crackle related from the system*
+* except the references to it in ~/.profile, ~/.bashrc and ~/.bash_completion. all those references are documented in crackle.conf
 
 ## Configuration
 

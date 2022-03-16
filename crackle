@@ -22,7 +22,8 @@ if [ -z "$operation" -o "$operation" = "help" ]; then
 	- crackle clean
 	- crackle search $PKG
 	- crackle show $PKG
-	- crackle update'
+	- crackle update
+	- crackle nuke'
 	exit 0
 fi
 
@@ -212,6 +213,20 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
     $APT_GET clean;
     echo Done!
     exit 0;
+}
+
+# remove crackle from the system
+[[ "$operation" = "nuke" ]] && {
+    [ -d $PKG_PATH ] && rm -r $PKG_PATH;
+    [[ -d "$APTCACHE" ]] && rm -r "$APTCACHE";
+    [[ -d "$APTSTATE" ]] && rm -r "$APTSTATE";
+    [[ -d "$PKG_PATH" ]] && rm -r "$PKG_PATH";
+    [[ -d "$APTCONFIG" ]] && rm -r "$APTCONFIG";
+    [[ -f "$PKG_PREFIX/bin/crackle" ]] && rm $PKG_PREFIX/bin/crackle;
+    [[ -f "$CRACKLECMP/crackle" ]] && rm $CRACKLECMP/crackle;
+    find "$PKG_PREFIX/bin" -xtype l -exec rm {} +;
+    find "$CRACKLECMP" -xtype l -exec rm {} +;
+    echo please check ~/.profile ~/.bashrc and ~/.bash_completion for leftover references to crackle
 }
 
 # Delete a package from the user path
