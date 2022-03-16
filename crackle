@@ -42,7 +42,7 @@ APTCONFIG=${APTCONFIG:-${XDG_CONFIG_HOME:-$HOME/.config}/crackle};
 # Configuration for Crackle
 CRACKLERC=$APTCONFIG/cracklerc;
 CRACKLEENV=$APTCONFIG/environment;
-CRACKLECMP=${XDG_DATA_HOME:-$HOME/.local/share}/bash-completion/completions/crackle;
+CRACKLECMP=${XDG_DATA_HOME:-$HOME/.local/share}/bash-completion/completions;
 CRACKDIR=${CRACKDIR:-$HOME/packages/$PKG};
 
 # Aliases for commands
@@ -130,12 +130,12 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
     #TRANSISTION to the new structure
     [[ -d "$PKG_PATH/bin/scripts" ]] && rm -r "$PKG_PATH/bin/scripts";
     [[ -d "$PKG_PREFIX/bin/scripts" ]] || mkdir -p "$PKG_PATH/bin/scripts";
-    [[ -f "$CRACKLECMP" ]] || {
+    [[ -d "$CRACKLECMP" ]] || {
         echo Setting up bash_completions...;
-	mkdir -p ${XDG_DATA_HOME:-$HOME/.local/share}/bash-completion/completions;
+	mkdir -p $CRACKLECMP;
 	#TRANSISTION to the new structure
 	[[ -f "$APTCONFIG/crackle_completion" ]] && rm "$APTCONFIG/crackle_completion";
-        cp "$SCRP_DIR/crackle_complete" $CRACKLECMP;
+        cp "$SCRP_DIR/crackle_complete" $CRACKLECMP/crackle;
     }
     [[ ! "$(grep completions "$HOME"/.bash_completion)" ]] && {
         echo setting up bash completion.
