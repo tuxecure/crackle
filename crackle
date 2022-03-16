@@ -99,6 +99,9 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
     }
 
     [[ -d "$APTCACHE" ]] || mkdir -p "$APTCACHE";
+    [[ -d "$APTSTATE" ]] || mkdir -p "$APTSTATE";
+    #TRANSISTION to the new structure
+    [[ -d "$APTCACHE/lists" ]] && rm -r "$APTCACHE/lists";
     [[ -d "$APTCONFIG" ]] || {
         mkdir -p $APTCONFIG/sources.list.d $APTCONFIG/preferences.d;
         ln -s /etc/apt/sources.list $APTCONFIG;
