@@ -113,8 +113,7 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
         ln -s /etc/apt/sources.list $APTCONFIG;
     }
     [[ -f "$CRACKLERC" ]] || {
-        echo "PKG_PATH=$PKG_PATH" > "$CRACKLERC";
-        echo "CRACKLEENV=$CRACKLEENV" >> "$CRACKLERC";
+        echo "CRACKLEENV=$CRACKLEENV" > "$CRACKLERC";
 	[ -d $CRACKLEENV ] || mkdir $CRACKLEENV;
         cat "$SCRP_DIR"/cracklerc >> "$CRACKLERC";
     }
