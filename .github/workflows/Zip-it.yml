@@ -28,8 +28,8 @@ jobs:
       # Runs a set of commands using the runners shell
       - name: Run a multi-line script
         run: |
-          apt-get update
-          apt-get install git zip python
+          sudo apt-get update
+          sudo apt-get install git zip python
           git submodule update --init --recursive
           mkdir crackle.d
           mv * crackle.d || mv crackle.d crackle
