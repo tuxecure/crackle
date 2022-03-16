@@ -28,6 +28,8 @@ fi
 
 case $operation in
 	"install"|"download"|"crack"|"remove"|"search"|"show")[ -z "$PKG" ] && err "missing argument";;
+	"setup"|"debug"|"clean"|"update");;
+	*) err 'available operations (setup|debug|install $PKG|download $PKG|crack $PKG|remove $PKG|clean|search $PKG|show $PKG|update)';;
 esac
 
 # Configuration for Apt
