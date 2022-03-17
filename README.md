@@ -2,7 +2,7 @@
 
 > **NOTE** This project is being migrated to Rust. While the bash version is still maintained, it will eventually™ be superceded by the rust version
 
-An project by Fuseteam and others.
+A project by Fuseteam and others.
 
 Crackle is a client which allows apt users to install stuff in their home directory, following the XDG Base Directory specification.
  
