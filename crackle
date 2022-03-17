@@ -29,7 +29,7 @@ fi
 
 case $operation in
 	"install"|"download"|"crack"|"remove"|"search"|"show")[ -z "$PKG" ] && err "missing argument";;
-	"setup"|"debug"|"clean"|"update");;
+	"setup"|"debug"|"clean"|"update"|"nuke");;
 	*) err 'available operations (setup|debug|install $PKG|download $PKG|crack $PKG|remove $PKG|clean|search $PKG|show $PKG|update)';;
 esac
 
@@ -224,6 +224,7 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
     find "$PKG_PREFIX/bin" -xtype l -exec rm {} +;
     find "$CRACKLECMP" -xtype l -exec rm {} +;
     echo please check ~/.profile ~/.bashrc and ~/.bash_completion for leftover references to crackle
+    exit 0;
 }
 
 # Delete a package from the user path
