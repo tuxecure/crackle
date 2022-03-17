@@ -33,12 +33,12 @@ function fetch_rdependencies(){
     done;
 }
 function link_bin(){
-	[ ! -d "$HOME/.local/bin" ] && mkdir-p  "$HOME/.local/bin";
-	ln -s $PKG_PATH/bin/* $HOME/.local/bin
-	ln -s $PKG_PATH/sbin/* $HOME/.local/bin
-	ln -s $PKG_PATH/usr/bin/* $HOME/.local/bin
+	[ ! -d "$HOME/.local/bin" ] && mkdir -p  "$HOME/.local/bin";
+	[ -d "$PKG_PATH/bin" ] && ln -s $PKG_PATH/bin/* $HOME/.local/bin
+	[ -d "$PKG_PATH/sbin" ] && ln -s $PKG_PATH/sbin/* $HOME/.local/bin
+	[ -d "$PKG_PATH/usr/bin" ] && ln -s $PKG_PATH/usr/bin/* $HOME/.local/bin
 }
 function link_bash-completion(){
-        ln -s "$PKG_PATH"/etc/bash_completion.d/* ${XDG_DATA_HOME:-$HOME/.local/share}/bash-completion/completions;
-        ln -s "$PKG_PATH"/usr/share/bash-completion/completions/* ${XDG_DATA_HOME:-$HOME/.local/share}/bash-completion/completions;
+        [ -d "$PKG_PATH/etc/bash_completion.d" ] && ln -s "$PKG_PATH"/etc/bash_completion.d/* ${XDG_DATA_HOME:-$HOME/.local/share}/bash-completion/completions;
+        [ -d "$PKG_PATH/usr/share/bash-completion/completions" ] && ln -s "$PKG_PATH"/usr/share/bash-completion/completions/* ${XDG_DATA_HOME:-$HOME/.local/share}/bash-completion/completions;
 }
