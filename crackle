@@ -129,7 +129,7 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
     diff -q $PKG_PREFIX/lib/loginfo $SCRP_DIR/lib/loginfo || upd $SCRP_DIR/lib/loginfo $PKG_PREFIX/lib
     #TRANSISTION to the new structure
     [[ -d "$PKG_PATH/bin/scripts" ]] && rm -r "$PKG_PATH/bin/scripts";
-    [[ -d "$PKG_PREFIX/bin/scripts" ]] || mkdir -p "$PKG_PATH/bin/scripts";
+    [[ -d "$PKG_PREFIX/bin/scripts" ]] || mkdir -p "$PKG_PREFIX/bin/scripts";
     #TRANSISTION to the new structure
     [[ -f "$APTCONFIG/crackle_completion" ]] && rm "$APTCONFIG/crackle_completion";
     [[ -d "$CRACKLECMP" ]] || {
@@ -145,9 +145,7 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
         echo Fetching package lists...;
         "$SCRP_DIR"/crackle update || exit 100;
     }
-    if ! check_cmd git; then "$SCRP_DIR"/crackle install git; fi
-    [[ -d "$SCRP_DIR"/bin/* ]] || { cd $SCRP_DIR;git submodule update --init; }
-    cp -r bin/* "$PKG_PREFIX/bin/scripts"
+    cp -r "$SCRP_DIR"/bin/* "$PKG_PREFIX/bin/scripts"
     if ! check_cmd patchelf; then "$SCRP_DIR"/crackle install patchelf; fi
     echo "Setup complete!";
     exit 0;
@@ -197,14 +195,14 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
     };
     readarray -t packages < <(ls "$APTCACHE"/archives/*.deb);
     TRIPLET=$(get_architecture);
+    . "$PKG_PREFIX/lib/loginfo";
     for package in "${packages[@]}"
     do
-        . "$PKG_PREFIX/lib/loginfo";
         get_pkg_info $package;
         [[ "$operation" = "install" ]] && log_pkg_info "$package";
 	echo Unpacking $pkgname "("$pkgversion")"
         dpkg-deb -x "$package" "$dir";
-	[[ -f "$PKG_PREFIX/bin/scripts/$pkgname" ]] && { echo Setting up $pkgname; PKG_PATH=$PKG_PATH TRIPLET=$TRIPLET CRACKLEENV=$CRACKLEENV/$pkgname "$PKG_PREFIX/bin/scripts/$pkgname"; };
+	[[ -f "$PKG_PREFIX/bin/scripts/$pkgname" ]] && { echo Setting up $pkgname; PKG_PATH=$PKG_PATH PKG_PREFIX=$PKG_PREFIX TRIPLET=$TRIPLET CRACKLEENV=$CRACKLEENV/$pkgname "$PKG_PREFIX/bin/scripts/$pkgname"; };
     done;
     link_bin;
     link_bash-completion;
