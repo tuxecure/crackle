@@ -28,7 +28,7 @@ if [ -z "$operation" -o "$operation" = "help" ]; then
 fi
 
 case $operation in
-	"install"|"download"|"crack"|"remove"|"search"|"show")[ -z "$PKG" ] && err "missing argument";;
+	"install"|"reinstall"|"download"|"crack"|"remove"|"search"|"show")[ -z "$PKG" ] && err "missing argument";;
 	"setup"|"debug"|"clean"|"update"|"nuke");;
 	*) err 'available operations (setup|debug|install $PKG|download $PKG|crack $PKG|remove $PKG|clean|search $PKG|show $PKG|update)';;
 esac
@@ -210,6 +210,12 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
     $APT_GET clean;
     echo Done!
     exit 0;
+}
+
+# reinstall a package
+[[ "$operation" = "reinstall" ]] && {
+    rm -r $PKGS_DIR/$PKG;
+    crackle install $PKG;
 }
 
 # remove crackle from the system
