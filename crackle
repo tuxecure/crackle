@@ -93,8 +93,6 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
     #TRANSISTION to the new structure
     [[ ! -e "$PKG_PREFIX/bin/crackle" ]] && rm "$PKG_PREFIX/bin/crackle" ;
     cp $SCRP_DIR/crackle $PKG_PREFIX/bin;
-    #TRANSISTION to the new structure
-    [[ -e "$PKG_PATH/bin/crackle" ]] && rm "$PKG_PATH/bin/crackle";
     cp $SCRP_DIR/lib/* $PKG_PREFIX/lib;
     #TRANSISTION to the new structure
     [ -d $PKG_PATH/lib ] && rm -r $PKG_PATH/lib;
@@ -139,7 +137,7 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
     }
     [[ ! "$(grep completions "$HOME"/.bash_completion)" ]] && {
         echo setting up bash completion.
-        $SCRP_DIR/awkfig -v start="#cracklecmp" "$SCRP_DIR"/crackle.conf >> $HOME/.bash_completion; 
+        $SCRP_DIR/awkfig -v start="#cracklecmp" "$SCRP_DIR"/crackle.conf >> $HOME/.bash_completion;
     }
     [ -d "$APTSTATE/lists" ] || {
         echo Fetching package lists...;
