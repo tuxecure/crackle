@@ -30,7 +30,7 @@ jobs:
         run: |
           git submodule update --init --recursive
           mkdir build
-          mv * build
+          mv * build||echo "move succesfull"
           mv .git* build
       - name: Upload the zip file
         uses: actions/upload-artifact@v2
