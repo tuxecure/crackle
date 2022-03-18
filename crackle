@@ -193,6 +193,8 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
         echo "Comparing...";
         [[ "$installed" = "$candidate" ]] && { echo "$PKG" is already the newest version \($installed\); exit 0; }
     }
+    pkgstatus=$(apt-cache policy $PKG|awk '/Installed/{print $2}')
+    [ ! $pkgstatus = "(none)" ] && { echo "apt: $PKG" is already the newest version \($pkgstatus\); exit 0; }
     $APT_GET install --download-only "$PKG" || exit 1;
     readarray -t packages < <(ls "$APTCACHE"/archives/*.deb);
     TRIPLET=$(get_architecture);
