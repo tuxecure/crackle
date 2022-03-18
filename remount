@@ -1,0 +1,8 @@
+#!/bin/bash
+if [ $(rorw) = "ro" ]; then
+	set -x
+	sudo mount -o remount,rw /
+elif [ $(rorw) = "rw" ]; then
+	set -x
+	sudo mount -o remount,ro /
+fi

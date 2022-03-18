@@ -123,6 +123,10 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
         echo Amending ~/.profile...;
         $SCRP_DIR/awkfig -v start="#cracklerc" "$SCRP_DIR"/crackle.conf >> "$HOME"/.profile;
     }
+    [[ ! -f "$PKG_PREFIX/bin/awkopts" ]] && cp $SCRP_DIR/awkopts $PKG_PREFIX/bin;
+    [[ ! -f "$PKG_PREFIX/bin/rorw" ]] && cp $SCRP_DIR/rorw $PKG_PREFIX/bin;
+    [[ ! -f "$PKG_PREFIX/bin/remount" ]] && cp $SCRP_DIR/remount $PKG_PREFIX/bin;
+
     diff -q $PKG_PREFIX/bin/crackle $SCRP_DIR/crackle || upd $SCRP_DIR/crackle $PKG_PREFIX/bin
     diff -q $PKG_PREFIX/lib/loginfo $SCRP_DIR/lib/loginfo || upd $SCRP_DIR/lib/loginfo $PKG_PREFIX/lib
     #TRANSISTION to the new structure
@@ -170,6 +174,10 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
 
 # Install a package for the user
 [[ "$operation" = "install" || "$operation" = "crack" ]] && {
+    if [[ $(rorw) = "rw" ]]; then
+        echo "remounting rootfs as readonly";
+        remount;
+    fi
     if [[ "$operation" = "crack" ]]; then
         dir="$CRACKDIR";
     else
@@ -224,6 +232,9 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
     [[ -d "$PKG_PATH" ]] && rm -r "$PKG_PATH";
     [[ -d "$APTCONFIG" ]] && rm -r "$APTCONFIG";
     [[ -f "$PKG_PREFIX/bin/crackle" ]] && rm $PKG_PREFIX/bin/crackle;
+    [[ -f "$PKG_PREFIX/bin/awkopts" ]] && rm $SCRP_DIR/awkopts $PKG_PREFIX/bin;
+    [[ -f "$PKG_PREFIX/bin/rorw" ]] && rm $SCRP_DIR/rorw $PKG_PREFIX/bin;
+    [[ -f "$PKG_PREFIX/bin/remount" ]] && rm $SCRP_DIR/remount $PKG_PREFIX/bin;
     [[ -f "$CRACKLECMP/crackle" ]] && rm $CRACKLECMP/crackle;
     find "$PKG_PREFIX/bin" -xtype l -exec rm {} +;
     find "$CRACKLECMP" -xtype l -exec rm {} +;

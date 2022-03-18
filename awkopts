@@ -1,0 +1,2 @@
+#!/usr/bin/awk -f
+/setup/,/nuke/{print $3}
