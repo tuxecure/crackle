@@ -236,6 +236,7 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
     [[ -f "$PKG_PREFIX/bin/rorw" ]] && rm $SCRP_DIR/rorw $PKG_PREFIX/bin;
     [[ -f "$PKG_PREFIX/bin/remount" ]] && rm $SCRP_DIR/remount $PKG_PREFIX/bin;
     [[ -f "$CRACKLECMP/crackle" ]] && rm $CRACKLECMP/crackle;
+    [[ -d "$PKG_PREFIX/bin/scripts" ]] && rm -r $PKG_PREFIX/bin/scripts;
     find "$PKG_PREFIX/bin" -xtype l -exec rm {} +;
     find "$CRACKLECMP" -xtype l -exec rm {} +;
     echo please check ~/.profile ~/.bashrc and ~/.bash_completion for leftover references to crackle
