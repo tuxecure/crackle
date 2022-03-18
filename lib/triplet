@@ -11,9 +11,8 @@ check_proc() {
 checkro() {
     if ! check_cmd rorw;
     then
-	    rorw="$SCRP_DIR/rorw";
-	    remount="$SCRP_DIR/remount";
-	    echo please add ~/.local/bin to your PATH;
+        export PATH="$PATH:~/.local/bin"
+	echo please add ~/.local/bin to your PATH;
     fi
     if [[ $(rorw) = "rw" ]]; then
         echo "remounting rootfs as readonly....";
