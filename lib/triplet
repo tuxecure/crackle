@@ -8,6 +8,13 @@ check_proc() {
     fi
 }
 
+checkro() {
+    if [[ $(rorw) = "rw" ]]; then
+        echo "remounting rootfs as readonly....";
+        remount || err "remounting failed!";
+    fi
+}
+
 get_bitness() {
     need_cmd head
     # Architecture detection without dependencies beyond coreutils.
