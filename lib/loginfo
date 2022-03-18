@@ -32,13 +32,20 @@ function fetch_rdependencies(){
 	    [ -d "$PKGS_DIR/$package" ] || packages=("${packages[@]/$package}");
     done;
 }
+function link(){
+    pkgs=($(diff -r "$1" "$2"|awk '/crackle\//{print $4}'|sort|uniq));
+    for pkg in ${pkgs[@]};
+    do
+        ln -s ${1}/$pkg ${2};
+    done;
+}
 function link_bin(){
 	[ ! -d "$HOME/.local/bin" ] && mkdir -p  "$HOME/.local/bin";
-	[ -d "$PKG_PATH/bin" ] && ln -s $PKG_PATH/bin/* $HOME/.local/bin
-	[ -d "$PKG_PATH/sbin" ] && ln -s $PKG_PATH/sbin/* $HOME/.local/bin
-	[ -d "$PKG_PATH/usr/bin" ] && ln -s $PKG_PATH/usr/bin/* $HOME/.local/bin
+	[ -d "$PKG_PATH/bin" ] && link $PKG_PATH/bin $PKG_PREFIX/bin;
+	[ -d "$PKG_PATH/sbin" ] && link $PKG_PATH/sbin $PKG_PREFIX/bin;
+	[ -d "$PKG_PATH/usr/bin" ] && link $PKG_PATH/usr/bin $PKG_PREFIX/bin
 }
 function link_bash-completion(){
-        [ -d "$PKG_PATH/etc/bash_completion.d" ] && ln -s "$PKG_PATH"/etc/bash_completion.d/* ${XDG_DATA_HOME:-$HOME/.local/share}/bash-completion/completions;
-        [ -d "$PKG_PATH/usr/share/bash-completion/completions" ] && ln -s "$PKG_PATH"/usr/share/bash-completion/completions/* ${XDG_DATA_HOME:-$HOME/.local/share}/bash-completion/completions;
+        [ -d "$PKG_PATH/etc/bash_completion.d" ] && link "$PKG_PATH"/etc/bash_completion.d ${XDG_DATA_HOME:-$HOME/.local/share}/bash-completion/completions;
+        [ -d "$PKG_PATH/usr/share/bash-completion/completions" ] && link "$PKG_PATH"/usr/share/bash-completion/completions ${XDG_DATA_HOME:-$HOME/.local/share}/bash-completion/completions;
 }
