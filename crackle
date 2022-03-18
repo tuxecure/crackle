@@ -134,13 +134,13 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
     [[ -d "$PKG_PREFIX/bin/scripts" ]] || mkdir -p "$PKG_PREFIX/bin/scripts";
     #TRANSISTION to the new structure
     [[ -f "$APTCONFIG/crackle_completion" ]] && rm "$APTCONFIG/crackle_completion";
-    [[ -d "$CRACKLECMP" ]] || {
+    [[ -f "$CRACKLECMP/crackle" ]] || {
         echo Setting up bash_completions...;
 	mkdir -p $CRACKLECMP;
         cp "$SCRP_DIR/crackle_complete" $CRACKLECMP/crackle;
     }
     [[ ! "$(grep completions "$HOME"/.bash_completion)" ]] && {
-        echo setting up bash completion.
+        echo enabling bash completion........
         $SCRP_DIR/awkfig -v start="#cracklecmp" "$SCRP_DIR"/crackle.conf >> $HOME/.bash_completion;
     }
     [ -d "$APTSTATE/lists" ] || {
