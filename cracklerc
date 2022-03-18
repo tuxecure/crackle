@@ -1,5 +1,5 @@
 readarray -t environments < <(ls "$CRACKLEENV"/*);
 for environment in ${environments[@]}
 do
-. $environment
+[ -f "$environment" ] && . $environment
 done;
