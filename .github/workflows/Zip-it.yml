@@ -29,9 +29,12 @@ jobs:
       - name: Run a multi-line script
         run: |
           git submodule update --init --recursive
+          git diff
           mkdir build
           mv * build||echo "move succesfull"
           mv .git* build
+          cd build
+          git diff
       - name: Upload the zip file
         uses: actions/upload-artifact@v2
         with:
