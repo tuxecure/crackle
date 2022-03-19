@@ -216,6 +216,9 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
     [[ -d "$PKG_PATH" ]] && rm -r "$PKG_PATH";
     [[ -d "$APTCONFIG" ]] && rm -r "$APTCONFIG";
     [[ -f "$PKG_PREFIX/bin/crackle" ]] && rm $PKG_PREFIX/bin/crackle;
+    [[ -f "$PKG_PREFIX/lib/triplet" ]] && rm $PKG_PREFIX/lib/triplet;
+    [[ -f "$PKG_PREFIX/lib/loginfo" ]] && rm $PKG_PREFIX/lib/loginfo;
+    [[ -f "$PKG_PREFIX/lib/pkgfunc" ]] && rm $PKG_PREFIX/lib/pkgfunc;
     [[ -f "$PKG_PREFIX/bin/awkopts" ]] && rm $SCRP_DIR/awkopts $PKG_PREFIX/bin;
     [[ -f "$PKG_PREFIX/bin/rorw" ]] && rm $SCRP_DIR/rorw $PKG_PREFIX/bin;
     [[ -f "$PKG_PREFIX/bin/remount" ]] && rm $SCRP_DIR/remount $PKG_PREFIX/bin;
