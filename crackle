@@ -182,6 +182,7 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
     }
     for pkg in "${PKG[@]}"
     do
+	    echo Fetching packages.....;
 	    pkgstatus $pkg;
     done;
     $APT_GET install --download-only ${PKG[@]} || exit 1;
