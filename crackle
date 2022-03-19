@@ -91,8 +91,6 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
     # install crackle in ~/.local
     mkdir -p "$PKG_PREFIX/bin" "$PKG_PREFIX/lib";
     #TRANSISTION to the new structure
-    [[ ! -e "$PKG_PREFIX/bin/crackle" ]] && rm "$PKG_PREFIX/bin/crackle" ;
-    #TRANSISTION to the new structure
     [[ -f "$PKG_PREFIX/lib/loginfo" ]] && rm $PKG_PREFIX/lib/loginfo;
     #TRANSISTION to the new structure
     [ -d $PKG_PATH/lib ] && rm -r $PKG_PATH/lib;
