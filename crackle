@@ -197,6 +197,7 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
 	[[ -f "$PKG_PREFIX/bin/scripts/$pkgname" ]] && { say "Setting up $pkgname"; PKG_PATH=$PKG_PATH PKG_PREFIX=$PKG_PREFIX TRIPLET=$TRIPLET CRACKLEENV=$CRACKLEENV/$pkgname "$PKG_PREFIX/bin/scripts/$pkgname"; };
     done;
     link_bin;
+    link_lib;
     link_bash-completion;
     say "Cleaning packages..";
     $APT_GET clean;
