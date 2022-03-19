@@ -16,6 +16,7 @@ if [ -z "$operation" -o "$operation" = "help" ]; then
 	- crackle setup
 	- crackle debug
 	- crackle install $PKG
+	- crackle reinstall $PKG
 	- crackle download $PKG
 	- crackle crack $PKG
 	- crackle remove $PKG
