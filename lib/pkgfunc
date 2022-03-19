@@ -20,7 +20,7 @@ function log_pkg_info () {
 }
 function rmpkgtree() {
     [ -d "$PKGS_DIR/$1" ] && {
-        echo Removing $1;
+        say "Removing $1";
         readarray -t files < <(cat "$PKGS_DIR/$1/pkgs.list");
         for file in "${files[@]}"
         do
@@ -64,13 +64,13 @@ function link_bash-completion(){
 
 function pkgstatus(){
     [[ -d "$PKGS_DIR/$PKG" && "$operation" = "install" ]] && {
-        echo "Fetching installed version...";
+        say "Fetching installed version...";
         installed=$(cat $PKGS_DIR/$PKG/pkgs.version);
-        echo "Fetching candidate version...";
+        say "Fetching candidate version...";
         candidate=$($APT_CACHE policy $PKG|awk '/Candidate/{print $2}');
-        echo "Comparing...";
-        [[ "$installed" = "$candidate" ]] && { echo "$PKG" is already the newest version \($installed\); exit 0; }
+        say "Comparing...";
+        [[ "$installed" = "$candidate" ]] && stat "$PKG is already the newest version \($installed\)";
     }
     pkgstatus=$($APT_CACHE policy $1|awk '/Installed/{print $2}')
-    [ ! $pkgstatus = "(none)" ] && { echo "apt: $1" is already the newest version \($pkgstatus\); exit 0; }
+    [ ! $pkgstatus = "(none)" ] && stat "Apt: $1 is already the newest version \($pkgstatus\)";
 }
