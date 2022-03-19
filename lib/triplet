@@ -60,8 +60,10 @@ err() {
 
 upd() {
     lib=$(basename $1)
-    say "updating $lib..." >&2
-    cp $1 $2
+    if ! diff -q $1 $2; then
+	say "updating $lib..." >&2
+	cp $1 $2
+    fi
 }
 
 # Run a command that should never fail. If the command fails execution

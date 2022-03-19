@@ -94,15 +94,12 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
     [[ ! -e "$PKG_PREFIX/bin/crackle" ]] && rm "$PKG_PREFIX/bin/crackle" ;
     #TRANSISTION to the new structure
     [[ -f "$PKG_PREFIX/lib/loginfo" ]] && rm $PKG_PREFIX/lib/loginfo;
-    cp $SCRP_DIR/crackle $PKG_PREFIX/bin;
-    cp $SCRP_DIR/lib/* $PKG_PREFIX/lib;
     #TRANSISTION to the new structure
     [ -d $PKG_PATH/lib ] && rm -r $PKG_PATH/lib;
 
-    diff -q $PKG_PREFIX/lib/triplet $SCRP_DIR/lib/triplet || {
-        source $SCRP_DIR/lib/triplet
-        upd $SCRP_DIR/lib/triplet $PKG_PREFIX/lib
-    }
+    upd $SCRP_DIR/lib/triplet $PKG_PREFIX/lib
+    upd $SCRP_DIR/crackle $PKG_PREFIX/bin
+    upd $SCRP_DIR/lib/pkgfunc $PKG_PREFIX/lib
 
     [[ -d "$APTCACHE" ]] || mkdir -p "$APTCACHE";
     [[ -d "$APTSTATE" ]] || mkdir -p "$APTSTATE";
@@ -125,12 +122,10 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
         echo Amending ~/.profile...;
         $SCRP_DIR/awkfig -v start="#cracklerc" "$SCRP_DIR"/crackle.conf >> "$HOME"/.profile;
     }
-    [[ ! -f "$PKG_PREFIX/bin/awkopts" ]] && cp $SCRP_DIR/awkopts $PKG_PREFIX/bin;
-    [[ ! -f "$PKG_PREFIX/bin/rorw" ]] && cp $SCRP_DIR/rorw $PKG_PREFIX/bin;
-    [[ ! -f "$PKG_PREFIX/bin/remount" ]] && cp $SCRP_DIR/remount $PKG_PREFIX/bin;
+    upd $SCRP_DIR/awkopts $PKG_PREFIX/bin;
+    upd $SCRP_DIR/rorw $PKG_PREFIX/bin;
+    upd $SCRP_DIR/remount $PKG_PREFIX/bin;
 
-    diff -q $PKG_PREFIX/bin/crackle $SCRP_DIR/crackle || upd $SCRP_DIR/crackle $PKG_PREFIX/bin
-    diff -q $PKG_PREFIX/lib/pkgfunc $SCRP_DIR/lib/pkgfunc || upd $SCRP_DIR/lib/pkgfunc $PKG_PREFIX/lib
     #TRANSISTION to the new structure
     [[ -d "$PKG_PATH/bin/scripts" ]] && rm -r "$PKG_PATH/bin/scripts";
     [[ -d "$PKG_PREFIX/bin/scripts" ]] || mkdir -p "$PKG_PREFIX/bin/scripts";
