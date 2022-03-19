@@ -52,8 +52,7 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
 
 # Root check
 [ "$EUID" = "0" ] && {
-    echo "Don't run me as root, please"
-    exit 32;
+    err "Don't run me as root, please"
 }
 
 # View information about Crackle, don't do anything
@@ -112,11 +111,11 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
         cat "$SCRP_DIR"/cracklerc >> "$CRACKLERC";
     }
     [[ -z "$bashrc" ]] && {
-        echo Amending ~/.bashrc...;
+        say "Amending ~/.bashrc...";
         $SCRP_DIR/awkfig -v start="#cracklerc" "$SCRP_DIR"/crackle.conf >> "$HOME"/.bashrc;
     }
     [[ -z "$profile" ]] && {
-        echo Amending ~/.profile...;
+        say "Amending ~/.profile...";
         $SCRP_DIR/awkfig -v start="#cracklerc" "$SCRP_DIR"/crackle.conf >> "$HOME"/.profile;
     }
     upd $SCRP_DIR/awkopts $PKG_PREFIX/bin;
@@ -129,21 +128,21 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
     #TRANSISTION to the new structure
     [[ -f "$APTCONFIG/crackle_completion" ]] && rm "$APTCONFIG/crackle_completion";
     [[ -f "$CRACKLECMP/crackle" ]] || {
-        echo Setting up bash_completions...;
+        say "Setting up bash_completions...";
 	mkdir -p $CRACKLECMP;
         cp "$SCRP_DIR/crackle_complete" $CRACKLECMP/crackle;
     }
     [[ ! "$(grep completions "$HOME"/.bash_completion)" ]] && {
-        echo enabling bash completion........
+        say "enabling bash completion.......";
         $SCRP_DIR/awkfig -v start="#cracklecmp" "$SCRP_DIR"/crackle.conf >> $HOME/.bash_completion;
     }
     [ -d "$APTSTATE/lists" ] || {
-        echo Fetching package lists...;
+        say "Fetching package lists...";
         "$SCRP_DIR"/crackle update || exit 100;
     }
     cp -r "$SCRP_DIR"/bin/* "$PKG_PREFIX/bin/scripts"
     if ! check_cmd patchelf; then "$SCRP_DIR"/crackle install patchelf; fi
-    echo "Setup complete!";
+    say "Setup complete!";
     exit 0;
 }
 
@@ -182,7 +181,7 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
     }
     for pkg in "${PKG[@]}"
     do
-	    echo Fetching packages.....;
+	    say "Fetching packages.....";
 	    pkgstatus $pkg;
     done;
     $APT_GET install --download-only ${PKG[@]} || exit 1;
@@ -192,15 +191,15 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
     do
         get_pkg_info $package;
         [[ "$operation" = "install" ]] && log_pkg_info "$package";
-	echo Unpacking $pkgname "("$pkgversion")"
+	say "Unpacking $pkgname ($pkgversion)"
         dpkg-deb -x "$package" "$dir";
-	[[ -f "$PKG_PREFIX/bin/scripts/$pkgname" ]] && { echo Setting up $pkgname; PKG_PATH=$PKG_PATH PKG_PREFIX=$PKG_PREFIX TRIPLET=$TRIPLET CRACKLEENV=$CRACKLEENV/$pkgname "$PKG_PREFIX/bin/scripts/$pkgname"; };
+	[[ -f "$PKG_PREFIX/bin/scripts/$pkgname" ]] && { say "Setting up $pkgname"; PKG_PATH=$PKG_PATH PKG_PREFIX=$PKG_PREFIX TRIPLET=$TRIPLET CRACKLEENV=$CRACKLEENV/$pkgname "$PKG_PREFIX/bin/scripts/$pkgname"; };
     done;
     link_bin;
     link_bash-completion;
-    echo Cleaning packages...
+    say "Cleaning packages..";
     $APT_GET clean;
-    echo Done!
+    say "Done"!
     exit 0;
 }
 
@@ -231,14 +230,14 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
     [[ -d "$PKG_PREFIX/bin/scripts" ]] && rm -r $PKG_PREFIX/bin/scripts;
     find "$PKG_PREFIX/bin" -xtype l -exec rm {} +;
     find "$CRACKLECMP" -xtype l -exec rm {} +;
-    echo please check ~/.profile ~/.bashrc and ~/.bash_completion for leftover references to crackle
+    say "please check ~/.profile ~/.bashrc and ~/.bash_completion for leftover references to crackle";
     exit 0;
 }
 
 # Delete a package from the user path
 [[ "$operation" = "remove" ]] && {
     [ -d "$PKGS_DIR/$PKG" ] || err "$PKG is not installed";
-    echo Building dependency tree...;
+    say "Building dependency tree...";
     readarray -t dependencies < <($APT_CACHE depends "$PKG"| awk '/Depends/{print $2}'|uniq);
     for dependency in "${dependencies[@]}"
     do
@@ -247,7 +246,7 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
 		fetch_rdependencies
 	}
     done
-    echo the following packages would be removed: ${packages[@]};
+    say "the following packages would be removed: ${packages[@]}";
     exit 0;
     [ -f "$CRACKLEENV/$PKG" ] && rm $CRACKLEENV/$PKG;
     for dependency in "${dependencies[@]}"
