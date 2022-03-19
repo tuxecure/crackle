@@ -1,6 +1,6 @@
 #!/bin/bash
 operation=${1};
-PKG="${2}"
+PKG=("${@:2}")
 PKG_PATH=${PKG_PATH:-${XDG_DATA_HOME:-$HOME/.local/share}/crackle};
 PKG_PREFIX=${PKG_PREFIX:-$HOME/.local}
 SCRP_DIR=$(dirname "${BASH_SOURCE[0]}")
@@ -163,6 +163,7 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
 
 # View information about a package
 [[ "$operation" = "search" || "$operation" = "show" ]] && {
+        [[ "${#PKG[@]}" -gt 1 ]] && err "too many arguments";
         $APT_CACHE "$operation" "$PKG";
         exit 0;
 }
@@ -179,8 +180,11 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
     [ "$operation" = "install" ] && {
             [ -d "$PKG_PATH" ] || err "$PKG_PATH does not exist, please run crackle setup first";
     }
-    pkgstatus $PKG;
-    $APT_GET install --download-only "$PKG" || exit 1;
+    for pkg in "${PKG[@]}"
+    do
+	    pkgstatus $pkg;
+    done;
+    $APT_GET install --download-only ${PKG[@]} || exit 1;
     readarray -t packages < <(ls "$APTCACHE"/archives/*.deb);
     TRIPLET=$(get_architecture);
     for package in "${packages[@]}"
