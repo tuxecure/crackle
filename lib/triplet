@@ -60,7 +60,10 @@ err() {
 
 upd() {
     lib=$(basename $1)
-    if ! diff -q $1 $2; then
+    if [[ ! -f "$2/$lib" ]]; then
+	say "installing $lib..." >&2
+	cp $1 $2
+    elif ! diff -q $1 $2; then
 	say "updating $lib..." >&2
 	cp $1 $2
     fi
