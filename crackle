@@ -1,13 +1,13 @@
 #!/bin/bash
-operation=$1;
-PKG=$2
+operation=${1};
+PKG="${2}"
 PKG_PATH=${PKG_PATH:-${XDG_DATA_HOME:-$HOME/.local/share}/crackle};
 PKG_PREFIX=${PKG_PREFIX:-$HOME/.local}
 SCRP_DIR=$(dirname "${BASH_SOURCE[0]}")
-if [[ -f "$PKG_PREFIX/lib/triplet" ]]; then
-    source "$PKG_PREFIX/lib/triplet";
+if [[ -f "$PKG_PREFIX/lib/pkgfunc" ]]; then
+    source "$PKG_PREFIX/lib/pkgfunc";
 else
-    source "$SCRP_DIR/lib/triplet";
+    source "$SCRP_DIR/lib/pkgfunc";
 fi
 
 # Help
@@ -92,6 +92,8 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
     mkdir -p "$PKG_PREFIX/bin" "$PKG_PREFIX/lib";
     #TRANSISTION to the new structure
     [[ ! -e "$PKG_PREFIX/bin/crackle" ]] && rm "$PKG_PREFIX/bin/crackle" ;
+    #TRANSISTION to the new structure
+    [[ -f "$PKG_PREFIX/lib/loginfo" ]] && rm $PKG_PREFIX/lib/loginfo;
     cp $SCRP_DIR/crackle $PKG_PREFIX/bin;
     cp $SCRP_DIR/lib/* $PKG_PREFIX/lib;
     #TRANSISTION to the new structure
@@ -128,7 +130,7 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
     [[ ! -f "$PKG_PREFIX/bin/remount" ]] && cp $SCRP_DIR/remount $PKG_PREFIX/bin;
 
     diff -q $PKG_PREFIX/bin/crackle $SCRP_DIR/crackle || upd $SCRP_DIR/crackle $PKG_PREFIX/bin
-    diff -q $PKG_PREFIX/lib/loginfo $SCRP_DIR/lib/loginfo || upd $SCRP_DIR/lib/loginfo $PKG_PREFIX/lib
+    diff -q $PKG_PREFIX/lib/pkgfunc $SCRP_DIR/lib/pkgfunc || upd $SCRP_DIR/lib/pkgfunc $PKG_PREFIX/lib
     #TRANSISTION to the new structure
     [[ -d "$PKG_PATH/bin/scripts" ]] && rm -r "$PKG_PATH/bin/scripts";
     [[ -d "$PKG_PREFIX/bin/scripts" ]] || mkdir -p "$PKG_PREFIX/bin/scripts";
@@ -176,7 +178,6 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
 # Install a package for the user
 [[ "$operation" = "install" || "$operation" = "crack" ]] && {
     checkro;
-    . "$PKG_PREFIX/lib/loginfo";
     if [[ "$operation" = "crack" ]]; then
         dir="$CRACKDIR";
     else
@@ -234,7 +235,6 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
 # Delete a package from the user path
 [[ "$operation" = "remove" ]] && {
     [ -d "$PKGS_DIR/$PKG" ] || err "$PKG is not installed";
-    . "$PKG_PREFIX/lib/loginfo";
     echo Building dependency tree...;
     readarray -t dependencies < <($APT_CACHE depends "$PKG"| awk '/Depends/{print $2}'|uniq);
     for dependency in "${dependencies[@]}"
