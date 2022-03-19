@@ -206,8 +206,11 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
 
 # reinstall a package
 [[ "$operation" = "reinstall" ]] && {
-    rm -r $PKGS_DIR/$PKG;
-    crackle install $PKG;
+    for pkg in "${PKG[@]}"
+    do
+	    [ -d $PKGS_DIR/$pkg ] && rm -r $PKGS_DIR/$pkg;
+    done;
+    crackle install ${PKG[@]};
 }
 
 # remove crackle from the system
