@@ -81,14 +81,13 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
     exit 0;
 }
 
-# Reads configuration for Crackle
+# Installs/updates Crackle into ~/.local ~/.config and ~/.cache
 [ "$operation" = "setup" ] && {
     bashrc=$(grep crackle "$HOME"/.bashrc);
     profile=$(grep crackle "$HOME"/.profile);
 
     [[ -d "$PKG_PATH" ]] || mkdir -p "$PKG_PATH";
     [[ -d "$PKGS_DIR" ]] || mkdir -p "$PKGS_DIR";
-    # install crackle in ~/.local
     mkdir -p "$PKG_PREFIX/bin" "$PKG_PREFIX/lib";
     #TRANSISTION to the new structure
     [[ -f "$PKG_PREFIX/lib/loginfo" ]] && rm $PKG_PREFIX/lib/loginfo;
