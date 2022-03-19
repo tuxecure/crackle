@@ -49,29 +49,5 @@ ensure() {
 }
 
 get_architecture() {
-    local _arch
-    _arch="$(dpkg --print-architecture)"
-    _os="linux-gnu"
-
-    case "$_arch" in
-
-        arm64)
-            triplet=aarch64-${_os}
-            ;;
-
-        armhf)
-            triplet=arm-${_os}eabihf
-            ;;
-
-        amd64)
-            triplet=x86_64-${_os}
-            ;;
-
-        *)
-            err "unrecognized architecture: $_arch"
-            ;;
-
-    esac
-
-   echo "$triplet"
+    bash --version|arch_triplet
 }

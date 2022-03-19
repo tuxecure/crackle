@@ -120,6 +120,7 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
         $SCRP_DIR/awkfig -v start="#cracklerc" "$SCRP_DIR"/crackle.conf >> "$HOME"/.profile;
     }
     upd $SCRP_DIR/awkopts $PKG_PREFIX/bin;
+    upd $SCRP_DIR/arch_triplet $PKG_PREFIX/bin;
     upd $SCRP_DIR/rorw $PKG_PREFIX/bin;
     upd $SCRP_DIR/remount $PKG_PREFIX/bin;
 
@@ -226,6 +227,7 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
     [[ -f "$PKG_PREFIX/lib/loginfo" ]] && rm $PKG_PREFIX/lib/loginfo;
     [[ -f "$PKG_PREFIX/lib/pkgfunc" ]] && rm $PKG_PREFIX/lib/pkgfunc;
     [[ -f "$PKG_PREFIX/bin/awkopts" ]] && rm $SCRP_DIR/awkopts $PKG_PREFIX/bin;
+    [[ -f "$PKG_PREFIX/bin/arch_triplet" ]] && rm $SCRP_DIR/arch_triplet $PKG_PREFIX/bin;
     [[ -f "$PKG_PREFIX/bin/rorw" ]] && rm $SCRP_DIR/rorw $PKG_PREFIX/bin;
     [[ -f "$PKG_PREFIX/bin/remount" ]] && rm $SCRP_DIR/remount $PKG_PREFIX/bin;
     [[ -f "$CRACKLECMP/crackle" ]] && rm $CRACKLECMP/crackle;
