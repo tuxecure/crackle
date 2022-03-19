@@ -43,6 +43,7 @@ function link(){
     pkgs=($(diff -r "$1" "$2"|awk '/crackle\//{print $4}'|sort|uniq));
     for pkg in ${pkgs[@]};
     do
+	say "linking $pkg..."
         ln -s ${1}/$pkg ${2};
     done;
 }
@@ -51,6 +52,7 @@ function link_bin(){
 	[ -d "$PKG_PATH/bin" ] && link $PKG_PATH/bin $PKG_PREFIX/bin;
 	[ -d "$PKG_PATH/sbin" ] && link $PKG_PATH/sbin $PKG_PREFIX/bin;
 	[ -d "$PKG_PATH/usr/bin" ] && link $PKG_PATH/usr/bin $PKG_PREFIX/bin
+	[ -d "$PKG_PATH/usr/games" ] && link $PKG_PATH/usr/games $PKG_PREFIX/bin;
 }
 function link_bash-completion(){
         [ -d "$PKG_PATH/etc/bash_completion.d" ] && link "$PKG_PATH"/etc/bash_completion.d ${XDG_DATA_HOME:-$HOME/.local/share}/bash-completion/completions;
