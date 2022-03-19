@@ -32,6 +32,7 @@ function fetch_rdependencies(){
 	    [ -d "$PKGS_DIR/$package" ] || packages=("${packages[@]/$package}");
     done;
 }
+
 function link(){
     pkgs=($(diff -r "$1" "$2"|awk '/crackle\//{print $4}'|sort|uniq));
     for pkg in ${pkgs[@]};
@@ -48,4 +49,17 @@ function link_bin(){
 function link_bash-completion(){
         [ -d "$PKG_PATH/etc/bash_completion.d" ] && link "$PKG_PATH"/etc/bash_completion.d ${XDG_DATA_HOME:-$HOME/.local/share}/bash-completion/completions;
         [ -d "$PKG_PATH/usr/share/bash-completion/completions" ] && link "$PKG_PATH"/usr/share/bash-completion/completions ${XDG_DATA_HOME:-$HOME/.local/share}/bash-completion/completions;
+}
+
+function pkgstatus(){
+    [[ -d "$PKGS_DIR/$PKG" && "$operation" = "install" ]] && {
+        echo "Fetching installed version...";
+        installed=$(cat $PKGS_DIR/$PKG/pkgs.version);
+        echo "Fetching candidate version...";
+        candidate=$($APT_CACHE policy $PKG|awk '/Candidate/{print $2}');
+        echo "Comparing...";
+        [[ "$installed" = "$candidate" ]] && { echo "$PKG" is already the newest version \($installed\); exit 0; }
+    }
+    pkgstatus=$($APT_CACHE policy $1|awk '/Installed/{print $2}')
+    [ ! $pkgstatus = "(none)" ] && { echo "apt: $1" is already the newest version \($pkgstatus\); exit 0; }
 }
