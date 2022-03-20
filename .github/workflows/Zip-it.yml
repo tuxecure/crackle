@@ -38,6 +38,7 @@ jobs:
           path: crackle.zip
   release:
     runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags')
 
     steps:
       - name: checkout code
@@ -60,10 +61,6 @@ jobs:
           echo "HEAD at master: $(git rev-parse bash)"
           echo "::set-output name=sha::$(git rev-parse origin/bash)"
       - name: Make release
-        if: >-
-          github.event_name == 'push' &&
-          startsWith(github.ref, 'refs/tags') &&
-          steps.get_master_sha.outputs.sha == github.sha
         uses: softprops/action-gh-release@v1
         with:
           files: crackle.zip
