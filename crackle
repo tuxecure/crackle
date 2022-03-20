@@ -112,6 +112,13 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
 	[ -d $CRACKLEENV ] || mkdir $CRACKLEENV;
         cat "$SCRP_DIR"/cracklerc >> "$CRACKLERC";
     }
+    $SCRP_DIR/awkfig -v start="CRACKLEENV=" "$CRACKLERC" > $SCRP_DIR/cracklerc.tmp
+    if ! diff -q "$SCRP_DIR"/cracklerc "$SCRP_DIR/cracklerc.tmp"; then
+        echo "CRACKLEENV=$CRACKLEENV" > "$CRACKLERC";
+	say "updating cracklerc..." >&2
+        cat "$SCRP_DIR"/cracklerc >> "$CRACKLERC";
+    fi
+    rm $SCRP_DIR/cracklerc.tmp
     [[ -z "$bashrc" ]] && {
         say "Amending ~/.bashrc...";
         $SCRP_DIR/awkfig -v start="#cracklerc" "$SCRP_DIR"/crackle.conf >> "$HOME"/.bashrc;
