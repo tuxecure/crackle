@@ -11,7 +11,7 @@ Crackle is a client which allows apt users to install stuff in their home direct
 The project is currently a bunch of bash scripts, as such installation relatively simple~
 - Download the code
 
-[![download](https://github.com/Fuseteam/linus-proof/blob/main/images/download.png)](https://github.com/tuxecure/crackle/releases/latest/download/crackle.zip)
+[![download](https://raw.githubusercontent.com/Fuseteam/linus-proof/main/images/download.png)](https://github.com/tuxecure/crackle/releases/latest/download/crackle.zip)
 
 - open a terminal
 - run `cd Downloads`
