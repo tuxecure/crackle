@@ -7,6 +7,7 @@ on:
   # Triggers the workflow on push or pull request events but only for the bash branch
   push:
     branches: [ bash ]
+    tags: [ '*' ]
   pull_request:
     branches: [ bash ]
 
