@@ -232,10 +232,10 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
     [[ -f "$PKG_PREFIX/lib/triplet" ]] && rm $PKG_PREFIX/lib/triplet;
     [[ -f "$PKG_PREFIX/lib/loginfo" ]] && rm $PKG_PREFIX/lib/loginfo;
     [[ -f "$PKG_PREFIX/lib/pkgfunc" ]] && rm $PKG_PREFIX/lib/pkgfunc;
-    [[ -f "$PKG_PREFIX/bin/awkopts" ]] && rm $SCRP_DIR/awkopts $PKG_PREFIX/bin;
-    [[ -f "$PKG_PREFIX/bin/arch_triplet" ]] && rm $SCRP_DIR/arch_triplet $PKG_PREFIX/bin;
-    [[ -f "$PKG_PREFIX/bin/rorw" ]] && rm $SCRP_DIR/rorw $PKG_PREFIX/bin;
-    [[ -f "$PKG_PREFIX/bin/remount" ]] && rm $SCRP_DIR/remount $PKG_PREFIX/bin;
+    [[ -f "$PKG_PREFIX/bin/awkopts" ]] && rm $SCRP_DIR/awkopts;
+    [[ -f "$PKG_PREFIX/bin/arch_triplet" ]] && rm $SCRP_DIR/arch_triplet;
+    [[ -f "$PKG_PREFIX/bin/rorw" ]] && rm $SCRP_DIR/rorw;
+    [[ -f "$PKG_PREFIX/bin/remount" ]] && rm $SCRP_DIR/remount;
     [[ -f "$CRACKLECMP/crackle" ]] && rm $CRACKLECMP/crackle;
     [[ -d "$PKG_PREFIX/bin/scripts" ]] && rm -r $PKG_PREFIX/bin/scripts;
     find "$PKG_PREFIX/bin" -xtype l -exec rm {} +;
