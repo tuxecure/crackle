@@ -39,8 +39,6 @@ jobs:
           path: ./*
   release:
     name: create release
-    # This ensures that this job only runs on git tags
-    if: startsWith(github.ref, 'refs/tags/v')
     needs:
       - build
     runs-on: ubuntu-latest
@@ -50,33 +48,32 @@ jobs:
         uses: actions/checkout@v3
         with:
           submodules: 'true'
-      - name: Get git tag version
+          
+      - name: Get version
         id: get_version
         uses: battila7/get-version-action@v2
-
-      - name: Set git tag version
-        run: |
-          echo "VERSION=${{ steps.get_version.outputs.version }}" >> $GITHUB_ENV
-      - name: Download build artifacts
+        
+      - name: Download build artifact
         uses: actions/download-artifact@v2
         with:
-          path: build-artifacts
-      - name: Create draft GitHub release page
-        id: create_release
-        uses: marvinpinto/action-automatic-releases@v1.2.1
+          name: crackle
+          path: /tmp/build
+      - name: Unpack artifact
+        run: unzip crackle.zip
+      - name: Get bash HEAD SHA
+        id: get_bash_sha
+        run: |
+          git fetch --depth 1 origin bash
+          echo "Commit that triggered this workflow: ${{ github.sha }}"
+          echo "HEAD at master: $(git rev-parse bash)"
+          echo "::set-output name=sha::$(git rev-parse origin/bash)"
+      - name: Make release
+        if: >-
+          github.event_name == 'push' &&
+          startsWith(github.ref, 'refs/tags') &&
+          steps.get_master_sha.outputs.sha == github.sha
+        uses: softprops/action-gh-release@v1
         with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          title: ${{ env.VERSION }}
-          draft: true
-          prerelease: false
           files: |
-            **/*.zip
-
-      - name: Add AppImage to release (x86_64)
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./build-artifacts/crackle/crackle.zip
-          asset_name: crackle.zip
+            /tmp/build/crackle.zip
+          draft: true
