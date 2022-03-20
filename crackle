@@ -9,6 +9,7 @@ if [[ -f "$PKG_PREFIX/lib/pkgfunc" ]]; then
 else
     source "$SCRP_DIR/lib/pkgfunc";
 fi
+checkro;
 
 # Help
 if [ -z "$operation" -o "$operation" = "help" ]; then
@@ -151,7 +152,6 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
 # Updates the apt repositories
 [ "$operation" = "update" ] && {
         wget -q --spider https://ubports.com || err "no internet connection, please run crackle update later to fetch the latest package lists";
-        checkro;
         $APT_GET "$operation"
         exit 0;
 }
@@ -171,7 +171,6 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
 
 # Install a package for the user
 [[ "$operation" = "install" || "$operation" = "crack" ]] && {
-    checkro;
     if [[ "$operation" = "crack" ]]; then
         dir="$CRACKDIR";
     else
