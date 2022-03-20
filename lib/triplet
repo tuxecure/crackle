@@ -8,7 +8,7 @@ checkro() {
     fi
     if [[ $(rorw) = "rw" ]]; then
         echo "remounting rootfs as readonly....";
-        remount || err "remounting failed!";
+        remount || err "remounting failed! crackle works best on a readonly rootfs";
     fi
 }
 
