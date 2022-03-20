@@ -1,8 +1,8 @@
 #!/bin/bash
 if [ $(rorw) = "ro" ]; then
 	set -x
-	sudo mount -o remount,rw /
+	sudo -k mount -o remount,rw /
 elif [ $(rorw) = "rw" ]; then
 	set -x
-	sudo mount -o remount,ro /
+	sudo -k mount -o remount,ro /
 fi
