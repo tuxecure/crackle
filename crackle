@@ -234,8 +234,10 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
     [[ -d "$PKG_PREFIX/bin/scripts" ]] && rm -r $PKG_PREFIX/bin/scripts;
     find "$PKG_PREFIX/bin" -xtype l -exec rm {} +;
     find "$PKG_PREFIX/lib" -xtype l -exec rm {} +;
+    sed -i '/cracklerc/d' $HOME/.bashrc
+    sed -i '/cracklerc/d' $HOME/.profile
     find "$CRACKLECMP" -xtype l -exec rm {} +;
-    say "please check ~/.profile ~/.bashrc and ~/.bash_completion for leftover references to crackle";
+    say "please check ~/.bash_completion for leftover references to crackle";
     exit 0;
 }
 

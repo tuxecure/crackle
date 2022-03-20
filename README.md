@@ -47,7 +47,7 @@ Crackle specific commands:
 - `reinstall`: this is equivalent to `apt install --reinstall $PKG`
 - `nuke`: Automagically remove everything crackle related from the system`*`
 
-`*` except the references to it in `~/.profile`, `~/.bashrc` and `~/.bash_completion`. all those references are documented in crackle.conf
+`*` except the references to it in `~/.bash_completion`. all those references are documented in crackle.conf
 
 ## Configuration
 
