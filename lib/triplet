@@ -12,6 +12,15 @@ checkro() {
     fi
 }
 
+upgrade_crackle() {
+	wget https://github.com/tuxecure/crackle/releases/latest/download/crackle.zip -O $HOME/Downloads/crackle.zip
+	unzip $HOME/Downloads/crackle.zip -d $HOME/crackle
+	$HOME/crackle/crackle setup
+	rm $HOME/Downloads/crackle.zip;
+	exit 0;
+
+}
+
 check_cmd() {
     command -v "$1" > /dev/null 2>&1
 }
