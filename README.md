@@ -39,7 +39,7 @@ crackle
 Essentially, what each command does is what you would expect from using apt as usual, but with amendments for installing things locally, instead of system-wide.
 
 Crackle specific commands:
-- `setup`: Automagically reads the user configuration and saves it into cracklerc
+- `setup`: Automagically configures and installs/upgrades crackle
 - `debug`: Shows some debugging information. Doesn't do any changes to the system.
 - `crack`: this will extract the package `$PKG` and it's dependencies to `$HOME/packages/$PKG` for easy inspection, usefull to see the file tree or navigate through the various files associated with the package or its dependencies
 - `reinstall`: this is equivalent to `apt install --reinstall $PKG`
