@@ -28,7 +28,6 @@ crackle
 	install $PKG
 	download $PKG
 	crack $PKG
-	remove $PKG
 	search $PKG
 	show $PKG
 	clean
