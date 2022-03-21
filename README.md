@@ -14,8 +14,7 @@ The project is currently a bunch of bash scripts, as such installation relativel
 [![download](https://raw.githubusercontent.com/Fuseteam/linus-proof/main/images/download.png)](https://github.com/tuxecure/crackle/releases/latest/download/crackle.zip)
 
 - open a terminal
-- run `cd Downloads`
-- run `unzip crackle.zip`
+- run `unzip Downloads/crackle.zip -d crackle`
 - run `crackle/crackle setup`
 - ???
 - profit
@@ -48,6 +47,25 @@ Crackle specific commands:
 - `nuke`: Automagically remove everything crackle related from the system`*`
 
 `*` except the references to it in `~/.bash_completion`. all those references are documented in crackle.conf
+
+## Limitations
+
+the following are the limitations of crackle:
+- currently crackle doesn't account for desktop files i.e. gui applications
+- crackle doesn't work on systems with a readwrite rootfs
+- currently crackle doesn't know how to remove packages
+- crackle doesn't know how to deal with all packages, so it may be hit or miss please report packages that don't work on gitlab
+
+## Support
+
+Support, question and suggestions for crackle can be filed on [GitLab](https://gitlab.com/tuxecure/crackle-apt/crackle). There is also a discussion & support group on [Telegram](https://t.me/CrackleApt)
+
+## Status
+
+Crackle should considered Alpha, packages may or may not work and crackle is unable to remove packages, it can only remove itself and all the packages it installed with `crackle nuke`.
+for 0.3.x considerations are being made to restructure how crackle installs packages to facililate package removal. however this update may require the user to run crackle nuke first
+for now the plan for 0.2.6 is to deprecate cracklerc to make the experience much smoother, to handle desktop files and other smaller bug fixes that don't currently comes to mind
+
 
 ## Configuration
 
