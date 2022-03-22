@@ -217,6 +217,7 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
 
 # remove crackle from the system
 [[ "$operation" = "nuke" ]] && {
+    transition_crackle;
     [ -d $PKG_PATH ] && rm -r $PKG_PATH;
     [[ -d "$APTCACHE" ]] && rm -r "$APTCACHE";
     [[ -d "$APTSTATE" ]] && rm -r "$APTSTATE";
@@ -224,7 +225,6 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
     [[ -d "$APTCONFIG" ]] && rm -r "$APTCONFIG";
     [[ -f "$PKG_PREFIX/bin/crackle" ]] && rm $PKG_PREFIX/bin/crackle;
     [[ -f "$PKG_PREFIX/lib/triplet" ]] && rm $PKG_PREFIX/lib/triplet;
-    [[ -f "$PKG_PREFIX/lib/loginfo" ]] && rm $PKG_PREFIX/lib/loginfo;
     [[ -f "$PKG_PREFIX/lib/pkgfunc" ]] && rm $PKG_PREFIX/lib/pkgfunc;
     [[ -f "$PKG_PREFIX/bin/_crackleopts" ]] && rm $SCRP_DIR/_crackleopts;
     [[ -f "$PKG_PREFIX/bin/_crackleconf" ]] && rm $SCRP_DIR/_crackleconf;
