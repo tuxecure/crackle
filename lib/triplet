@@ -23,7 +23,7 @@ upgrade_crackle() {
 	say "unpacking..."
 	unzip -q $HOME/Downloads/crackle.zip -d $HOME/crackle
 	transistion_crackle
-	$HOME/crackle/crackle setup
+	[[  $(basename $SCRP_DIR) = "bin" ]] || $HOME/crackle/crackle setup
 	say "cleaning up..."
 	rm $HOME/Downloads/crackle.zip;
 	say "done!"
