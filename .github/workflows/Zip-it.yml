@@ -34,18 +34,20 @@ jobs:
         run: zip -r crackle.zip *
 
       - name: Get git tag version
+        if: startsWith(github.ref, 'refs/tags')
         id: get_version
         uses: battila7/get-version-action@v2
       - name: get the tag message
+        if: startsWith(github.ref, 'refs/tags')
         id: get_tag_msg
-        run: echo "MSG=$(git tag -l --format=\"%(contents)\" ${{ steps.get_version.outputs.version }})" >> $GITHUB_ENV
+        run: echo "::set-output name=tag-message::$(git tag -l --format=\"%(contents)\" ${{ steps.get_version.outputs.version }})"
 
       - name: Make release
         if: startsWith(github.ref, 'refs/tags')
         uses: softprops/action-gh-release@v1
         with:
           files: crackle.zip
-          body: ${{ env.MSG }}
+          body: ${{ get_tag_msg.outputs.tag-message }}
           draft: true
       - name: Upload the zip file
         uses: actions/upload-artifact@v2
