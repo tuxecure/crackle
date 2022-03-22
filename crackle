@@ -91,10 +91,6 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
     [[ -d "$PKG_PATH" ]] || mkdir -p "$PKG_PATH";
     [[ -d "$PKGS_DIR" ]] || mkdir -p "$PKGS_DIR";
     mkdir -p "$PKG_PREFIX/bin" "$PKG_PREFIX/lib";
-    #TRANSISTION to the new structure
-    [[ -f "$PKG_PREFIX/lib/loginfo" ]] && rm $PKG_PREFIX/lib/loginfo;
-    #TRANSISTION to the new structure
-    [ -d $PKG_PATH/lib ] && rm -r $PKG_PATH/lib;
 
     upd $SCRP_DIR/lib/triplet $PKG_PREFIX/lib
     upd $SCRP_DIR/crackle $PKG_PREFIX/bin
@@ -102,8 +98,6 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
 
     [[ -d "$APTCACHE" ]] || mkdir -p "$APTCACHE";
     [[ -d "$APTSTATE" ]] || mkdir -p "$APTSTATE";
-    #TRANSISTION to the new structure
-    [[ -d "$APTCACHE/lists" ]] && rm -r "$APTCACHE/lists";
     [[ -d "$APTCONFIG" ]] || {
         mkdir -p $APTCONFIG/sources.list.d $APTCONFIG/preferences.d;
         ln -s /etc/apt/sources.list $APTCONFIG;
@@ -133,11 +127,7 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
     upd $SCRP_DIR/rorw $PKG_PREFIX/bin;
     upd $SCRP_DIR/remount $PKG_PREFIX/bin;
 
-    #TRANSISTION to the new structure
-    [[ -d "$PKG_PATH/bin/scripts" ]] && rm -r "$PKG_PATH/bin/scripts";
     [[ -d "$PKG_PREFIX/bin/scripts" ]] || mkdir -p "$PKG_PREFIX/bin/scripts";
-    #TRANSISTION to the new structure
-    [[ -f "$APTCONFIG/crackle_completion" ]] && rm "$APTCONFIG/crackle_completion";
     [[ -f "$CRACKLECMP/crackle" ]] || {
         say "Setting up bash_completions...";
 	mkdir -p $CRACKLECMP;

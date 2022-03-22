@@ -17,12 +17,21 @@ upgrade_crackle() {
 	wget -q https://github.com/tuxecure/crackle/releases/latest/download/crackle.zip -O $HOME/Downloads/crackle.zip
 	say "unpacking..."
 	unzip -q $HOME/Downloads/crackle.zip -d $HOME/crackle
+	transistion_crackle
 	$HOME/crackle/crackle setup
 	say "cleaning up..."
 	rm $HOME/Downloads/crackle.zip;
 	say "done!"
 	exit 0;
 
+}
+
+transistion_crackle() {
+	[[ -f "$PKG_PREFIX/lib/loginfo" ]] && rm $PKG_PREFIX/lib/loginfo;
+	[ -d $PKG_PATH/lib ] && rm -r $PKG_PATH/lib;
+	[[ -d "$APTCACHE/lists" ]] && rm -r "$APTCACHE/lists";
+	[[ -f "$APTCONFIG/crackle_completion" ]] && rm "$APTCONFIG/crackle_completion";
+	[[ -d "$PKG_PATH/bin/scripts" ]] && rm -r "$PKG_PATH/bin/scripts";
 }
 
 check_cmd() {
