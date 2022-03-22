@@ -1,5 +1,6 @@
 #!/bin/bash
-# pulled out of https://sh.rustup.rs/
+# parts are pulled out of https://sh.rustup.rs/
+#check if the rootfs is readonly, if not remount
 checkro() {
     if ! check_cmd rorw;
     then
@@ -30,6 +31,7 @@ upgrade_crackle() {
 
 }
 
+# remove lines, files and folders that crackle added/installed once upon a time
 transistion_crackle() {
 	[[ -f "$PKG_PATH/bin/awkopts" ]] && rm $PKG_PATH/bin/awkopts;
 	[[ -f "$PKG_PREFIX/bin/awkopts" ]] && rm $PKG_PREFIX/bin/awkopts;
@@ -41,6 +43,7 @@ transistion_crackle() {
 	sed -i '/crackle_conmpletion/d' $HOME/.bash_completion
 }
 
+# check is a command exists
 check_cmd() {
     command -v "$1" > /dev/null 2>&1
 }
@@ -49,16 +52,19 @@ say() {
     printf '%s\n' "$1"
 }
 
+# error out
 err() {
     say "Crackle: $1" >&2
     exit 100
 }
 
+# say something and quit the script
 stat() {
     say "$1" >&2
     exit 0
 }
 
+# check if the files differ, if yes overwrite the old version
 upd() {
     lib=$(basename $1)
     if [[ ! -f "$2/$lib" && -d "$2" ]]; then
