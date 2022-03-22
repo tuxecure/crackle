@@ -47,7 +47,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: crackle.zip
-          body: ${{ get_tag_msg.outputs.tag-message }}
+          body: ${{ steps.get_tag_msg.outputs.tag-message }}
           draft: true
       - name: Upload the zip file
         uses: actions/upload-artifact@v2
