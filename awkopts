@@ -1,8 +1,6 @@
 #!/usr/bin/awk -f
 BEGIN {
-	system("crackle > /tmp/crackle.opts")
-	ARGC=2
-	ARGV[1]="/tmp/crackle.opts"
+	c="crackle"
+	while(c|getline) { if ( $3 ) print $3 }
+	close(c);
 }
-/setup/,/nuke/{print $3}
-END { system("rm /tmp/crackle.opts") }
