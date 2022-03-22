@@ -27,6 +27,7 @@ jobs:
       - name: checkout code
         uses: actions/checkout@v3
         with:
+          ref: ${{ github.ref }}
           submodules: 'true'
 
       # Runs a set of commands using the runners shell
