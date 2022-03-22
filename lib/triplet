@@ -27,6 +27,8 @@ upgrade_crackle() {
 }
 
 transistion_crackle() {
+	[[ -f "$PKG_PATH/bin/awkopts" ]] && rm $PKG_PATH/bin/awkopts;
+	[[ -f "$PKG_PREFIX/bin/awkopts" ]] && rm $PKG_PREFIX/bin/awkopts;
 	[[ -f "$PKG_PREFIX/lib/loginfo" ]] && rm $PKG_PREFIX/lib/loginfo;
 	[ -d $PKG_PATH/lib ] && rm -r $PKG_PATH/lib;
 	[[ -d "$APTCACHE/lists" ]] && rm -r "$APTCACHE/lists";
