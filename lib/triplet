@@ -60,7 +60,3 @@ upd() {
 ensure() {
     if ! "$@"; then exit 1; fi
 }
-
-get_architecture() {
-    bash --version|arch_triplet
-}

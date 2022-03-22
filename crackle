@@ -196,7 +196,7 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
     done;
     ensure $APT_GET install --download-only ${PKG[@]};
     readarray -t packages < <(ls "$APTCACHE"/archives/*.deb);
-    TRIPLET=$(get_architecture);
+    TRIPLET=$(arch_triplet);
     for package in "${packages[@]}"
     do
         get_pkg_info $package;

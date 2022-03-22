@@ -5,7 +5,7 @@ _crackle()
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
     case $COMP_CWORD in
-	    1) COMPREPLY=( $(compgen -W "$(crackle | awkopts)" -- ${cur}) );;
+	    1) COMPREPLY=( $(compgen -W "$(awkopts)" -- ${cur}) );;
 	    *);;
     esac
     case $prev in
