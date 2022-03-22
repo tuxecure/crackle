@@ -12,9 +12,13 @@ checkro() {
     fi
 }
 
-upgrade_crackle() {
+download_crackle() {
 	say "downloading latest version"
 	wget -q https://github.com/tuxecure/crackle/releases/latest/download/crackle.zip -O $HOME/Downloads/crackle.zip
+}
+
+upgrade_crackle() {
+	[[ ! -f $HOME/Downloads/crackle.zip ]] && download_crackle;
 	say "unpacking..."
 	unzip -q $HOME/Downloads/crackle.zip -d $HOME/crackle
 	transistion_crackle
