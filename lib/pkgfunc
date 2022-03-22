@@ -44,7 +44,13 @@ function link(){
     for pkg in ${pkgs[@]};
     do
 	say "linking $pkg..."
-        ln -s ${1}/$pkg ${2};
+        if [ -f ${1}/$pkg ]; then
+		ln -s ${1}/$pkg ${2};
+	elif [ -f ${1}/$(arch_triplet)/$pkg ]; then
+		ln -s ${1}/$(arch_triplet)/$pkg ${2};
+	else
+		say "linking $pkg failed!"
+	fi
     done;
 }
 function link_bin(){
@@ -56,6 +62,7 @@ function link_bin(){
 }
 function link_lib(){
         [ -d "$PKG_PATH/usr/lib" ] && link "$PKG_PATH"/usr/lib ${PKG_PREFIX}/lib;
+        [ -d "$PKG_PATH/lib" ] && link "$PKG_PATH"/lib ${PKG_PREFIX}/lib;
 }
 function link_bash-completion(){
         [ -d "$PKG_PATH/etc/bash_completion.d" ] && link "$PKG_PATH"/etc/bash_completion.d ${XDG_DATA_HOME:-$HOME/.local/share}/bash-completion/completions;
