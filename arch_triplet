@@ -1,13 +1,9 @@
 #!/usr/bin/awk -f
 BEGIN {
 	FS = "[ ()-]"
-	system("bash --version > /tmp/bash.version")
-	ARGC=2
-	ARGV[1]="/tmp/bash.version"
+	c="bash --version"
+	c|getline;
+	close(c);
 	OFS="-"
-	
-}
-/bash/{print $9,$11,$12}
-END {
-	system("rm /tmp/bash.version")
+ if ( /bash/ ) print $9,$11,$12
 }
