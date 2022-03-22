@@ -1,2 +1,8 @@
 #!/usr/bin/awk -f
+BEGIN {
+	system("crackle > /tmp/crackle.opts")
+	ARGC=2
+	ARGV[1]="/tmp/crackle.opts"
+}
 /setup/,/nuke/{print $3}
+END { system("rm /tmp/crackle.opts") }
