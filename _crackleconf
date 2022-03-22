@@ -1,0 +1,7 @@
+#!/usr/bin/awk -f
+BEGIN {
+	ARGC = 2
+	if ( !ARGV[1] ) exit;
+	if ( !end ) end ="###"
+}
+$0~start{flag=1;next}$1~end{flag=0}flag
