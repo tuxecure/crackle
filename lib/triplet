@@ -54,7 +54,7 @@ stat() {
 
 upd() {
     lib=$(basename $1)
-    if [[ ! -f "$2/$lib" ]]; then
+    if [[ ! -f "$2/$lib" && -d "$2" ]]; then
 	say "installing $lib..." >&2
 	cp $1 $2
     elif ! diff -q $1 $2; then
