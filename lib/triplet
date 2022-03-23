@@ -2,11 +2,6 @@
 # parts are pulled out of https://sh.rustup.rs/
 #check if the rootfs is readonly, if not remount
 checkro() {
-    if ! check_cmd rorw;
-    then
-        export PATH="$PATH:~/.local/bin"
-	echo please add ~/.local/bin to your PATH;
-    fi
     if [[ $(rorw) = "rw" ]]; then
         echo "remounting rootfs as readonly....";
         remount || err "remounting failed! crackle works best on a readonly rootfs";

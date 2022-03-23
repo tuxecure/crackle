@@ -9,7 +9,12 @@ if [[ -f "$PKG_PREFIX/lib/pkgfunc" ]]; then
 else
     source "$SCRP_DIR/lib/pkgfunc";
 fi
-checkro;
+if ! check_cmd rorw;
+    then
+	echo please add ~/.local/bin to your PATH;
+else
+	checkro;
+fi
 
 # Help
 if [ -z "$operation" -o "$operation" = "help" ]; then
@@ -173,6 +178,7 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
 
 # Install a package for the user
 [[ "$operation" = "install" || "$operation" = "crack" ]] && {
+    if ! check_cmd rorw; then err "programs I install won't be executable now, please adjust your PATH variable"; fi
     if [[ "$operation" = "crack" ]]; then
         dir="$CRACKDIR";
     else
