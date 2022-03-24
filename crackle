@@ -194,16 +194,15 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
 	    pkgstatus $pkg;
     done;
     ensure $APT_GET install --download-only ${PKG[@]};
-    readarray -t packages < <(ls "$APTCACHE"/archives/*.deb);
     TRIPLET=$(arch_triplet);
-    for package in "${packages[@]}"
+    while read package
     do
         get_pkg_info $package;
         [[ "$operation" = "install" ]] && log_pkg_info "$package";
 	say "Unpacking $pkgname ($pkgversion)"
         dpkg-deb -x "$package" "$dir";
-	[[ -f "$PKG_PREFIX/bin/scripts/$pkgname" ]] && { say "Setting up $pkgname"; PKG_PATH=$PKG_PATH PKG_PREFIX=$PKG_PREFIX TRIPLET=$TRIPLET CRACKLEENV=$CRACKLEENV/$pkgname "$PKG_PREFIX/bin/scripts/$pkgname"; };
-    done;
+	[[ -f "$PKG_PREFIX/bin/scripts/$pkgname" && "$operation" = "install" ]] && { say "Setting up $pkgname"; PKG_PATH=$PKG_PATH PKG_PREFIX=$PKG_PREFIX TRIPLET=$TRIPLET CRACKLEENV=$CRACKLEENV/$pkgname "$PKG_PREFIX/bin/scripts/$pkgname"; };
+    done < <(ls "$APTCACHE"/archives/*.deb);
     link_bin;
     link_lib;
     link_bash-completion;
