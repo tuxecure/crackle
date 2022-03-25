@@ -1,57 +1,57 @@
 #!/bin/bash
 LIB_DIR=$(dirname "${BASH_SOURCE[0]}")
 if [[ -f "$PKG_PREFIX/lib/triplet" ]]; then
-    source "$PKG_PREFIX/lib/triplet";
+	source "$PKG_PREFIX/lib/triplet";
 else
-    source "$LIB_DIR/triplet";
+	source "$LIB_DIR/triplet";
 fi
 function urldecode() { : "${*//+/ }"; echo -e "${_//%/\\x}"; }
 function get_pkg_info () {
-    pkg="$(basename "$1")";
-    pkgname="${pkg%%_*}";
-    pkgversion="${pkg%_*}";
-    pkgversion="${pkgversion#*_}";
-    pkgversion="$(urldecode $pkgversion)";
+	pkg="$(basename "$1")";
+	pkgname="${pkg%%_*}";
+	pkgversion="${pkg%_*}";
+	pkgversion="${pkgversion#*_}";
+	pkgversion="$(urldecode $pkgversion)";
 }
 function log_pkg_info () {
-    [ -d "$PKGS_DIR/$pkgname" ] || mkdir "$PKGS_DIR/$pkgname";
-    dpkg -c "$1" | awk '{print $6}' > "$PKGS_DIR/$pkgname/pkgs.list";
-    echo "$pkgversion" > "$PKGS_DIR/$pkgname/pkgs.version";
+	[ -d "$PKGS_DIR/$pkgname" ] || mkdir "$PKGS_DIR/$pkgname";
+	dpkg -c "$1" | awk '{print $6}' > "$PKGS_DIR/$pkgname/pkgs.list";
+	echo "$pkgversion" > "$PKGS_DIR/$pkgname/pkgs.version";
 }
 function rmpkgtree() {
-    [ -d "$PKGS_DIR/$1" ] && {
-        say "Removing $1";
-        readarray -t files < <(cat "$PKGS_DIR/$1/pkgs.list");
-        for file in "${files[@]}"
-        do
-                [ -f "$PKG_PATH/$file" ] && rm "$PKG_PATH/$file";
-        done
-        find $PKG_PATH -empty -type d -delete;
-        find "$PKG_PATH" -xtype l -exec rm {} +;
-        rm -r "${PKGS_DIR:?}/$1";
-    }
+	[ -d "$PKGS_DIR/$1" ] && {
+	say "Removing $1";
+	readarray -t files < <(cat "$PKGS_DIR/$1/pkgs.list");
+	for file in "${files[@]}"
+	do
+		[ -f "$PKG_PATH/$file" ] && rm "$PKG_PATH/$file";
+	done
+	find $PKG_PATH -empty -type d -delete;
+	find "$PKG_PATH" -xtype l -exec rm {} +;
+	rm -r "${PKGS_DIR:?}/$1";
+}
 }
 function fetch_rdependencies(){
-    readarray -t packages < <($APT_CACHE rdepends "$dependency" | awk '/Depends/{next}/$/{print $1}'|uniq);
-    for package in "${packages[@]}"
-    do
-	    [ -d "$PKGS_DIR/$package" ] || packages=("${packages[@]/$package}");
-    done;
+	readarray -t packages < <($APT_CACHE rdepends "$dependency" | awk '/Depends/{next}/$/{print $1}'|uniq);
+	for package in "${packages[@]}"
+	do
+		[ -d "$PKGS_DIR/$package" ] || packages=("${packages[@]/$package}");
+	done;
 }
 
 function link(){
-    pkgs=($(diff -r "$1" "$2"|awk '/crackle\//{print $4}'|sort|uniq));
-    for pkg in ${pkgs[@]};
-    do
-	say "linking $pkg..."
-        if [ -f ${1}/$pkg ]; then
-		ln -s ${1}/$pkg ${2};
-	elif [ -f ${1}/$(arch_triplet)/$pkg ]; then
-		ln -s ${1}/$(arch_triplet)/$pkg ${2};
-	else
-		say "linking $pkg failed!"
-	fi
-    done;
+	pkgs=($(diff -r "$1" "$2"|awk '/crackle\//{print $4}'|sort|uniq));
+	for pkg in ${pkgs[@]};
+	do
+		say "linking $pkg..."
+		if [ -f ${1}/$pkg ]; then
+			ln -s ${1}/$pkg ${2};
+		elif [ -f ${1}/$(arch_triplet)/$pkg ]; then
+			ln -s ${1}/$(arch_triplet)/$pkg ${2};
+		else
+			say "linking $pkg failed!"
+		fi
+	done;
 }
 function link_bin(){
 	[ ! -d "$HOME/.local/bin" ] && mkdir -p  "$HOME/.local/bin";
@@ -61,23 +61,22 @@ function link_bin(){
 	[ -d "$PKG_PATH/usr/games" ] && link $PKG_PATH/usr/games $PKG_PREFIX/bin;
 }
 function link_lib(){
-        [ -d "$PKG_PATH/usr/lib" ] && link "$PKG_PATH"/usr/lib ${PKG_PREFIX}/lib;
-        [ -d "$PKG_PATH/lib" ] && link "$PKG_PATH"/lib ${PKG_PREFIX}/lib;
+	[ -d "$PKG_PATH/usr/lib" ] && link "$PKG_PATH"/usr/lib ${PKG_PREFIX}/lib;
+	[ -d "$PKG_PATH/lib" ] && link "$PKG_PATH"/lib ${PKG_PREFIX}/lib;
 }
 function link_bash-completion(){
-        [ -d "$PKG_PATH/etc/bash_completion.d" ] && link "$PKG_PATH"/etc/bash_completion.d ${XDG_DATA_HOME:-$HOME/.local/share}/bash-completion/completions;
-        [ -d "$PKG_PATH/usr/share/bash-completion/completions" ] && link "$PKG_PATH"/usr/share/bash-completion/completions ${XDG_DATA_HOME:-$HOME/.local/share}/bash-completion/completions;
+	[ -d "$PKG_PATH/etc/bash_completion.d" ] && link "$PKG_PATH"/etc/bash_completion.d ${XDG_DATA_HOME:-$HOME/.local/share}/bash-completion/completions;
+	[ -d "$PKG_PATH/usr/share/bash-completion/completions" ] && link "$PKG_PATH"/usr/share/bash-completion/completions ${XDG_DATA_HOME:-$HOME/.local/share}/bash-completion/completions;
 }
 
 function pkgstatus(){
-    [[ -d "$PKGS_DIR/$PKG" && "$operation" = "install" ]] && {
-        say "Fetching installed version...";
-        installed=$(cat $PKGS_DIR/$PKG/pkgs.version);
-        say "Fetching candidate version...";
-        candidate=$($APT_CACHE policy $PKG|awk '/Candidate/{print $2}');
-        say "Comparing...";
-        [[ "$installed" = "$candidate" ]] && stat "$PKG is already the newest version \($installed\)";
-    }
-    pkgstatus=$($APT_CACHE policy $1|awk '/Installed/{print $2}')
-    [ ! $pkgstatus = "(none)" ] && stat "Apt: $1 is already the newest version \($pkgstatus\)";
+	[[ -d "$PKGS_DIR/$PKG" && "$operation" = "install" ]] && {
+	say "Fetching installed version...";
+	installed=$(cat $PKGS_DIR/$PKG/pkgs.version);
+	say "Fetching candidate version...";
+	candidate=$($APT_CACHE policy $PKG|awk '/Candidate/{print $2}');
+	say "Comparing...";
+	[[ "$installed" = "$candidate" ]] && stat "$PKG is already the newest version \($installed\)"; }
+	pkgstatus=$($APT_CACHE policy $1|awk '/Installed/{print $2}');
+	[ ! $pkgstatus = "(none)" ] && stat "Apt: $1 is already the newest version \($pkgstatus\)";
 }
