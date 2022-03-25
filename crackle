@@ -198,10 +198,8 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
     while read package
     do
         get_pkg_info $package;
-        [[ "$operation" = "install" ]] && log_pkg_info "$package";
-	say "Unpacking $pkgname ($pkgversion)"
-        dpkg-deb -x "$package" "$dir";
-	[[ -f "$PKG_PREFIX/bin/scripts/$pkgname" && "$operation" = "install" ]] && { say "Setting up $pkgname"; PKG_PATH=$PKG_PATH PKG_PREFIX=$PKG_PREFIX TRIPLET=$TRIPLET CRACKLEENV=$CRACKLEENV/$pkgname "$PKG_PREFIX/bin/scripts/$pkgname"; };
+        [[ "$operation" = "install" ]] && pkg_install;
+        [[ "$operation" = "crackle" ]] && pkg_crack;
     done < <(ls "$APTCACHE"/archives/*.deb);
     link_bin;
     link_lib;

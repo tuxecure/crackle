@@ -18,6 +18,23 @@ function log_pkg_info () {
 	dpkg -c "$1" | awk '{print $6}' > "$PKGS_DIR/$pkgname/pkgs.list";
 	echo "$pkgversion" > "$PKGS_DIR/$pkgname/pkgs.version";
 }
+function pkg_install () {
+	say "Unpacking ${pkgname} (${pkgversion})"
+        dpkg-deb -x "${package}" "${dir}";
+	log_pkg_info "${package}"
+	if [ -f "${PKG_PREFIX}/bin/scripts/${pkgname}" ]; then
+		source "${PKG_PREFIX}/bin/scripts/${pkgname}";
+		install_${pkgname};
+	fi
+}
+function pkg_crack () {
+	say "Unpacking ${pkgname} (${pkgversion})"
+        dpkg-deb -x "${package}" "${dir}";
+	say "Cleaning packages..";
+	${APT_GET} clean;
+	say "Done"!
+	exit 0;
+}
 function rmpkgtree() {
 	[ -d "$PKGS_DIR/$1" ] && {
 	say "Removing $1";
