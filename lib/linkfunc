@@ -3,13 +3,13 @@ function link(){
 	pkgs=($(diff -r "$1" "$2"|awk '/crackle\//{print $4}'|sort|uniq));
 	for pkg in ${pkgs[@]};
 	do
-		say "linking $pkg..."
+		say "Linking $pkg..."
 		if [ -f ${1}/$pkg ]; then
 			ln -s ${1}/$pkg ${2};
 		elif [ -f ${1}/$(arch_triplet)/$pkg ]; then
 			ln -s ${1}/$(arch_triplet)/$pkg ${2};
 		else
-			say "linking $pkg failed!"
+			say "Linking $pkg failed!"
 		fi
 	done;
 }

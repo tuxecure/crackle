@@ -29,10 +29,6 @@ function pkg_install () {
 function pkg_crack () {
 	say "Unpacking ${pkgname} (${pkgversion})"
         dpkg-deb -x "${package}" "${dir}";
-	say "Cleaning packages..";
-	${APT_GET} clean;
-	say "Done"!
-	exit 0;
 }
 
 function rmpkgtree() {
