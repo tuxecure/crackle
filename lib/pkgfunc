@@ -21,6 +21,9 @@ function pkg_install () {
 		source "${PKG_PREFIX}/bin/scripts/${pkgname}";
 		install_${pkgname};
 	fi
+	link_bin;
+	link_lib;
+	link_bash-completion;
 }
 
 function pkg_crack () {

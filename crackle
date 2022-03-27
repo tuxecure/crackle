@@ -205,11 +205,8 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
     do
         get_pkg_info $package;
         [[ "$operation" = "install" ]] && pkg_install;
-        [[ "$operation" = "crackle" ]] && pkg_crack;
+        [[ "$operation" = "crack" ]] && pkg_crack;
     done < <(ls "$APTCACHE"/archives/*.deb);
-    link_bin;
-    link_lib;
-    link_bash-completion;
     say "Cleaning packages..";
     $APT_GET clean;
     say "Done"!
