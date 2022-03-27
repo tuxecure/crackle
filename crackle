@@ -184,7 +184,6 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
 
 # Install a package for the user
 [[ "$operation" = "install" || "$operation" = "crack" ]] && {
-    if ! check_cmd rorw; then err "programs I install won't be executable now, please adjust your PATH variable"; fi
     if [[ "$operation" = "crack" ]]; then
         dir="$CRACKDIR";
     else
@@ -192,13 +191,14 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
     fi
     [[ "$operation" = "crack" && ! -d "$dir" ]] && mkdir "$dir";
     [ "$operation" = "install" ] && {
-            [ -d "$PKG_PATH" ] || err "$PKG_PATH does not exist, please run crackle setup first";
-    }
-    for pkg in "${PKG[@]}"
-    do
+        [ -d "$PKG_PATH" ] || err "$PKG_PATH does not exist, please run crackle setup first";
+	if ! check_cmd rorw; then err "programs I install won't be executable now, please adjust your PATH variable"; fi
+	for pkg in "${PKG[@]}"
+	do
 	    say "Fetching packages.....";
 	    pkgstatus $pkg;
-    done;
+	done;
+    }
     ensure $APT_GET install --download-only ${PKG[@]};
     TRIPLET=$(arch_triplet);
     while read package
