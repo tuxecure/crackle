@@ -1,6 +1,16 @@
 #!/bin/bash
 # parts are pulled out of https://sh.rustup.rs/
 #check if the rootfs is readonly, if not remount
+LIB_DIR=$(dirname "${BASH_SOURCE[0]}")
+load_lib() {
+	lib=$1;
+	if [[ -f "$PKG_PREFIX/lib/$lib" ]]; then
+		source "$PKG_PREFIX/lib/$lib";
+	else
+		source "$LIB_DIR/$lib";
+	fi
+}
+urldecode() { : "${*//+/ }"; echo -e "${_//%/\\x}"; }
 checkro() {
     if [[ $(rorw) = "rw" ]]; then
         echo "remounting rootfs as readonly....";

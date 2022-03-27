@@ -4,12 +4,13 @@ PKG=("${@:2}")
 PKG_PATH=${PKG_PATH:-${XDG_DATA_HOME:-$HOME/.local/share}/crackle};
 PKG_PREFIX=${PKG_PREFIX:-$HOME/.local}
 SCRP_DIR=$(dirname "${BASH_SOURCE[0]}")
-if [[ -f "$PKG_PREFIX/lib/pkgfunc" ]]; then
-    source "$PKG_PREFIX/lib/pkgfunc";
+if [[ -f "$PKG_PREFIX/lib/triplet" ]]; then
+    source "$PKG_PREFIX/lib/triplet";
 else
-    source "$SCRP_DIR/lib/pkgfunc";
+    source "$SCRP_DIR/lib/triplet";
 fi
-load_lib triplet;
+load_lib pkgfunc;
+load_lib linkfunc;
 if ! check_cmd rorw;
     then
 	echo please add ~/.local/bin to your PATH;
@@ -105,6 +106,7 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
     upd $SCRP_DIR/lib/triplet $PKG_PREFIX/lib
     upd $SCRP_DIR/crackle $PKG_PREFIX/bin
     upd $SCRP_DIR/lib/pkgfunc $PKG_PREFIX/lib
+    upd $SCRP_DIR/lib/linkfunc $PKG_PREFIX/lib
 
     [[ -d "$APTCACHE" ]] || mkdir -p "$APTCACHE";
     [[ -d "$APTSTATE" ]] || mkdir -p "$APTSTATE";

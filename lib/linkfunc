@@ -1,0 +1,33 @@
+#!/bin/bash
+function link(){
+	pkgs=($(diff -r "$1" "$2"|awk '/crackle\//{print $4}'|sort|uniq));
+	for pkg in ${pkgs[@]};
+	do
+		say "linking $pkg..."
+		if [ -f ${1}/$pkg ]; then
+			ln -s ${1}/$pkg ${2};
+		elif [ -f ${1}/$(arch_triplet)/$pkg ]; then
+			ln -s ${1}/$(arch_triplet)/$pkg ${2};
+		else
+			say "linking $pkg failed!"
+		fi
+	done;
+}
+
+function link_bin(){
+	[ ! -d "$HOME/.local/bin" ] && mkdir -p  "$HOME/.local/bin";
+	[ -d "$PKG_PATH/bin" ] && link $PKG_PATH/bin $PKG_PREFIX/bin;
+	[ -d "$PKG_PATH/sbin" ] && link $PKG_PATH/sbin $PKG_PREFIX/bin;
+	[ -d "$PKG_PATH/usr/bin" ] && link $PKG_PATH/usr/bin $PKG_PREFIX/bin
+	[ -d "$PKG_PATH/usr/games" ] && link $PKG_PATH/usr/games $PKG_PREFIX/bin;
+}
+
+function link_lib(){
+	[ -d "$PKG_PATH/usr/lib" ] && link "$PKG_PATH"/usr/lib ${PKG_PREFIX}/lib;
+	[ -d "$PKG_PATH/lib" ] && link "$PKG_PATH"/lib ${PKG_PREFIX}/lib;
+}
+
+function link_bash-completion(){
+	[ -d "$PKG_PATH/etc/bash_completion.d" ] && link "$PKG_PATH"/etc/bash_completion.d ${XDG_DATA_HOME:-$HOME/.local/share}/bash-completion/completions;
+	[ -d "$PKG_PATH/usr/share/bash-completion/completions" ] && link "$PKG_PATH"/usr/share/bash-completion/completions ${XDG_DATA_HOME:-$HOME/.local/share}/bash-completion/completions;
+}
