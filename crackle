@@ -9,6 +9,7 @@ if [[ -f "$PKG_PREFIX/lib/pkgfunc" ]]; then
 else
     source "$SCRP_DIR/lib/pkgfunc";
 fi
+load_lib triplet;
 if ! check_cmd rorw;
     then
 	echo please add ~/.local/bin to your PATH;

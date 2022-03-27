@@ -1,10 +1,13 @@
 #!/bin/bash
 LIB_DIR=$(dirname "${BASH_SOURCE[0]}")
-if [[ -f "$PKG_PREFIX/lib/triplet" ]]; then
-	source "$PKG_PREFIX/lib/triplet";
-else
-	source "$LIB_DIR/triplet";
-fi
+function load_lib () {
+	lib=$1;
+	if [[ -f "$PKG_PREFIX/lib/$lib" ]]; then
+		source "$PKG_PREFIX/lib/$lib";
+	else
+		source "$LIB_DIR/$lib";
+	fi
+}
 function urldecode() { : "${*//+/ }"; echo -e "${_//%/\\x}"; }
 function get_pkg_info () {
 	pkg="$(basename "$1")";
