@@ -80,19 +80,29 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
 
 # View information about Crackle, don't do anything
 [ "$operation" = "debug" ] && {
+        echo "CRACKLE CONFIG"
 	echo "PKG_PATH: '$PKG_PATH'"
 	echo "PKG_PREFIX: '$PKG_PREFIX'"
 	echo "PKGS_DIR: '$PKGS_DIR'"
-	echo "APT_CACHE: '$APT_CACHE'"
-	echo "APTCONFIG: '$APTCONFIG'"
-	echo "APTCACHE: '$APTCONFIG'"
-	echo "APTSTATE: '$APTSTATE'"
 	echo "CRACKLERC: '$CRACKLERC'"
 	echo "CRACKLEENV: '$CRACKLEENV'"
 	echo "CRACKLECMP: '$CRACKLECMP'"
 	echo "CRACKDIR: '$CRACKDIR'"
+	echo "APT CONFIG"
+	echo "APT_CACHE: '$APT_CACHE'"
+	echo "APTCONFIG: '$APTCONFIG'"
+	echo "APTCACHE: '$APTCONFIG'"
+	echo "APTSTATE: '$APTSTATE'"
 	echo "APT_GET: '$APT_GET'"
 	echo "APT_CACHE: '$APT_CACHE'"
+	echo "CLICK CONFIG"
+	echo "ROOT: '$ROOT'"
+	echo "ARCH: '$ARCH'"
+	echo "ARCH_TRIPLET: '$ARCH_TRIPLET'"
+	echo "BUILD_DIR: '$BUILD_DIR'"
+	echo "INSTALL_DIR: '$INSTALL_DIR'"
+	echo "CLICK_LD_LIBRARY_PATH: '$CLICK_LD_LIBRARY_PATH'"
+	echo "CLICK_PATH: '$CLICK_PATH'"
 	exit 0;
 }
 
