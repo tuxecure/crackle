@@ -1,0 +1,31 @@
+#!/bin/bash
+function build_click () {
+    [ ! -f "manifest.json" ] && err "missing manifest.json";
+    [ -d "${BUILD_DIR}" ] && rm -r ${BUILD_DIR}
+    CRACKDIR=${BUILD_DIR} crackle crack ${PKG};
+    say "Preparing build environment..."
+    prep_build;
+    say "Building package tree..."
+    [ -d ${BUILD_DIR}/lib ] && cp -r ${BUILD_DIR}/lib/* ${CLICK_LD_LIBRARY_PATH}
+    [ -d ${BUILD_DIR}/usr/lib ] && cp -r ${BUILD_DIR}/usr/lib/* ${CLICK_LD_LIBRARY_PATH}
+    [ -d ${CLICK_LD_LIBRARY_PATH}/${ARCH_TRIPLET} ] && { mv ${CLICK_LD_LIBRARY_PATH}/${ARCH_TRIPLET}/* ${CLICK_LD_LIBRARY_PATH};rmdir ${CLICK_LD_LIBRARY_PATH}/${ARCH_TRIPLET}; }
+    [ -d ${BUILD_DIR}/usr/bin ] && cp -r ${BUILD_DIR}/usr/bin/* ${CLICK_PATH}
+    [ -d ${BUILD_DIR}/usr/sbin ] && cp -r ${BUILD_DIR}/usr/sbin/* ${CLICK_PATH}
+    [ -d ${BUILD_DIR}/usr/share ] && cp -r ${BUILD_DIR}/usr/share ${INSTALL_DIR}
+    ROOT=$ROOT ARCH=$ARCH ARCH_TRIPLET=$ARCH_TRIPLET BUILD_DIR=$BUILD_DIR INSTALL_DIR=$INSTALL_DIR CLICK_LD_LIBRARY_PATH=$CLICK_LD_LIBRARY_PATH CLICK_PATH=$CLICK_PATH bash ${BUILD_DIR}/adapt.sh
+    sed -i "s/@CLICK_ARCH@/${ARCH}/" ${INSTALL_DIR}/manifest.json
+    say "Building click...";
+    click build ${INSTALL_DIR}
+    exit 0;
+}
+
+function prep_build () {
+	[ -d "${INSTALL_DIR}" ] && rm -r ${INSTALL_DIR}
+	mkdir -p ${CLICK_LD_LIBRARY_PATH} ${CLICK_PATH} ${INSTALL_DIR}
+	cp ${ROOT}/pkg.desktop ${BUILD_DIR}/${PKG}.desktop
+	cp ${ROOT}/pkg.d/* ${ROOT}/build.sh ${ROOT}/apparmor.json ${ROOT}/manifest.json ${BUILD_DIR}/ || exit 1
+	sed -i "s/@pkg@/${PKG}/" ${BUILD_DIR}/manifest.json
+	sed -i "s/@pkg@/${PKG}/" ${BUILD_DIR}/${PKG}.desktop
+	cp ${BUILD_DIR}/${PKG}.desktop ${BUILD_DIR}/*.json ${INSTALL_DIR}
+	cp ${BUILD_DIR}/pkg.sh ${CLICK_PATH}/${PKG}.sh
+}
