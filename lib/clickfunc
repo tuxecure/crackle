@@ -1,5 +1,6 @@
 #!/bin/bash
 function build_click () {
+    if ! check_cmd click; then err "missing click"; fi
     [ ! -f "manifest.json" ] && err "missing manifest.json";
     [ -d "${BUILD_DIR}" ] && rm -r ${BUILD_DIR}
     CRACKDIR=${BUILD_DIR} crackle crack ${PKG};
