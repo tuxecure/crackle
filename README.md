@@ -2,7 +2,7 @@
 
 > **NOTE** This project is being migrated to Rust. While the bash version is still maintained, it will eventually™ be superceded by the rust version
 
-A project started by Fuseteam, inspired by [Pacstall](https://github.com/pacstall/pacstall) and [Nix](https://github.com/NixOS/nix)
+A project started by Fuseteam, inspired by [Pacstall](https://github.com/pacstall/pacstall), [Nix](https://github.com/NixOS/nix) and [nyaa](https://git.kreatea.space/kreato-linux/nyaa)
 
 Crackle is a client which allows apt users to install stuff in their home directory, following the XDG Base Directory specification.
  
@@ -42,6 +42,7 @@ Crackle specific commands:
 - `setup`: Automagically configures and installs/upgrades crackle
 - `debug`: Shows some debugging information. Doesn't do any changes to the system.
 - `crack`: this will extract the package `$PKG` and it's dependencies to `$HOME/packages/$PKG` for easy inspection, usefull to see the file tree or navigate through the various files associated with the package or its dependencies
+- `click`: this will build a click package from the downloaded deb packages
 - `reinstall`: this is equivalent to `apt install --reinstall $PKG`
 - `nuke`: Automagically remove everything crackle related from the system`*`
 
