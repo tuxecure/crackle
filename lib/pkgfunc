@@ -40,6 +40,7 @@ function pkg_arch() {
 			dpkgs+="${pkg}":"${ARCH} "
 		fi
 	done
+	echo ${dpkgs};
 }
 
 function rmpkgtree() {
