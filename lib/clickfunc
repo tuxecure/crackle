@@ -1,6 +1,7 @@
 #!/bin/bash
 function build_click () {
     if ! check_cmd click; then err "missing click"; fi
+    cd ${ROOT};
     [ ! -f "manifest.json" ] && err "missing manifest.json";
     [ -d "${BUILD_DIR}" ] && rm -r ${BUILD_DIR}
     [ -d "${APTSTATE}/lists" ] || {
@@ -28,7 +29,6 @@ function build_click () {
 
 function prep_build () {
 	[ -d "${INSTALL_DIR}" ] && rm -r ${INSTALL_DIR}
-	cd ${ROOT};
 	mkdir -p ${CLICK_LD_LIBRARY_PATH} ${CLICK_PATH} ${INSTALL_DIR}
 	cp ${ROOT}/pkg.desktop ${BUILD_DIR}/${PKG}.desktop
 	cp ${ROOT}/pkg.d/* ${ROOT}/apparmor.json ${ROOT}/manifest.json ${BUILD_DIR}/ || exit 1
