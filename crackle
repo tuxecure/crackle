@@ -226,7 +226,6 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
 	done;
     }
     ensure $APT_GET install --download-only ${PKG[@]};
-    TRIPLET=$(arch_triplet);
     while read package
     do
         get_pkg_info $package;
