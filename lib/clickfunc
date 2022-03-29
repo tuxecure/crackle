@@ -28,6 +28,7 @@ function build_click () {
 
 function prep_build () {
 	[ -d "${INSTALL_DIR}" ] && rm -r ${INSTALL_DIR}
+	cd ${ROOT};
 	mkdir -p ${CLICK_LD_LIBRARY_PATH} ${CLICK_PATH} ${INSTALL_DIR}
 	cp ${ROOT}/pkg.desktop ${BUILD_DIR}/${PKG}.desktop
 	cp ${ROOT}/pkg.d/* ${ROOT}/apparmor.json ${ROOT}/manifest.json ${BUILD_DIR}/ || exit 1
