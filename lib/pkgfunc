@@ -32,7 +32,7 @@ function pkg_crack () {
 }
 
 function pkg_arch() {
-	for pkg in "${PKGS[@]}"
+	for pkg in "${PKG[@]}"
 	do
 		if [[ "${pkg}" == *":all" ]]; then
 			dpkgs+="${pkg} "
