@@ -3,7 +3,7 @@ function build_click () {
     if ! check_cmd click; then err "missing click"; fi
     [ ! -f "manifest.json" ] && err "missing manifest.json";
     [ -d "${BUILD_DIR}" ] && rm -r ${BUILD_DIR}
-    CRACKDIR=${BUILD_DIR} ensure crackle crack ${PKG[@]};
+    CRACKDIR=${BUILD_DIR} ensure ${SCRP_DIR}/crackle crack ${PKG[@]};
     say "Preparing build environment..."
     prep_build;
     say "Building package tree..."
