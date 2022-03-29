@@ -75,9 +75,9 @@ APT_GET="apt-get -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -y"
 APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc=$APTCONFIG"
 
 # Root check
-[ "$EUID" = "0" ] && {
-    err "Don't run me as root, please"
-}
+#[ "$EUID" = "0" ] && {
+    #err "Don't run me as root, please"
+#}
 
 # View information about Crackle, don't do anything
 [ "$operation" = "debug" ] && {
