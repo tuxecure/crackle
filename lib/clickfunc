@@ -5,7 +5,8 @@ function build_click () {
     [ -d "${BUILD_DIR}" ] && rm -r ${BUILD_DIR}
     [ -d "${APTSTATE}/lists" ] || {
         say "Fetching package lists...";
-        ensure "$SCRP_DIR"/crackle update
+	mkdir -p ${APTSTATE}/lists/partial;
+        ensure "$SCRP_DIR"/crackle update;
     }
     CRACKDIR=${BUILD_DIR} ensure ${SCRP_DIR}/crackle crack ${PKG[@]};
     say "Preparing build environment..."
