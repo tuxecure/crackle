@@ -1,9 +1,15 @@
 #!/bin/bash
 function build_click () {
     if ! check_cmd click; then err "missing click"; fi
+    cd ${ROOT};
     [ ! -f "manifest.json" ] && err "missing manifest.json";
     [ -d "${BUILD_DIR}" ] && rm -r ${BUILD_DIR}
-    CRACKDIR=${BUILD_DIR} ensure crackle crack ${PKG[@]};
+    [ -d "${APTSTATE}/lists" ] || {
+        say "Fetching package lists...";
+        mkdir -p ${APTSTATE}/lists/partial ${APTCACHE}/archives/partial;
+        ensure "$SCRP_DIR"/crackle update;
+    }
+    CRACKDIR=${BUILD_DIR} ensure ${SCRP_DIR}/crackle crack ${PKG[@]};
     say "Preparing build environment..."
     prep_build;
     say "Building package tree..."
@@ -25,7 +31,7 @@ function prep_build () {
 	[ -d "${INSTALL_DIR}" ] && rm -r ${INSTALL_DIR}
 	mkdir -p ${CLICK_LD_LIBRARY_PATH} ${CLICK_PATH} ${INSTALL_DIR}
 	cp ${ROOT}/pkg.desktop ${BUILD_DIR}/${PKG}.desktop
-	cp ${ROOT}/pkg.d/* ${ROOT}/build.sh ${ROOT}/apparmor.json ${ROOT}/manifest.json ${BUILD_DIR}/ || exit 1
+	cp ${ROOT}/pkg.d/* ${ROOT}/apparmor.json ${ROOT}/manifest.json ${BUILD_DIR}/ || exit 1
 	sed -i "s/@pkg@/${PKG}/" ${BUILD_DIR}/manifest.json
 	sed -i "s/@pkg@/${PKG}/" ${BUILD_DIR}/${PKG}.desktop
 	cp ${BUILD_DIR}/${PKG}.desktop ${BUILD_DIR}/*.json ${INSTALL_DIR}
