@@ -225,7 +225,8 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
 	    pkgstatus $pkg;
 	done;
     }
-    ensure $APT_GET install --download-only ${PKG[@]};
+    pkg_arch;
+    ensure $APT_GET install --download-only ${dpkgs};
     while read package
     do
         get_pkg_info $package;
