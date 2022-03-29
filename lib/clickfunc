@@ -22,8 +22,10 @@ function build_click () {
 [ -d ${BUILD_DIR}/usr/games ] && cp -r ${BUILD_DIR}/usr/games/* ${CLICK_PATH}
     ROOT=$ROOT ARCH=$ARCH ARCH_TRIPLET=$ARCH_TRIPLET BUILD_DIR=$BUILD_DIR INSTALL_DIR=$INSTALL_DIR CLICK_LD_LIBRARY_PATH=$CLICK_LD_LIBRARY_PATH CLICK_PATH=$CLICK_PATH bash ${BUILD_DIR}/adapt.sh
     sed -i "s/@CLICK_ARCH@/${ARCH}/" ${INSTALL_DIR}/manifest.json
-    #say "Building click...";
-    #click build ${INSTALL_DIR}
+    if -z $CI; then
+        say "Building click...";
+        click build ${INSTALL_DIR}
+    fi
     exit 0;
 }
 
