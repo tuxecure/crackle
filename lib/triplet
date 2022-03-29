@@ -11,6 +11,11 @@ load_lib() {
 	fi
 }
 urldecode() { : "${*//+/ }"; echo -e "${_//%/\\x}"; }
+root_check() {
+	[ "$EUID" = "0" ] && {
+	    err "Don't run me as root, please"
+	}
+}
 checkro() {
     if [[ $(rorw) = "rw" ]]; then
         echo "remounting rootfs as readonly....";

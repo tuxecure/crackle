@@ -71,13 +71,11 @@ case $operation in
 esac
 
 # Aliases for commands
-APT_GET="apt-get -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc=$APTCONFIG"
+if [[ -z "$CI" ]]; then APTCONF="-o Dir::Etc=$APTCONFIG"; else APTCONF="-y"; fi
+APT_GET="apt-get -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE $APTCONF"
 APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc=$APTCONFIG"
-
 # Root check
-[ "$EUID" = "0" ] && {
-    err "Don't run me as root, please"
-}
+if [[ -z "$CI" ]]; then root_check; fi
 
 # View information about Crackle, don't do anything
 [ "$operation" = "debug" ] && {
@@ -225,7 +223,7 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
 	    pkgstatus $pkg;
 	done;
     }
-    ensure $APT_GET install --download-only ${PKG[@]};
+    ensure $APT_GET install --download-only $(pkg_arch);
     while read package
     do
         get_pkg_info $package;

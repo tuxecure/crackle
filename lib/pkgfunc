@@ -31,6 +31,22 @@ function pkg_crack () {
         dpkg-deb -x "${package}" "${dir}";
 }
 
+function pkg_arch() {
+	if [[ -z "$CI" ]]; then
+		echo ${PKG[@]};
+	else
+		for pkg in "${PKG[@]}"
+		do
+			if [[ "${pkg}" == *":all" ]]; then
+				dpkgs+="${pkg} "
+			else
+				dpkgs+="${pkg}":"${ARCH} "
+			fi
+		done
+		echo ${dpkgs};
+	fi
+}
+
 function rmpkgtree() {
 	[ -d "$PKGS_DIR/$1" ] && {
 	say "Removing $1";
