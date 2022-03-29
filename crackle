@@ -71,6 +71,7 @@ case $operation in
 esac
 
 # Aliases for commands
+echo $CI;
 if [[ -z "$CI" ]]; then APTCONF="-o Dir::Etc=$APTCONFIG"; else APTCONF="-y"; fi
 APT_GET="apt-get -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE $APTCONF"
 APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc=$APTCONFIG"
