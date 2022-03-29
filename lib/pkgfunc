@@ -32,15 +32,19 @@ function pkg_crack () {
 }
 
 function pkg_arch() {
-	for pkg in "${PKG[@]}"
-	do
-		if [[ "${pkg}" == *":all" ]]; then
-			dpkgs+="${pkg} "
-		else
-			dpkgs+="${pkg}":"${ARCH} "
-		fi
-	done
-	echo ${dpkgs};
+	if [[ -z "$CI" ]]; then
+		echo ${PKG[@]};
+	else
+		for pkg in "${PKG[@]}"
+		do
+			if [[ "${pkg}" == *":all" ]]; then
+				dpkgs+="${pkg} "
+			else
+				dpkgs+="${pkg}":"${ARCH} "
+			fi
+		done
+		echo ${dpkgs};
+	fi
 }
 
 function rmpkgtree() {
