@@ -10,7 +10,7 @@ function build_click () {
         ensure "$SCRP_DIR"/crackle update;
     }
     CRACKDIR=${BUILD_DIR} ensure ${SCRP_DIR}/crackle crack ${PKG[@]};
-    if [ -f "manifest.json.in" ]; then
+    if [ ! -f "manifest.json.in" ]; then
         say "Preparing build environment..."
         prep_build;
     fi
