@@ -33,13 +33,14 @@ function build_click () {
 function prep_build () {
 	[ -d "${INSTALL_DIR}" ] && rm -r ${INSTALL_DIR}
 	mkdir -p ${CLICK_LD_LIBRARY_PATH} ${CLICK_PATH} ${INSTALL_DIR}
+	[[ -d "${ROOT}/pkg.d" ]] && cp ${ROOT}/pkg.d/* ${BUILD_DIR}/
 	check_file ${ROOT}/pkg.desktop ${BUILD_DIR}/${PKG}.desktop
 	check_file ${ROOT}/manifest.json
-	[[ -d "${ROOT}/pkg.d" ]] && cp ${ROOT}/pkg.d/* ${BUILD_DIR}/
-	cp ${ROOT}/apparmor.json ${BUILD_DIR}/ || exit 1
+	check_file ${ROOT}/apparmor.json
 	if [[ -f "${ROOT}/manifest.json" ]]; then
 		sed -i "s/@pkg@/${PKG}/" ${BUILD_DIR}/manifest.json
 	fi
+	[[ ! -f "${BUILD_DIR}/manifest.json" ]] && exit 1;
 	sed -i "s/@pkg@/${PKG}/" ${BUILD_DIR}/${PKG}.desktop
 	cp ${BUILD_DIR}/${PKG}.desktop ${BUILD_DIR}/*.json ${INSTALL_DIR}
 	cp ${BUILD_DIR}/pkg.sh ${CLICK_PATH}/${PKG}.sh
