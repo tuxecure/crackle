@@ -2,7 +2,7 @@
 function build_click () {
     if ! check_cmd click; then err "missing click"; fi
     cd ${ROOT};
-    [ ! -f "manifest.json" &&  ! -f "manifest.json.in"  ] && err "missing manifest.json";
+    [ ! -f "manifest.json" && ! -f "manifest.json.in" ] && err "missing manifest.json";
     [ -d "${BUILD_DIR}" ] && rm -r ${BUILD_DIR}
     [ -d "${APTSTATE}/lists" ] || {
         say "Fetching package lists...";
@@ -10,8 +10,10 @@ function build_click () {
         ensure "$SCRP_DIR"/crackle update;
     }
     CRACKDIR=${BUILD_DIR} ensure ${SCRP_DIR}/crackle crack ${PKG[@]};
-    say "Preparing build environment..."
-    prep_build;
+    if [ -f "manifest.json.in" ]; then
+        say "Preparing build environment..."
+        prep_build;
+    fi
     say "Building package tree..."
     [ -d ${BUILD_DIR}/lib ] && cp -r ${BUILD_DIR}/lib/* ${CLICK_LD_LIBRARY_PATH}
     [ -d ${BUILD_DIR}/usr/lib ] && cp -r ${BUILD_DIR}/usr/lib/* ${CLICK_LD_LIBRARY_PATH}
