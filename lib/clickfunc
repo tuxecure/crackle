@@ -2,7 +2,7 @@
 function build_click () {
     if ! check_cmd click; then err "missing click"; fi
     cd ${ROOT};
-    [ ! -f "manifest.json" &&  ! -f "manifest.json.in"  ] && err "missing manifest.json";
+    [[ ! -f "manifest.json" && ! -f "manifest.json.in"  ]] && err "missing manifest.json";
     [ ! -f "apparmor.json" ] && err "missing apparmor.json";
     [ -d "${BUILD_DIR}" ] && rm -r ${BUILD_DIR}
     [ -d "${APTSTATE}/lists" ] || {
