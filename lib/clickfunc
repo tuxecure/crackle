@@ -45,7 +45,7 @@ function prep_build () {
 }
 
 function fetch_desktop() {
-	cp ${BUILD_DIR}/usr/share/applications/${PKG}.desktop ${INSTALL_DIR}
+	${SCRP_DIR}/desktop_trunc ${BUILD_DIR}/usr/share/applications/${PKG}.desktop > ${INSTALL_DIR}/${PKG}.desktop
 	sed -i 's/Icon=\//Icon=.\//g' ${INSTALL_DIR}/${PKG}.desktop
 	echo "X-Ubuntu-Touch=true" >> ${INSTALL_DIR}/${PKG}.desktop
 	# if mirx flag

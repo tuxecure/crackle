@@ -128,6 +128,7 @@ if [[ -z "$CI" ]]; then root_check; fi
 
     upd $SCRP_DIR/lib/triplet $PKG_PREFIX/lib
     upd $SCRP_DIR/crackle $PKG_PREFIX/bin
+    upd $SCRP_DIR/desktop_trunc $PKG_PREFIX/bin
     upd $SCRP_DIR/lib/pkgfunc $PKG_PREFIX/lib
     upd $SCRP_DIR/lib/clickfunc $PKG_PREFIX/lib
     upd $SCRP_DIR/lib/linkfunc $PKG_PREFIX/lib
