@@ -24,6 +24,17 @@ if [[ -f "$PKG_PREFIX/lib/triplet" ]]; then
 else
     source "$SCRP_DIR/lib/triplet";
 fi
+
+if ! check_cmd rorw;
+    then
+	echo please add ~/.local/bin to your PATH;
+else
+	checkro;
+fi
+
+# Root check
+if [[ -z "$CI" ]]; then root_check; fi
+
 load_lib pkgfunc;
 load_lib linkfunc;
 load_lib clickfunc;
@@ -36,13 +47,6 @@ BUILD_DIR=${BUILD_DIR:-${ROOT}/build}
 INSTALL_DIR=${INSTALL_DIR:-${ROOT}/install}
 CLICK_LD_LIBRARY_PATH=${CLICK_LD_LIBRARY_PATH:-${INSTALL_DIR}/lib/${ARCH_TRIPLET}}
 CLICK_PATH=${CLICK_PATH:-${CLICK_LD_LIBRARY_PATH}/bin}
-
-if ! check_cmd rorw;
-    then
-	echo please add ~/.local/bin to your PATH;
-else
-	checkro;
-fi
 
 # Help
 if [ -z "$operation" -o "$operation" = "help" ]; then
@@ -74,8 +78,6 @@ esac
 if [[ -z "$CI" ]]; then APTCONF="-o Dir::Etc=$APTCONFIG"; else APTCONF="-y"; fi
 APT_GET="apt-get -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE $APTCONF"
 APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc=$APTCONFIG"
-# Root check
-if [[ -z "$CI" ]]; then root_check; fi
 
 # View information about Crackle, don't do anything
 [ "$operation" = "debug" ] && {
