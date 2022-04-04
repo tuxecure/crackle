@@ -169,9 +169,9 @@ if [[ -z "$CI" ]]; then root_check; fi
     [[ -f "$CRACKLECMP/crackle" ]] || {
         say "Setting up bash_completions...";
 	mkdir -p $CRACKLECMP;
-        cp "$SCRP_DIR/crackle_complete" $CRACKLECMP/crackle;
+        cp "$SCRP_DIR/share/bash-completion/completions/crackle" $CRACKLECMP;
     }
-    upd $SCRP_DIR/crackle_complete $CRACKLECMP/crackle;
+    upd $SCRP_DIR/share/bash-completion/completions/crackle $CRACKLECMP;
     [[ ! "$(grep completions "$HOME"/.bash_completion)" ]] && {
         say "enabling bash completion.......";
         _crackleconf -v start="#cracklecmp" "$SCRP_DIR"/crackle.conf >> $HOME/.bash_completion;
