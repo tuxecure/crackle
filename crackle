@@ -128,13 +128,6 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
     [[ -d "$PKGS_DIR" ]] || mkdir -p "$PKGS_DIR";
     mkdir -p "$PKG_PREFIX/bin" "$PKG_PREFIX/lib";
 
-    upd $SCRP_DIR/lib/triplet $PKG_PREFIX/lib
-    upd $SCRP_DIR/crackle $PKG_PREFIX/bin
-    upd $SCRP_DIR/desktop_trunc $PKG_PREFIX/bin
-    upd $SCRP_DIR/lib/pkgfunc $PKG_PREFIX/lib
-    upd $SCRP_DIR/lib/clickfunc $PKG_PREFIX/lib
-    upd $SCRP_DIR/lib/linkfunc $PKG_PREFIX/lib
-
     [[ -d "$APTCACHE" ]] || mkdir -p "$APTCACHE";
     [[ -d "$APTSTATE" ]] || mkdir -p "$APTSTATE";
     [[ -d "$APTCONFIG" ]] || {
@@ -147,6 +140,13 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
         cat "$SCRP_DIR"/cracklerc >> "$CRACKLERC";
     }
     upd $SCRP_DIR/_crackleconf $PKG_PREFIX/bin;
+    upd $SCRP_DIR/lib/triplet $PKG_PREFIX/lib
+    upd $SCRP_DIR/crackle $PKG_PREFIX/bin
+    upd $SCRP_DIR/desktop_trunc $PKG_PREFIX/bin
+    upd $SCRP_DIR/lib/pkgfunc $PKG_PREFIX/lib
+    upd $SCRP_DIR/lib/clickfunc $PKG_PREFIX/lib
+    upd $SCRP_DIR/lib/linkfunc $PKG_PREFIX/lib
+
     _crackleconf -v start="CRACKLEENV=" "$CRACKLERC" > $SCRP_DIR/cracklerc.tmp
     if ! diff -q "$SCRP_DIR"/cracklerc "$SCRP_DIR/cracklerc.tmp"; then
         echo "CRACKLEENV=$CRACKLEENV" > "$CRACKLERC";
