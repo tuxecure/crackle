@@ -33,7 +33,7 @@ load_lib pkgfunc;
 load_lib linkfunc;
 load_lib clickfunc;
 
-if [[ "$CLICKABLE" = true ]] && pkgsetup;
+if [[ "$CLICKABLE" = true ]]; then  pkgsetup; fi
 
 # click config
 ROOT=${ROOT:-$(pwd)}
