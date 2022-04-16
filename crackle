@@ -39,6 +39,8 @@ load_lib pkgfunc;
 load_lib linkfunc;
 load_lib clickfunc;
 
+if [[ "$CLICKABLE" = true ]] && pkgsetup;
+
 # click config
 ROOT=${ROOT:-$(pwd)}
 ARCH=${ARCH:-$(dpkg --print-architecture)}
@@ -128,12 +130,6 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
     [[ -d "$PKGS_DIR" ]] || mkdir -p "$PKGS_DIR";
     mkdir -p "$PKG_PREFIX/bin" "$PKG_PREFIX/lib";
 
-    [[ -d "$APTCACHE" ]] || mkdir -p "$APTCACHE";
-    [[ -d "$APTSTATE" ]] || mkdir -p "$APTSTATE";
-    [[ -d "$APTCONFIG" ]] || {
-        mkdir -p $APTCONFIG/sources.list.d $APTCONFIG/preferences.d;
-        ln -s /etc/apt/sources.list $APTCONFIG;
-    }
     [[ -f "$CRACKLERC" ]] || {
         echo "CRACKLEENV=$CRACKLEENV" > "$CRACKLERC";
 	[ -d $CRACKLEENV ] || mkdir $CRACKLEENV;
@@ -178,10 +174,7 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
         say "enabling bash completion.......";
         _crackleconf -v start="#cracklecmp" "$SCRP_DIR"/crackle.conf >> $HOME/.bash_completion;
     }
-    [ -d "$APTSTATE/lists" ] || {
-        say "Fetching package lists...";
-        ensure "$SCRP_DIR"/crackle update
-    }
+    pkgsetup;
     cp -r "$SCRP_DIR"/bin/* "$PKG_PREFIX/bin/scripts"
     if ! check_cmd patchelf; then "$SCRP_DIR"/crackle install patchelf; fi
     [ ! -d $SCRP_DIR/.git ] && rm -r $SCRP_DIR;
