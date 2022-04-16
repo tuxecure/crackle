@@ -114,7 +114,7 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
 
 # Installs/updates Crackle into ~/.local ~/.config and ~/.cache
 [ "$operation" = "setup" ] && {
-    [[ -d $HOME/crackle ]] && rm -r $HOME/crackle;
+    [[ $(basename $SCRP_DIR) = "bin" && -d $HOME/crackle ]] && rm -r $HOME/crackle;
     [[ $(basename $SCRP_DIR) = "bin" || -f $HOME/Downloads/crackle.zip ]] && upgrade_crackle;
     bashrc=$(grep crackle "$HOME"/.bashrc);
     profile=$(grep crackle "$HOME"/.profile);
