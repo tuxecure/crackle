@@ -25,9 +25,9 @@ checkro() {
 
 install_rorw() {
    mkdir -p ~/.local/bin
-   cp $SCRP_DIR/rorw ~/.local/bin
-   cp $SCRP_DIR/remount ~/.local/bin
-   cp $SCRP_DIR/arch_triplet ~/.local/bin
+   upd $SCRP_DIR/rorw ~/.local/bin
+   upd $SCRP_DIR/remount ~/.local/bin
+   upd $SCRP_DIR/arch_triplet ~/.local/bin
    checkpath;
 }
 checkpath() {

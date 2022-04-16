@@ -123,6 +123,7 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
     [[ -d "$PKGS_DIR" ]] || mkdir -p "$PKGS_DIR";
     mkdir -p "$PKG_PREFIX/bin" "$PKG_PREFIX/lib";
 
+    pkgsetup;
     [[ -f "$CRACKLERC" ]] || {
         echo "CRACKLEENV=$CRACKLEENV" > "$CRACKLERC";
 	[ -d $CRACKLEENV ] || mkdir $CRACKLEENV;
@@ -167,7 +168,6 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
         say "enabling bash completion.......";
         _crackleconf -v start="#cracklecmp" "$SCRP_DIR"/crackle.conf >> $HOME/.bash_completion;
     }
-    pkgsetup;
     cp -r "$SCRP_DIR"/bin/* "$PKG_PREFIX/bin/scripts"
     if ! check_cmd patchelf; then "$SCRP_DIR"/crackle install patchelf; fi
     [ ! -d $SCRP_DIR/.git ] && rm -r $SCRP_DIR;
@@ -236,7 +236,7 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
 
 # remove crackle from the system
 [[ "$operation" = "nuke" ]] && {
-    transition_crackle;
+    transistion_crackle;
     [ -d $PKG_PATH ] && rm -r $PKG_PATH;
     [[ -d "$APTCACHE" ]] && rm -r "$APTCACHE";
     [[ -d "$APTSTATE" ]] && rm -r "$APTSTATE";
