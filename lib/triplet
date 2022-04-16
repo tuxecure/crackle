@@ -23,6 +23,21 @@ checkro() {
     fi
 }
 
+install_rorw() {
+   mkdir -p ~/.local/bin
+   cp $SCRP_DIR/rorw ~/.local/bin
+   cp $SCRP_DIR/remount ~/.local/bin
+   checkpath;
+}
+checkpath() {
+    if ! check_cmd rorw;
+        then
+	   if [[ ! -f ~/.local/bin/rorw ]]; then install_rorw; fi
+           echo please add ~/.local/bin to your PATH;
+    else
+           checkro;
+    fi
+}
 download_crackle() {
 	say "downloading latest version"
 	wget -q https://github.com/tuxecure/crackle/releases/latest/download/crackle.zip -O $HOME/Downloads/crackle.zip

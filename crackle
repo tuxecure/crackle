@@ -25,13 +25,7 @@ else
     source "$SCRP_DIR/lib/triplet";
 fi
 
-if ! check_cmd rorw;
-    then
-	echo please add ~/.local/bin to your PATH;
-else
-	checkro;
-fi
-
+checkpath;
 # Root check
 if [[ -z "$CI" ]]; then root_check; fi
 
