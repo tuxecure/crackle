@@ -23,16 +23,25 @@ checkro() {
     fi
 }
 
-install_rorw() {
-   mkdir -p ~/.local/bin
-   upd $SCRP_DIR/rorw ~/.local/bin
-   upd $SCRP_DIR/remount ~/.local/bin
-   upd $SCRP_DIR/arch_triplet ~/.local/bin
+install_bins() {
+   mkdir -p $PKG_PREFIX/bin $PKG_PREFIX/lib $CRACKLECMP
+   upd $SCRP_DIR/_crackleconf $PKG_PREFIX/bin;
+   upd $SCRP_DIR/lib/triplet $PKG_PREFIX/lib
+   upd $SCRP_DIR/crackle $PKG_PREFIX/bin
+   upd $SCRP_DIR/desktop_trunc $PKG_PREFIX/bin
+   upd $SCRP_DIR/lib/pkgfunc $PKG_PREFIX/lib
+   upd $SCRP_DIR/lib/clickfunc $PKG_PREFIX/lib
+   upd $SCRP_DIR/lib/linkfunc $PKG_PREFIX/lib
+   upd $SCRP_DIR/_crackleopts $PKG_PREFIX/bin;
+   upd $SCRP_DIR/arch_triplet $PKG_PREFIX/bin;
+   upd $SCRP_DIR/rorw $PKG_PREFIX/bin;
+   upd $SCRP_DIR/remount $PKG_PREFIX/bin;
+   upd $SCRP_DIR/share/bash-completion/completions/crackle $CRACKLECMP;
 }
 checkpath() {
     if ! check_cmd rorw;
         then
-	   if [[ ! -f ~/.local/bin/rorw ]]; then install_rorw; fi
+	   if [[ ! -f ~/.local/bin/rorw ]]; then install_bins; fi
            if ! check_cmd rorw; then echo please add ~/.local/bin to your PATH; fi
     else
            checkro;
@@ -97,10 +106,18 @@ stat() {
 upd() {
     lib=$(basename $1)
     if [[ ! -f "$2/$lib" && -d "$2" ]]; then
-	say "installing $lib..." >&2
+	if [[ $(basename $(dirname $1)) = "completions" ]] ; then
+		say "Setting up bash_completions..." >&2
+	else
+		say "Installing $lib..." >&2
+	fi
 	cp $1 $2
     elif ! diff -q $1 $2; then
-	say "updating $lib..." >&2
+	if [[ $(basename $(dirname $1)) = "completions" ]] ; then
+		say "Updating bash_completions..." >&2
+	else
+		say "Updating $lib..." >&2
+	fi
 	cp $1 $2
     fi
 }
