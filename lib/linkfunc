@@ -6,8 +6,8 @@ function link(){
 		say "Linking $pkg..."
 		if [ -f ${1}/$pkg ]; then
 			ln -s ${1}/$pkg ${2};
-		elif [ -f ${1}/$(arch_triplet)/$pkg ]; then
-			ln -s ${1}/$(arch_triplet)/$pkg ${2};
+		elif [ -f ${1}/$ARCH_TRIPLET/$pkg ]; then
+			ln -s ${1}/$ARCH_TRIPLET/$pkg ${2};
 		elif [ -d ${1}/${pkg} ]; then
 			ln -s ${1}/$pkg ${2};
 		else
