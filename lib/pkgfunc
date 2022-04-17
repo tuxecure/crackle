@@ -17,8 +17,8 @@ function pkg_install () {
 	say "Unpacking ${pkgname} (${pkgversion})"
         dpkg-deb -x "${package}" "${dir}";
 	log_pkg_info "${package}"
-	if [ -f "${PKG_PREFIX}/bin/scripts/${pkgname}" ]; then
-		source "${PKG_PREFIX}/bin/scripts/${pkgname}";
+	if [ -f "${PKG_PREFIX}/lib/crackle/${pkgname}" ]; then
+		source "${PKG_PREFIX}/lib/crackle/${pkgname}";
 		install_${pkgname};
 	fi
 	link_bin;

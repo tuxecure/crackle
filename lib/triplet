@@ -76,6 +76,7 @@ transistion_crackle() {
 	[[ -f "$PKG_PREFIX/lib/loginfo" ]] && rm $PKG_PREFIX/lib/loginfo;
 	[ -d $PKG_PATH/lib ] && rm -r $PKG_PATH/lib;
 	[[ -d "$APTCACHE/lists" ]] && rm -r "$APTCACHE/lists";
+	[[ -d "$PKG_PREFIX/bin/scripts" ]] && rm -r "$PKG_PREFIX/bin/scripts";
 	[[ -f "$APTCONFIG/crackle_completion" ]] && rm "$APTCONFIG/crackle_completion";
 	[[ -d "$PKG_PATH/bin/scripts" ]] && rm -r "$PKG_PATH/bin/scripts";
 	[ -f $HOME/.bash_completion ] && sed -i '/crackle_conmpletion/d' $HOME/.bash_completion
