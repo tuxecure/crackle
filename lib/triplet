@@ -28,13 +28,12 @@ install_rorw() {
    upd $SCRP_DIR/rorw ~/.local/bin
    upd $SCRP_DIR/remount ~/.local/bin
    upd $SCRP_DIR/arch_triplet ~/.local/bin
-   checkpath;
 }
 checkpath() {
     if ! check_cmd rorw;
         then
 	   if [[ ! -f ~/.local/bin/rorw ]]; then install_rorw; fi
-           echo please add ~/.local/bin to your PATH;
+           if ! check_cmd rorw; then echo please add ~/.local/bin to your PATH; fi
     else
            checkro;
     fi
