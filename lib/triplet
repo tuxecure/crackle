@@ -18,6 +18,7 @@ root_check() {
 }
 rm_rorw(){
    rm $PKG_PREFIX/bin/rorw
+   rm $PKG_PREFIX/bin/arch_triplet;
    rm $PKG_PREFIX/bin/remount
     err "remounting failed! crackle works best on a readonly rootfs";
 }
@@ -30,6 +31,7 @@ checkro() {
 
 install_rorw() {
    upd $SCRP_DIR/rorw $PKG_PREFIX/bin;
+   upd $SCRP_DIR/arch_triplet $PKG_PREFIX/bin;
    upd $SCRP_DIR/remount $PKG_PREFIX/bin;
 }
 install_bins() {
@@ -42,7 +44,6 @@ install_bins() {
    upd $SCRP_DIR/lib/clickfunc $PKG_PREFIX/lib
    upd $SCRP_DIR/lib/linkfunc $PKG_PREFIX/lib
    upd $SCRP_DIR/_crackleopts $PKG_PREFIX/bin;
-   upd $SCRP_DIR/arch_triplet $PKG_PREFIX/bin;
    upd $SCRP_DIR/share/bash-completion/completions/crackle $CRACKLECMP;
 }
 checkpath() {
