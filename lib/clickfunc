@@ -48,7 +48,7 @@ function fetch_desktop() {
 	${SCRP_DIR}/desktop_trunc ${BUILD_DIR}/usr/share/applications/${PKG}.desktop > ${INSTALL_DIR}/${PKG}.desktop
 	sed -i "/Icon=/d" ${INSTALL_DIR}/${PKG}.desktop
 	sed -i "/Exec=/d" ${INSTALL_DIR}/${PKG}.desktop
-	sed -i "/^Terminal=/i Exec=${PKG}.sh" ${INSTALL_DIR}/${PKG}.desktop
+	sed -i "/^Categories=/i Exec=${PKG}.sh" ${INSTALL_DIR}/${PKG}.desktop
 	echo "X-Ubuntu-Touch=true" >> ${INSTALL_DIR}/${PKG}.desktop
 	# if mirx flag
 	echo "X-Ubuntu-XMir-Enable=true" >> ${INSTALL_DIR}/${PKG}.desktop
