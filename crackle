@@ -114,6 +114,7 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
 
 # Installs/updates Crackle into ~/.local ~/.config and ~/.cache
 [ "$operation" = "setup" ] && {
+    [[ ! -f "$SCRP_DIR/bin/*" ]] && err "submodule missing";
     [[ $(basename $SCRP_DIR) = "bin" && -d $HOME/crackle ]] && rm -r $HOME/crackle;
     [[ $(basename $SCRP_DIR) = "bin" || -f $HOME/Downloads/crackle.zip ]] && upgrade_crackle;
     bashrc=$(grep crackle "$HOME"/.bashrc);
@@ -220,7 +221,6 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
 # remove crackle from the system
 [[ "$operation" = "nuke" ]] && {
     transistion_crackle;
-    [ -d $PKG_PATH ] && rm -r $PKG_PATH;
     [[ -d "$APTCACHE" ]] && rm -r "$APTCACHE";
     [[ -d "$APTSTATE" ]] && rm -r "$APTSTATE";
     [[ -d "$PKG_PATH" ]] && rm -r "$PKG_PATH";
