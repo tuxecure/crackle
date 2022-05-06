@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 function build_click () {
     if ! check_cmd click; then err "missing click"; fi
     cd ${ROOT};

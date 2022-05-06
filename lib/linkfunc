@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 function link(){
 	pkgs=($(diff -r "$1" "$2"|awk '/crackle\//{print $4}'|sort|uniq));
 	find "$PKG_PATH" -xtype l -exec rm {} +;

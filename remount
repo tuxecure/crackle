@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 if [ $(rorw) = "ro" ]; then
 	set -x
 	sudo -k mount -o remount,rw /

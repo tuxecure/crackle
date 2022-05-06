@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # parts are pulled out of https://sh.rustup.rs/
 #check if the rootfs is readonly, if not remount
 LIB_DIR=$(dirname "${BASH_SOURCE[0]}")

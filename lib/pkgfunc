@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 function get_pkg_info () {
 	pkg="$(basename "$1")";
 	pkgname="${pkg%%_*}";
