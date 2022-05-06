@@ -18,8 +18,33 @@ CRACKDIR=${CRACKDIR:-$HOME/packages/$PKG};
 PKG_PREFIX=${PKG_PREFIX:-$HOME/.local}
 SCRP_DIR=$(dirname "${BASH_SOURCE[0]}")
 
+# check if the files differ, if yes overwrite the old version
+upd() {
+    lib=$(basename $1)
+    if [[ ! -f "$2/$lib" && -d "$2" ]]; then
+	if [[ $(basename $(dirname $1)) = "completions" ]] ; then
+		say "Setting up bash_completions..." >&2
+	else
+		say "Installing $lib..." >&2
+	fi
+	cp $1 $2
+    elif ! diff -q $1 $2; then
+	if [[ $(basename $(dirname $1)) = "completions" ]] ; then
+		say "Updating bash_completions..." >&2
+	else
+		say "Updating $lib..." >&2
+	fi
+	cp $1 $2
+    fi
+}
+
+say() {
+    printf '%s\n' "$1"
+}
+
 # load libraries
 if [[ -f "$PKG_PREFIX/lib/triplet" ]]; then
+    upd $SCRP_DIR/lib/triplet $PKG_PREFIX/lib
     source "$PKG_PREFIX/lib/triplet";
 else
     source "$SCRP_DIR/lib/triplet";
