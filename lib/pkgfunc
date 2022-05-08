@@ -22,6 +22,7 @@ function pkg_install () {
 		install_${pkgname};
 	fi
 	fetch_desktop ${PKG_PATH}/usr/share/applications/${pkgname}.desktop ${PKG_PREFIX}/share/applications/crackle.${pkgname}.desktop
+	if [[ ! -e "${PKG_PREFIX}/share/icons" ]]; then link_iconsdir; fi
 	link_bin;
 	link_lib;
 	link_bash-completion;
@@ -100,4 +101,8 @@ function fetch_desktop() {
 	echo "X-Ubuntu-Touch=true" >> $2
 	# if mirx flag
 	echo "X-Ubuntu-XMir-Enable=true" >> $2
+}
+
+function link_iconsdir() {
+	if [[ -d "${PKG_PATH}/usr/share/icons" ]]; then say "linking icons directory";ln -s ${PKG_PATH}/usr/share/icons ${PKG_PREFIX}/share;fi
 }
