@@ -151,14 +151,16 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
     pkgsetup;
     [[ -f "$CRACKLERC" ]] || {
         echo "CRACKLEENV=$CRACKLEENV" > "$CRACKLERC";
+        echo "PKG_PREFIX=$PKG_PREFIX" >> "$CRACKLERC";
 	[ -d $CRACKLEENV ] || mkdir $CRACKLEENV;
         cat "$SCRP_DIR"/cracklerc >> "$CRACKLERC";
     }
     install_bins;
 
-    _crackleconf -v start="CRACKLEENV=" "$CRACKLERC" > $SCRP_DIR/cracklerc.tmp
+    _crackleconf -v start="PKG_PREFIX=" "$CRACKLERC" > $SCRP_DIR/cracklerc.tmp
     if ! diff -q "$SCRP_DIR"/cracklerc "$SCRP_DIR/cracklerc.tmp"; then
         echo "CRACKLEENV=$CRACKLEENV" > "$CRACKLERC";
+        echo "PKG_PREFIX=$PKG_PREFIX" >> "$CRACKLERC";
 	say "updating cracklerc..." >&2
         cat "$SCRP_DIR"/cracklerc >> "$CRACKLERC";
     fi
