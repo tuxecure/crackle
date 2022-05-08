@@ -35,16 +35,19 @@ install_rorw() {
    upd $SCRP_DIR/remount $PKG_PREFIX/bin;
 }
 install_bins() {
-   mkdir -p $PKG_PREFIX/bin $PKG_PREFIX/lib $CRACKLECMP
+   mkdir -p $PKG_PREFIX/bin $CRACKLECMP
    upd $SCRP_DIR/_crackleconf $PKG_PREFIX/bin;
-   upd $SCRP_DIR/lib/triplet $PKG_PREFIX/lib
    upd $SCRP_DIR/crackle $PKG_PREFIX/bin
    upd $SCRP_DIR/desktop_trunc $PKG_PREFIX/bin
+   upd $SCRP_DIR/_crackleopts $PKG_PREFIX/bin;
+   upd $SCRP_DIR/share/bash-completion/completions/crackle $CRACKLECMP;
+}
+install_libs() {
+   mkdir -p $PKG_PREFIX/lib
+   upd $SCRP_DIR/lib/triplet $PKG_PREFIX/lib
    upd $SCRP_DIR/lib/pkgfunc $PKG_PREFIX/lib
    upd $SCRP_DIR/lib/clickfunc $PKG_PREFIX/lib
    upd $SCRP_DIR/lib/linkfunc $PKG_PREFIX/lib
-   upd $SCRP_DIR/_crackleopts $PKG_PREFIX/bin;
-   upd $SCRP_DIR/share/bash-completion/completions/crackle $CRACKLECMP;
 }
 checkpath() {
     if ! check_cmd rorw;

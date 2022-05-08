@@ -155,6 +155,7 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
 	[ -d $CRACKLEENV ] || mkdir $CRACKLEENV;
         cat "$SCRP_DIR"/cracklerc >> "$CRACKLERC";
     }
+    install_libs;
     install_bins;
 
     _crackleconf -v start="PKG_PREFIX=" "$CRACKLERC" > $SCRP_DIR/cracklerc.tmp
