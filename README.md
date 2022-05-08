@@ -51,7 +51,7 @@ Crackle specific commands:
 ## Limitations
 
 the following are the limitations of crackle:
-- currently crackle doesn't account for desktop files i.e. gui applications
+- currently crackle starts all gui apps with xmir for the sake of running them on Ubuntu Touch
 - crackle doesn't work on systems with a readwrite rootfs
 - currently crackle doesn't know how to remove packages
 - crackle doesn't know how to deal with all packages, so it may be hit or miss please report packages that don't work on gitlab
@@ -66,7 +66,7 @@ Crackle should considered Alpha, packages may or may not work and crackle is una
 
 For 0.3.x considerations are being made to restructure how crackle installs packages to facililate package removal. However this update may require the user to run crackle nuke first, which will nuke all packages installed with crackle. But nothing is set in stone yet
 
-For now the plan for the 0.2.x branch is to deprecate cracklerc to make the experience much smoother, to handle desktop files and other smaller bug fixes that don't currently comes to mind
+For now the plan for the 0.2.x branch is to deprecate cracklerc to make the experience much smoother and other smaller bug fixes that don't currently comes to mind
 
 
 ## Configuration
