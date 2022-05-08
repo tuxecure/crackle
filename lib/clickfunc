@@ -37,19 +37,17 @@ function build_click () {
 function prep_build () {
 	[ -d "${INSTALL_DIR}" ] && rm -r ${INSTALL_DIR}
 	mkdir -p ${CLICK_LD_LIBRARY_PATH} ${CLICK_PATH} ${INSTALL_DIR}
-	fetch_desktop;
+	fetch_desktop ${BUILD_DIR}/usr/share/applications/${PKG}.desktop ${INSTALL_DIR}/${PKG}.desktop;
+	mod_desktop ${INSTALL_DIR}/${PKG}.desktop;
 	cp ${ROOT}/pkg.d/* ${ROOT}/apparmor.json ${ROOT}/manifest.json ${BUILD_DIR}/ || exit 1
 	sed -i "s/@pkg@/${PKG}/" ${BUILD_DIR}/manifest.json
 	cp ${BUILD_DIR}/*.json ${INSTALL_DIR}
 	cp ${BUILD_DIR}/pkg.sh ${CLICK_PATH}/${PKG}.sh
 }
 
-function fetch_desktop() {
-	${SCRP_DIR}/desktop_trunc ${BUILD_DIR}/usr/share/applications/${PKG}.desktop > ${INSTALL_DIR}/${PKG}.desktop
-	sed -i "/Icon=/d" ${INSTALL_DIR}/${PKG}.desktop
-	sed -i "/Exec=/d" ${INSTALL_DIR}/${PKG}.desktop
-	sed -i "/^Categories=/i Exec=${PKG}.sh" ${INSTALL_DIR}/${PKG}.desktop
-	echo "X-Ubuntu-Touch=true" >> ${INSTALL_DIR}/${PKG}.desktop
-	# if mirx flag
-	echo "X-Ubuntu-XMir-Enable=true" >> ${INSTALL_DIR}/${PKG}.desktop
+mod_desktop(){
+	sed -i "/Icon=/d" $1
+	sed -i "/Exec=/d" $1
+	sed -i "/^Categories=/i Exec=${PKG}.sh" $1;
 }
+

@@ -21,6 +21,7 @@ function pkg_install () {
 		source "${PKG_PREFIX}/lib/crackle/${pkgname}";
 		install_${pkgname};
 	fi
+	fetch_desktop ${PKG_PATH}/usr/share/applications/${pkgname}.desktop ${PKG_PREFIX}/share/applications/crackle.${pkgname}.desktop
 	link_bin;
 	link_lib;
 	link_bash-completion;
@@ -91,4 +92,12 @@ function pkgsetup(){
         say "Fetching package lists...";
         ensure "$SCRP_DIR"/crackle update
     }
+}
+
+function fetch_desktop() {
+	if [[ ! -f "$1" ]]; then exit 0;fi
+	${SCRP_DIR}/desktop_trunc $1 > $2
+	echo "X-Ubuntu-Touch=true" >> $2
+	# if mirx flag
+	echo "X-Ubuntu-XMir-Enable=true" >> $2
 }
