@@ -44,7 +44,7 @@ say() {
 
 # load libraries
 if [[ -f "$PKG_PREFIX/lib/triplet" ]]; then
-    upd $SCRP_DIR/lib/triplet $PKG_PREFIX/lib
+    [[ $(basename $SCRP_DIR) != "bin" ]] && upd $SCRP_DIR/lib/triplet $PKG_PREFIX/lib
     source "$PKG_PREFIX/lib/triplet";
 else
     source "$SCRP_DIR/lib/triplet";
