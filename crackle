@@ -4,8 +4,8 @@ operation=${1};
 PKG=("${@:2}")
 
 # Configuration for Apt
-APTCACHE=${APTCACHE:-${XDG_CACHE_HOME:-$HOME/.cache}/crackle};
-APTSTATE=${APTSTATE:-${XDG_STATE_HOME:-$HOME/.local/state}/crackle};
+APTCACHE=${APTCACHE:-${XDG_CACHE_HOME:-$HOME/.cache}/apt};
+APTSTATE=${APTSTATE:-${XDG_STATE_HOME:-$HOME/.local/state}/apt};
 APTCONFIG=${APTCONFIG:-${XDG_CONFIG_HOME:-$HOME/.config}/crackle};
 
 # Configuration for Crackle

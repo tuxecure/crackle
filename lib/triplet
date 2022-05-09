@@ -87,6 +87,8 @@ transistion_crackle() {
 	[[ -f "$PKG_PREFIX/bin/awkopts" ]] && rm $PKG_PREFIX/bin/awkopts;
 	[[ -f "$PKG_PREFIX/lib/loginfo" ]] && rm $PKG_PREFIX/lib/loginfo;
 	[ -d $PKG_PATH/lib ] && rm -r $PKG_PATH/lib;
+	[[ -d "$HOME/.cache/crackle" ]] && rm -r $HOME/.cache/crackle;
+	[[ -d "$HOME/.local/state/crackle" ]] && rm -r $HOME/.local/state/crackle;
 	[[ -d "$APTCACHE/lists" ]] && rm -r "$APTCACHE/lists";
 	[[ -d "$PKG_PREFIX/bin/scripts" ]] && rm -r "$PKG_PREFIX/bin/scripts";
 	[[ -f "$APTCONFIG/crackle_completion" ]] && rm "$APTCONFIG/crackle_completion";
