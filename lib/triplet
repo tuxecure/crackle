@@ -23,7 +23,7 @@ rm_rorw(){
     err "remounting failed! crackle works best on a readonly rootfs";
 }
 checkro() {
-    if [[ $(rorw) = "rw" ]]; then
+    if [[ $(rorw) = "rw" && $(lsb_release -rs) = "16.04" ]]; then
         echo "remounting rootfs as readonly....";
         remount || rm_rorw;
     fi
