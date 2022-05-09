@@ -176,7 +176,7 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
     }
 
     [[ -d "$PKG_PREFIX/lib/crackle" ]] || mkdir -p "$PKG_PREFIX/lib/crackle";
-    [[ ! "$(grep completions "$HOME"/.bash_completion)" ]] && {
+    [[ ! "$(grep -s completions "$HOME"/.bash_completion)" && $(lsb_release -rs) = "16.04" ]] && {
         say "enabling bash completion.......";
         _crackleconf -v start="#cracklecmp" "$SCRP_DIR"/crackle.conf >> $HOME/.bash_completion;
     }
