@@ -86,8 +86,10 @@ function pkgsetup(){
     [[ -d "$APTCACHE" ]] || mkdir -p "$APTCACHE";
     [[ -d "$APTSTATE" ]] || mkdir -p "$APTSTATE";
     [[ -d "$APTCONFIG" ]] || {
-        mkdir -p $APTCONFIG/sources.list.d $APTCONFIG/preferences.d;
+        mkdir -p $APTCONFIG/sources.list.d $APTCONFIG/preferences.d $APTCONFIG/trusted.gpg.d;
         ln -s /etc/apt/sources.list $APTCONFIG;
+        ln -s /etc/apt/trusted.gpg $APTCONFIG;
+        [[ -n "$(ls /etc/apt/trusted.gpg.d)" ]] && ln -s /etc/apt/trusted.gpg.d/* $APTCONFIG/trusted.gpg.d/;
     }
     [ -d "$APTSTATE/lists" ] || {
         say "Fetching package lists...";
