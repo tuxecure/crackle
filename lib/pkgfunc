@@ -96,11 +96,12 @@ function pkgsetup(){
 }
 
 function fetch_desktop() {
-	if [[ ! -f "$1" ]]; then exit 0;fi
-	${SCRP_DIR}/desktop_trunc $1 > $2
-	echo "X-Ubuntu-Touch=true" >> $2
-	# if mirx flag
-	echo "X-Ubuntu-XMir-Enable=true" >> $2
+	if [[ -f "$1" ]]; then
+		${SCRP_DIR}/desktop_trunc $1 > $2
+		echo "X-Ubuntu-Touch=true" >> $2
+		# if mirx flag
+		echo "X-Ubuntu-XMir-Enable=true" >> $2
+	fi
 }
 
 function link_iconsdir() {
