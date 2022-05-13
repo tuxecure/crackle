@@ -30,6 +30,7 @@ checkro() {
 }
 
 install_rorw() {
+   mkdir -p $PKG_PREFIX/bin
    upd $SCRP_DIR/rorw $PKG_PREFIX/bin;
    upd $SCRP_DIR/arch_triplet $PKG_PREFIX/bin;
    upd $SCRP_DIR/remount $PKG_PREFIX/bin;
