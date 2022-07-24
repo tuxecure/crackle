@@ -14,8 +14,6 @@ function log_pkg_info () {
 }
 
 function pkg_install () {
-	say "Unpacking ${pkgname} (${pkgversion})"
-        dpkg-deb -x "${package}" "${dir}";
 	log_pkg_info "${package}"
 	if [ -f "${PKG_PREFIX}/lib/crackle/${pkgname}" ]; then
 		source "${PKG_PREFIX}/lib/crackle/${pkgname}";
