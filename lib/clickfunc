@@ -16,7 +16,7 @@ function build_click () {
     fi
     if [ ! -f "manifest.json.in" ]; then
         say "Preparing build environment..."
-        prep_build;
+        prep_build ${XMIR:-"xmir-enable"};
     fi
     say "Building package tree..."
     [ -d ${CLICK_LD_LIBRARY_PATH} ] || mkdir -p ${CLICK_LD_LIBRARY_PATH} ${CLICK_PATH}
@@ -41,7 +41,7 @@ function build_click () {
 function prep_build () {
 	[ -d "${INSTALL_DIR}" ] && rm -r ${INSTALL_DIR}
 	mkdir -p ${CLICK_LD_LIBRARY_PATH} ${CLICK_PATH} ${INSTALL_DIR}
-	fetch_desktop ${BUILD_DIR}/usr/share/applications/${PKG}.desktop ${INSTALL_DIR}/${PKG}.desktop;
+	fetch_desktop ${BUILD_DIR}/usr/share/applications/${PKG}.desktop ${INSTALL_DIR}/${PKG}.desktop ${1};
 	mod_desktop ${INSTALL_DIR}/${PKG}.desktop;
 	cp ${ROOT}/pkg.d/* ${ROOT}/apparmor.json ${ROOT}/manifest.json ${BUILD_DIR}/ || exit 1
 	sed -i "s/@pkg@/${PKG}/" ${BUILD_DIR}/manifest.json
