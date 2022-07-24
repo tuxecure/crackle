@@ -9,7 +9,11 @@ function build_click () {
         mkdir -p ${APTSTATE}/lists/partial ${APTCACHE}/archives/partial;
         ensure "$SCRP_DIR"/crackle update;
     }
-    CRACKDIR=${BUILD_DIR} ensure ${SCRP_DIR}/crackle crack ${PKG[@]};
+    if [[ -z ${TARBALL} ]]; then
+	    CRACKDIR=${BUILD_DIR} ensure ${SCRP_DIR}/crackle crack ${PKG[@]};
+    else
+	    wget "${TARBALL}" -O - | tar -xjvf - -C "${BUILD_DIR}";
+    fi
     if [ ! -f "manifest.json.in" ]; then
         say "Preparing build environment..."
         prep_build;
