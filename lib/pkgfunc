@@ -13,6 +13,11 @@ function log_pkg_info () {
 	echo "$pkgversion" > "$PKGS_DIR/$pkgname/pkgs.version";
 }
 
+function tarball_install () {
+	wget "${TARBALL}" -O - | tar -xjvf - -C "${dir}";
+	pkg_install;
+}
+
 function pkg_install () {
 	log_pkg_info "${package}"
 	if [ -f "${PKG_PREFIX}/lib/crackle/${pkgname}" ]; then
