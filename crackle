@@ -214,7 +214,7 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
     else
         dir="$PKG_PATH";
     fi
-    [[ "$operation" = "crack" && ! -d "$dir" ]] && mkdir "$dir";
+    [[ "$operation" = "crack" && ! -d "$dir" ]] && mkdir -p "$dir";
     [ "$operation" = "install" ] && {
         [ -d "$PKG_PATH" ] || err "$PKG_PATH does not exist, please run crackle setup first";
 	if ! check_cmd rorw; then err "programs I install won't be executable now, please adjust your PATH variable"; fi
