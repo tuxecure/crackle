@@ -86,6 +86,11 @@ function pkgstatus(){
 }
 
 function pkgsetup(){
+    say "configuring crackle";
+    [[ -d "$DPKGSTATE" ]] || {
+        mkdir -p "$DPKGSTATE";
+        cp /var/lib/dpkg/status $DPKGSTATE/status;
+    }
     [[ -d "$APTCACHE" ]] || mkdir -p "$APTCACHE";
     [[ -d "$APTSTATE" ]] || mkdir -p "$APTSTATE";
     [[ -d "$APTCONFIG" ]] || {
@@ -97,10 +102,6 @@ function pkgsetup(){
     [ -d "$APTSTATE/lists" ] || {
         say "Fetching package lists...";
         ensure "$SCRP_DIR"/crackle update
-    }
-    [[ -d "$DPKGSTATE" ]] || {
-        mkdir -p "$DPKGSTATE";
-        cp /var/lib/dpkg/status $DPKGSTATE/status;
     }
 }
 
