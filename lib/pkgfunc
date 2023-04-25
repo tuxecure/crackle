@@ -98,6 +98,10 @@ function pkgsetup(){
         say "Fetching package lists...";
         ensure "$SCRP_DIR"/crackle update
     }
+    [[ -d "$DPKGSTATE" ]] || {
+        mkdir -p "$DPKGSTATE";
+        cp /var/lib/dpkg/status $DPKGSTATE/status;
+    }
 }
 
 function fetch_desktop() {
