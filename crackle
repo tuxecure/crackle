@@ -51,7 +51,7 @@ else
     source "$SCRP_DIR/lib/triplet";
 fi
 
-checkpath;
+if [[ -z "$CI" ]]; checkpath; fi
 # Root check
 if [[ -z "$CI" ]]; then root_check; fi
 
