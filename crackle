@@ -59,7 +59,7 @@ load_lib pkgfunc;
 load_lib linkfunc;
 load_lib clickfunc;
 
-if [[ "$CI" = true ]]; then  pkgsetup; fi
+if [[ "$CI" = true && ! -d /root/.config/crackle ]]; then  pkgsetup; fi
 
 # click config
 ROOT=${ROOT:-$(pwd)}
