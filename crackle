@@ -6,6 +6,7 @@ PKG=("${@:2}")
 # Configuration for Apt
 APTCACHE=${APTCACHE:-${XDG_CACHE_HOME:-$HOME/.cache}/apt};
 APTSTATE=${APTSTATE:-${XDG_STATE_HOME:-$HOME/.local/state}/apt};
+DPKGSTATE=${DPKGSTATE:-${XDG_STATE_HOME:-$HOME/.local/state}/dpkg};
 APTCONFIG=${APTCONFIG:-${XDG_CONFIG_HOME:-$HOME/.config}/crackle};
 
 # Configuration for Crackle
@@ -50,7 +51,7 @@ else
     source "$SCRP_DIR/lib/triplet";
 fi
 
-checkpath;
+if [[ -z "$CI" ]]; then checkpath; fi
 # Root check
 if [[ -z "$CI" ]]; then root_check; fi
 
@@ -58,7 +59,7 @@ load_lib pkgfunc;
 load_lib linkfunc;
 load_lib clickfunc;
 
-if [[ "$CLICKABLE" = true ]]; then  pkgsetup; fi
+if [[ "$CI" = true && ! -d /root/.config/crackle ]]; then  pkgsetup; fi
 
 # click config
 ROOT=${ROOT:-$(pwd)}
