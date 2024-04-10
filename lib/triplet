@@ -74,28 +74,12 @@ unzip_crackle() {
 upgrade_crackle() {
 	[[ ! -f $HOME/Downloads/crackle.zip ]] && download_crackle;
 	[[ ! -d $HOME/crackle ]] && unzip_crackle;
-	transistion_crackle
 	$HOME/crackle/crackle setup
 	say "cleaning up..."
 	rm -r $HOME/crackle;
 	rm $HOME/Downloads/crackle.zip;
 	say "done!"
 	exit 0;
-}
-
-# remove lines, files and folders that crackle added/installed once upon a time
-transistion_crackle() {
-	[[ -f "$PKG_PATH/bin/awkopts" ]] && rm $PKG_PATH/bin/awkopts;
-	[[ -f "$PKG_PREFIX/bin/awkopts" ]] && rm $PKG_PREFIX/bin/awkopts;
-	[[ -f "$PKG_PREFIX/lib/loginfo" ]] && rm $PKG_PREFIX/lib/loginfo;
-	[ -d $PKG_PATH/lib ] && rm -r $PKG_PATH/lib;
-	[[ -d "$HOME/.cache/crackle" ]] && rm -r $HOME/.cache/crackle;
-	[[ -d "$HOME/.local/state/crackle" ]] && rm -r $HOME/.local/state/crackle;
-	[[ -d "$APTCACHE/lists" ]] && rm -r "$APTCACHE/lists";
-	[[ -d "$PKG_PREFIX/bin/scripts" ]] && rm -r "$PKG_PREFIX/bin/scripts";
-	[[ -f "$APTCONFIG/crackle_completion" ]] && rm "$APTCONFIG/crackle_completion";
-	[[ -d "$PKG_PATH/bin/scripts" ]] && rm -r "$PKG_PATH/bin/scripts";
-	[ -f $HOME/.bash_completion ] && sed -i '/crackle_completion/d' $HOME/.bash_completion
 }
 
 # check is a command exists
