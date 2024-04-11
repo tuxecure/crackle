@@ -248,7 +248,6 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
 
 # remove crackle from the system
 [[ "$operation" = "nuke" ]] && {
-    transistion_crackle;
     [[ -d "$APTCACHE" ]] && rm -r "$APTCACHE";
     [[ -d "$APTSTATE" ]] && rm -r "$APTSTATE";
     [[ -d "$PKG_PATH" ]] && rm -r "$PKG_PATH";
