@@ -63,7 +63,7 @@ Support, question and suggestions for crackle can be filed on [GitLab](https://g
 
 ## Status
 
-Crackle should considered Alpha, packages may or may not work and crackle is unable to remove packages, it can only remove itself and all the packages it installed with `crackle nuke`.
+Crackle should be considered Alpha, packages may or may not work and crackle is unable to remove packages, it can only remove itself and all the packages it installed with `crackle nuke`.
 
 For 0.3.x the plan is to restructure how crackle installs packages to facililate package removal. However this update will require the user to run `crackle nuke` first, which will nuke all packages installed with crackle.
 
