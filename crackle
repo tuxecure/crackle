@@ -141,7 +141,6 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
 # Installs/updates Crackle into ~/.local ~/.config and ~/.cache
 [ "$operation" = "setup" ] && {
     [[ $(basename $SCRP_DIR) = "bin" ]] && upgrade_crackle;
-    if check_cmd crackle; then transistion_crackle; fi
     [[ -z "$(ls $SCRP_DIR/bin)" && $(basename $SCRP_DIR) != "bin" ]] && err "submodule missing";
     bashrc=$(grep crackle "$HOME"/.bashrc);
     profile=$(grep crackle "$HOME"/.profile);
