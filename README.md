@@ -55,6 +55,7 @@ the following are the limitations of crackle:
 - crackle doesn't work on systems with a readwrite rootfs
 - currently crackle doesn't know how to remove packages
 - crackle doesn't know how to deal with all packages, so it may be hit or miss please report packages that don't work on gitlab
+- crackle needs to set up the correct environment in order for packages to find their files and libraries as such it is sometimes required to log off and back for them to work as intended
 
 ## Support
 
