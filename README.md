@@ -49,7 +49,6 @@ Crackle specific commands:
 ## Limitations
 
 the following are the limitations of crackle:
-- currently crackle starts all gui apps with xmir for the sake of running them on Ubuntu Touch
 - crackle doesn't work on systems with a readwrite rootfs
 - currently crackle doesn't know how to remove packages
 - crackle doesn't know how to deal with all packages, so it may be hit or miss please report packages that don't work on gitlab

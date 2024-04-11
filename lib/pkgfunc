@@ -109,10 +109,6 @@ function fetch_desktop() {
 	if [[ -f "$1" ]]; then
 		${SCRP_DIR}/desktop_trunc $1 > $2
 		echo "X-Ubuntu-Touch=true" >> $2
-		xmir=${3:-"xmir-enable"}
-		if [[ ${xmir} = "xmir-enable" ]] ; then
-			echo "X-Ubuntu-XMir-Enable=true" >> $2
-		fi
 	fi
 }
 
