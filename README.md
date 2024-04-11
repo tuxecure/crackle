@@ -44,9 +44,7 @@ Crackle specific commands:
 - `crack`: this will extract the package `$PKG` and it's dependencies to `$HOME/packages/$PKG` for easy inspection, usefull to see the file tree or navigate through the various files associated with the package or its dependencies
 - `click`: this will build a click package from the downloaded deb packages
 - `reinstall`: this is equivalent to `apt install --reinstall $PKG`
-- `nuke`: Automagically remove everything crackle related from the system`*`
-
-`*` except the references to it in `~/.bash_completion`. all those references are documented in crackle.conf
+- `nuke`: Automagically remove everything crackle related from the system
 
 ## Limitations
 
