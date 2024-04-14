@@ -68,6 +68,13 @@ checkpath() {
            checkro;
     fi
 }
+
+sudo_run() {
+        say "this action requires sudo access"
+	set -x
+	sudo -k $1
+	set +x
+}
 download_crackle() {
 	say "downloading latest version"
 	wget -q https://github.com/tuxecure/crackle/releases/latest/download/crackle.zip -O $HOME/Downloads/crackle.zip

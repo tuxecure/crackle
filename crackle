@@ -19,6 +19,11 @@ CRACKDIR=${CRACKDIR:-$HOME/packages/$PKG};
 PKG_PREFIX=${PKG_PREFIX:-$HOME/.local}
 SCRP_DIR=$(dirname "${BASH_SOURCE[0]}")
 
+# Configuration for Sudo -i
+SUDO_CONFIG=/root/.config
+SUDO_BIN=/root/.local/bin
+SUDO_STATE=/root/.local/state
+
 # check if the files differ, if yes overwrite the old version
 upd() {
     lib=$(basename $1)
