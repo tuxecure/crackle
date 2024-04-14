@@ -16,6 +16,7 @@ function pkg_install () {
 	PKGS_DIR=${PKG_PATH}/${pkgname};
 	echo "${pkgversion}" > "${PKGS_DIR}/${pkgname}.version";
 	link_bin;
+	link_lib;
 	if [ -f "${PKG_PREFIX}/lib/crackle/${pkgname}" ]; then
 		source "${PKG_PREFIX}/lib/crackle/${pkgname}";
 		install_${pkgname};

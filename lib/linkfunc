@@ -1,4 +1,17 @@
 #!/usr/bin/env bash
+function link_lib(){
+    while read lib
+    do
+	    cd $lib
+	    while read libdir
+	    do
+	           mkdir -p $PKG_PREFIX/lib/$libdir 
+		   ln -s $(find $lib/$libdir -type f -maxdepth 1) $PKG_PREFIX/lib/$libdir 2> /dev/null
+		   symlinks=$(find $lib/$libdir -type l -maxdepth 1)
+		   [[ -n $symlinks ]] && cp $symlinks $PKG_PREFIX/lib/$libdir
+	    done < <(find . -type d)
+    done < <(find $PKGS_DIR -name lib -type d);
+}
 function link_bin(){
 	[ ! -d "$HOME/.local/bin" ] && mkdir -p  "$HOME/.local/bin";
 	[ ! -d "$SUDO_BIN" ] && sudo_run "mkdir -p  $SUDO_BIN";
