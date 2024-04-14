@@ -162,6 +162,7 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
     [[ -z "$(ls $SCRP_DIR/bin)" && $(basename $SCRP_DIR) != "bin" ]] && err "submodule missing";
     bashrc=$(grep crackle "$HOME"/.bashrc);
     profile=$(grep crackle "$HOME"/.profile);
+    rootprofile=$(grep crackle /root/.profile);
 
     [[ -d "$PKG_PATH" ]] || mkdir -p "$PKG_PATH";
 
@@ -190,6 +191,10 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
     [[ -z "$profile" ]] && {
         say "Amending ~/.profile...";
         _crackleconf -v start="#cracklerc" "$SCRP_DIR"/crackle.conf >> "$HOME"/.profile;
+    }
+    [[ -z "$rootprofile" ]] && {
+        say "Amending /root/.profile...";
+        _crackleconf -v start="#rootprofile" "$SCRP_DIR"/crackle.conf | sudo -k tee --append /root/.profile > /dev/null;
     }
 
     [[ -d "$PKG_PREFIX/lib/crackle" ]] || mkdir -p "$PKG_PREFIX/lib/crackle";
