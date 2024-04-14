@@ -7,33 +7,30 @@ function get_pkg_info () {
 	pkgversion="$(urldecode $pkgversion)";
 }
 
-function log_pkg_info () {
-	[ -d "$PKGS_DIR/$pkgname" ] || mkdir "$PKGS_DIR/$pkgname";
-	dpkg -c "$1" | awk '{print $6}' > "$PKGS_DIR/$pkgname/pkgs.list";
-	echo "$pkgversion" > "$PKGS_DIR/$pkgname/pkgs.version";
-}
-
 function tarball_install () {
 	wget "${TARBALL}" -O - | tar -xjvf - -C "${dir}";
 	pkg_install;
 }
 
 function pkg_install () {
-	log_pkg_info "${package}"
+	PKGS_DIR=${PKG_PATH}/${pkgname};
+	echo "${pkgversion}" > "${PKGS_DIR}/${pkgname}.version";
+	link_bin;
 	if [ -f "${PKG_PREFIX}/lib/crackle/${pkgname}" ]; then
 		source "${PKG_PREFIX}/lib/crackle/${pkgname}";
 		install_${pkgname};
 	fi
-	fetch_desktop ${PKG_PATH}/usr/share/applications/${pkgname}.desktop ${PKG_PREFIX}/share/applications/crackle.${pkgname}.desktop
-	if [[ ! -e "${PKG_PREFIX}/share/icons" ]]; then link_iconsdir; fi
-	link_bin;
-	link_lib;
+	fetch_desktop ${PKGS_DIR}/usr/share/applications/${pkgname}.desktop ${PKG_PREFIX}/share/applications/crackle.${pkgname}.desktop
+	if [[ ! -e "${PKGS_DIR}/share/icons" ]]; then link_iconsdir; fi
 	link_bash-completion;
 }
 
 function pkg_crack () {
+	PKGS_DIR=${PKG_PATH}/${pkgname}
 	say "Unpacking ${pkgname} (${pkgversion})"
+	[[ ${dir} = ${PKG_PATH} ]] && dir=${PKG_PATH}/${pkgname}
         dpkg-deb -x "${package}" "${dir}";
+	dir=${PKG_PATH}
 }
 
 function pkg_arch() {
@@ -52,35 +49,14 @@ function pkg_arch() {
 	fi
 }
 
-function rmpkgtree() {
-	[ -d "$PKGS_DIR/$1" ] && {
-	say "Removing $1";
-	readarray -t files < <(cat "$PKGS_DIR/$1/pkgs.list");
-	for file in "${files[@]}"
-	do
-		[ -f "$PKG_PATH/$file" ] && rm "$PKG_PATH/$file";
-	done
-	find $PKG_PATH -empty -type d -delete;
-	find "$PKG_PATH" -xtype l -exec rm {} +;
-	rm -r "${PKGS_DIR:?}/$1"; }
-}
-
-function fetch_rdependencies(){
-	readarray -t packages < <($APT_CACHE rdepends "$dependency" | awk '/Depends/{next}/$/{print $1}'|uniq);
-	for package in "${packages[@]}"
-	do
-		[ -d "$PKGS_DIR/$package" ] || packages=("${packages[@]/$package}");
-	done;
-}
-
 function pkgstatus(){
-	[[ -d "$PKGS_DIR/$PKG" && "$operation" = "install" ]] && {
+	[[ -d "$PKGS_DIR" && "$operation" = "install" ]] && {
 	say "Fetching installed version...";
-	installed=$(cat $PKGS_DIR/$PKG/pkgs.version);
+	installed=$(cat $PKGS_DIR/$1.version);
 	say "Fetching candidate version...";
-	candidate=$($APT_CACHE policy $PKG|awk '/Candidate/{print $2}');
+	candidate=$($APT_CACHE policy $1|awk '/Candidate/{print $2}');
 	say "Comparing...";
-	[[ "$installed" = "$candidate" ]] && stat "$PKG is already the newest version \($installed\)"; }
+	[[ "$installed" = "$candidate" ]] && stat "$1 is already the newest version \($installed\)"; }
 	pkgstatus=$($APT_CACHE policy $1|awk '/Installed/{print $2}');
 	[ ! $pkgstatus = "(none)" ] && stat "Apt: $1 is already the newest version \($pkgstatus\)";
 }
