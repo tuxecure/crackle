@@ -1,6 +1,6 @@
 # Crackle
 
-> **NOTE** This project is being migrated to Rust. While the bash version is still maintained, it will eventually™ be superceded by the rust version
+> **NOTE** if you were using crackle before v0.3.0 you will need to nuke your crackle install first before installing v0.3.0.
 
 A project started by Fuseteam, inspired by [Pacstall](https://github.com/pacstall/pacstall), [Nix](https://github.com/NixOS/nix) and [nyaa](https://git.kreatea.space/kreato-linux/nyaa)
 
@@ -30,6 +30,8 @@ crackle
 	crack $PKG
 	search $PKG
 	show $PKG
+	remove $PKG
+	list
 	clean
 	setup
 	debug
@@ -50,8 +52,8 @@ Crackle specific commands:
 
 the following are the limitations of crackle:
 - crackle doesn't work on systems with a readwrite rootfs
-- currently crackle doesn't know how to remove packages
-- crackle doesn't know how to deal with all packages, so it may be hit or miss please report packages that don't work on gitlab
+- crackle does not resolve dependencies, dependencies have to removed by name.
+- crackle doesn't know how to deal with all packages, so it may be hit or miss please report packages that don't work on [GitLab](https://gitlab.com/tuxecure/crackle-apt/crackle)
 - crackle needs to set up the correct environment in order for packages to find their files and libraries as such it is sometimes required to log off and back for them to work as intended
 
 ## Support
@@ -60,9 +62,7 @@ Support, question and suggestions for crackle can be filed on [GitLab](https://g
 
 ## Status
 
-Crackle should be considered Alpha, packages may or may not work and crackle is unable to remove packages, it can only remove itself and all the packages it installed with `crackle nuke`.
-
-For 0.3.x the plan is to restructure how crackle installs packages to facililate package removal. However this update will require the user to run `crackle nuke` first, which will nuke all packages installed with crackle.
+Crackle should be considered Alpha, as packages are not aware of crackle they need to be patched to tell them where to find their files before they can work.
 
 ## Configuration
 
