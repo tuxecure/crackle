@@ -15,14 +15,14 @@ function link_lib(){
 function link_bin(){
 	[ ! -d "$HOME/.local/bin" ] && mkdir -p  "$HOME/.local/bin";
 	[ ! -d "$SUDO_BIN" ] && sudo_run "mkdir -p  $SUDO_BIN";
-	[ -d "$PKGS_DIR/bin" ] && ln -s $PKGS_DIR/bin/* $PKG_PREFIX/bin;
-	[ -d "$PKGS_DIR/sbin" ] && sudo_run "ln -s $PKGS_DIR/sbin/* $SUDO_BIN";
-	[ -d "$PKGS_DIR/usr/bin" ] && ln -s $PKGS_DIR/usr/bin/* $PKG_PREFIX/bin;
-	[ -d "$PKGS_DIR/usr/sbin" ] && sudo_run "ln -s $PKGS_DIR/usr/sbin/* $SUDO_BIN";
-	[ -d "$PKGS_DIR/usr/games" ] && ln -s $PKGS_DIR/usr/games/* $PKG_PREFIX/bin;
+	[ -d "$PKGS_DIR/bin" ] && ln -s $PKGS_DIR/bin/* $PKG_PREFIX/bin 2> /dev/null;
+	[ -d "$PKGS_DIR/sbin" ] && sudo_run "ln -s $PKGS_DIR/sbin/* $SUDO_BIN 2> /dev/null";
+	[ -d "$PKGS_DIR/usr/bin" ] && ln -s $PKGS_DIR/usr/bin/* $PKG_PREFIX/bin 2> /dev/null;
+	[ -d "$PKGS_DIR/usr/sbin" ] && sudo_run "ln -s $PKGS_DIR/usr/sbin/* $SUDO_BIN 2> /dev/null";
+	[ -d "$PKGS_DIR/usr/games" ] && ln -s $PKGS_DIR/usr/games/* $PKG_PREFIX/bin 2> /dev/null;
 }
 
 function link_bash-completion(){
-	[ -d "$PKGS_DIR/etc/bash_completion.d" ] && ln -s "$PKGS_DIR"/etc/bash_completion.d/* ${XDG_DATA_HOME:-$HOME/.local/share}/bash-completion/completions;
-	[ -d "$PKGS_DIR/usr/share/bash-completion/completions" ] && ln -s "$PKGS_DIR"/usr/share/bash-completion/completions/* ${XDG_DATA_HOME:-$HOME/.local/share}/bash-completion/completions;
+	[ -d "$PKGS_DIR/etc/bash_completion.d" ] && ln -s "$PKGS_DIR"/etc/bash_completion.d/* ${XDG_DATA_HOME:-$HOME/.local/share}/bash-completion/completions 2> /dev/null;
+	[ -d "$PKGS_DIR/usr/share/bash-completion/completions" ] && ln -s "$PKGS_DIR"/usr/share/bash-completion/completions/* ${XDG_DATA_HOME:-$HOME/.local/share}/bash-completion/completions 2> /dev/null;
 }
