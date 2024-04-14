@@ -87,6 +87,7 @@ if [ -z "$operation" -o "$operation" = "help" ]; then
 	- crackle download $PKG
 	- crackle crack $PKG
 	- crackle remove $PKG
+	- crackle list
 	- crackle clean
 	- crackle click $PKG
 	- crackle search $PKG
@@ -97,10 +98,10 @@ if [ -z "$operation" -o "$operation" = "help" ]; then
 fi
 
 case $operation in
-	"install"|"reinstall"|"download"|"crack"|"remove"|"search"|"show")[ -z "$PKG" ] && err "missing argument";;
-	"setup"|"debug"|"clean"|"update"|"nuke");;
+	"install"|"reinstall"|"download"|"crack"|"remove"|"search"|"show"|"remove")[ -z "$PKG" ] && err "missing argument";;
+	"setup"|"debug"|"clean"|"update"|"nuke"|"list");;
 	"click")[ -z "$PKG" ] && err "missing argument";build_click;;
-	*) err 'available operations (setup|debug|install $PKG|download $PKG|crack $PKG|remove $PKG|clean|search $PKG|show $PKG|update)';;
+	*) err 'available operations (setup|debug|install $PKG|download $PKG|crack $PKG|remove $PKG|clean|search $PKG|show $PKG|update|remove $PKG)';;
 esac
 
 # Aliases for commands
@@ -143,6 +144,16 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
     find "$PKG_PREFIX/lib" -xtype l -exec rm {} +;
     find "${XDG_DATA_HOME:-$HOME/.local/share}/bash-completion/completions" -xtype l -exec rm {} +;
     exit 0;
+}
+
+# list installed packages
+[[ "$operation" = "list" ]] && {
+	while read package
+	do
+		version=$(cat $PKG_PATH/$package/$package.version)
+		echo $package $version;
+	done < <(ls $PKG_PATH);
+	exit 0;
 }
 
 # Installs/updates Crackle into ~/.local ~/.config and ~/.cache
@@ -249,6 +260,21 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
     crackle install ${PKG[@]};
 }
 
+# remove a package
+[[ "$operation" = "remove" ]] && {
+    for pkg in "${PKG[@]}"
+    do
+	    say "removing $pkg";
+	    [ -d $PKGS_DIR ] && rm -r $PKGS_DIR;
+    done;
+    find "$PKG_PREFIX/bin" -xtype l -exec rm {} +;
+    sudo_run "find $SUDO_BIN -xtype l -exec rm {} +";
+    sudo_run "find $SUDO_CONFIG -xtype l -exec rm {} +";
+    find "$CRACKLECMP" -xtype l -exec rm {} +;
+    say "Done";
+    exit 0;
+}
+
 # remove crackle from the system
 [[ "$operation" = "nuke" ]] && {
     [[ -d "$APTCACHE" ]] && rm -r "$APTCACHE";
@@ -264,14 +290,13 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
     [[ -f "$PKG_PREFIX/bin/rorw" ]] && rm $SCRP_DIR/rorw;
     [[ -f "$PKG_PREFIX/bin/remount" ]] && rm $SCRP_DIR/remount;
     [[ -f "$CRACKLECMP/crackle" ]] && rm $CRACKLECMP/crackle;
-    [[ -d "$PKG_PREFIX/bin/scripts" ]] && rm -r $PKG_PREFIX/bin/scripts;
     [[ -d "$PKG_PREFIX/lib/crackle" ]] && rm -r $PKG_PREFIX/lib/crackle;
     find "$PKG_PREFIX/bin" -xtype l -exec rm {} +;
-    find "$PKG_PREFIX/lib" -xtype l -exec rm {} +;
+    find "$SUDO_BIN" -xtype l -exec rm {} +;
+    find "$SUDO_CONFIG" -xtype l -exec rm {} +;
     find "${XDG_DATA_HOME:-$HOME/.local/share}" -xtype l -exec rm {} + 2> /dev/null;
     sed -i '/cracklerc/d' $HOME/.bashrc
     sed -i '/cracklerc/d' $HOME/.profile
     find "$CRACKLECMP" -xtype l -exec rm {} +;
-    [ -f $HOME/.bash_completion ] && say "please check ~/.bash_completion for leftover references to crackle";
     exit 0;
 }
