@@ -20,6 +20,7 @@ function link_bin(){
 	[ -d "$PKGS_DIR/usr/bin" ] && ln -s $PKGS_DIR/usr/bin/* $PKG_PREFIX/bin 2> /dev/null;
 	[ -d "$PKGS_DIR/usr/sbin" ] && sudo_run "ln -s $PKGS_DIR/usr/sbin/* $SUDO_BIN 2> /dev/null";
 	[ -d "$PKGS_DIR/usr/games" ] && ln -s $PKGS_DIR/usr/games/* $PKG_PREFIX/bin 2> /dev/null;
+	sudo -K;
 }
 
 function link_bash-completion(){

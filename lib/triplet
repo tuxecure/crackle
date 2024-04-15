@@ -72,7 +72,7 @@ checkpath() {
 sudo_run() {
         say "this action requires sudo access"
 	set -x
-	sudo -k $1
+	sudo $1
 	set +x
 }
 download_crackle() {

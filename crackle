@@ -194,7 +194,8 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
     }
     [[ -z "$rootprofile" ]] && {
         say "Amending /root/.profile...";
-        _crackleconf -v start="#rootprofile" "$SCRP_DIR"/crackle.conf | sudo -k tee --append /root/.profile > /dev/null;
+        _crackleconf -v start="#rootprofile" "$SCRP_DIR"/crackle.conf | sudo_run "tee --append /root/.profile > /dev/null";
+	sudo -K;
     }
 
     [[ -d "$PKG_PREFIX/lib/crackle" ]] || mkdir -p "$PKG_PREFIX/lib/crackle";
@@ -276,6 +277,7 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
     sudo_run "find $SUDO_BIN -xtype l -exec rm {} +";
     sudo_run "find $SUDO_CONFIG -xtype l -exec rm {} +";
     find "$CRACKLECMP" -xtype l -exec rm {} +;
+    sudo -K;
     say "Done";
     exit 0;
 }
@@ -297,11 +299,12 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
     [[ -f "$CRACKLECMP/crackle" ]] && rm $CRACKLECMP/crackle;
     [[ -d "$PKG_PREFIX/lib/crackle" ]] && rm -r $PKG_PREFIX/lib/crackle;
     find "$PKG_PREFIX/bin" -xtype l -exec rm {} +;
-    find "$SUDO_BIN" -xtype l -exec rm {} +;
-    find "$SUDO_CONFIG" -xtype l -exec rm {} +;
+    sudo_run "find $SUDO_BIN -xtype l -exec rm {} +";
+    sudo_run "find $SUDO_CONFIG -xtype l -exec rm {} +";
     find "${XDG_DATA_HOME:-$HOME/.local/share}" -xtype l -exec rm {} + 2> /dev/null;
     sed -i '/cracklerc/d' $HOME/.bashrc
     sed -i '/cracklerc/d' $HOME/.profile
     find "$CRACKLECMP" -xtype l -exec rm {} +;
+    sudo -K
     exit 0;
 }
