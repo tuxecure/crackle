@@ -276,6 +276,7 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
     find "$PKG_PREFIX/bin" -xtype l -exec rm {} +;
     sudo_run "find $SUDO_BIN -xtype l -exec rm {} +";
     sudo_run "find $SUDO_CONFIG -xtype l -exec rm {} +";
+    find "${XDG_DATA_HOME:-$HOME/.local/share}" -xtype l -exec rm {} + 2> /dev/null;
     find "$CRACKLECMP" -xtype l -exec rm {} +;
     sudo -K;
     say "Done";
