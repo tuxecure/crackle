@@ -4,7 +4,7 @@
 
 A project started by Fuseteam, inspired by [Pacstall](https://github.com/pacstall/pacstall), [Nix](https://github.com/NixOS/nix) and [nyaa](https://git.kreatea.space/kreato-linux/nyaa)
 
-Crackle is a client which allows apt users to install stuff in their home directory, following the XDG Base Directory specification.
+Crackle is a client which allows apt users to install stuff in their home directory, following the [XDG Base Directory specification](https://www.freedesktop.org/software/systemd/man/file-hierarchy.html#Home%20Directory).
  
 ## Installation
 
