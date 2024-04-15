@@ -21,8 +21,8 @@ function pkg_install () {
 		source "${PKG_PREFIX}/lib/crackle/${pkgname}";
 		install_${pkgname};
 	fi
-	fetch_desktop ${PKGS_DIR}/usr/share/applications/${pkgname}.desktop ${PKG_PREFIX}/share/applications/crackle.${pkgname}.desktop
-	if [[ ! -e "${PKGS_DIR}/share/icons" ]]; then link_iconsdir; fi
+	fetch_desktop ${PKG_PATH}/${pkgname}/usr/share/applications/${pkgname}.desktop ${PKG_PREFIX}/share/applications/crackle.${pkgname}.desktop
+	if [[ ! -e "${PKG_PATH}/${pkgname}/usr/share/icons" ]]; then link_icons; fi
 	link_bash-completion;
 }
 
@@ -86,8 +86,4 @@ function fetch_desktop() {
 		${SCRP_DIR}/desktop_trunc $1 > $2
 		echo "X-Ubuntu-Touch=true" >> $2
 	fi
-}
-
-function link_iconsdir() {
-	if [[ -d "${PKG_PATH}/usr/share/icons" ]]; then say "linking icons directory";ln -s ${PKG_PATH}/usr/share/icons ${PKG_PREFIX}/share;fi
 }

@@ -27,3 +27,7 @@ function link_bash-completion(){
 	[ -d "$PKGS_DIR/etc/bash_completion.d" ] && ln -s "$PKGS_DIR"/etc/bash_completion.d/* ${XDG_DATA_HOME:-$HOME/.local/share}/bash-completion/completions 2> /dev/null;
 	[ -d "$PKGS_DIR/usr/share/bash-completion/completions" ] && ln -s "$PKGS_DIR"/usr/share/bash-completion/completions/* ${XDG_DATA_HOME:-$HOME/.local/share}/bash-completion/completions 2> /dev/null;
 }
+
+function link_icons() {
+	if [[ -d "${PKG_PATH}/${pkgname}/usr/share/icons" ]]; then say "linking icons directory";ln -s ${PKG_PATH}/${pkgname}/usr/share/icons ${PKG_PREFIX}/share;fi
+}
