@@ -31,7 +31,7 @@ function pkg_crack () {
 	say "Unpacking ${pkgname} (${pkgversion})"
 	[[ ${dir} = ${PKG_PATH} ]] && dir=${PKG_PATH}/${pkgname}
         dpkg-deb -x "${package}" "${dir}";
-	dir=${PKG_PATH}
+	[[ "${dir}" = "${PKG_PATH}/${pkgname}" ]] && dir=${PKG_PATH}
 }
 
 function pkg_arch() {
