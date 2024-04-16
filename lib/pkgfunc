@@ -22,7 +22,7 @@ function pkg_install () {
 		install_${pkgname};
 	fi
 	fetch_desktop ${PKG_PATH}/${pkgname}/usr/share/applications/${pkgname}.desktop ${PKG_PREFIX}/share/applications/crackle.${pkgname}.desktop
-	if [[ ! -e "${PKG_PATH}/${pkgname}/usr/share/icons" ]]; then link_icons; fi
+        link_icons;
 	link_bash-completion;
 }
 

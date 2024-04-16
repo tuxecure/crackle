@@ -1,20 +1,32 @@
 #!/usr/bin/env bash
-function link_lib(){
+function build_tree(){
+    base_path="$1";
+    xdg_path="$2"
     while read lib
     do
-	    cd $lib
 	    while read libdir
 	    do
-	           mkdir -p $PKG_PREFIX/lib/$libdir 
-		   ln -s $(find $lib/$libdir -type f -maxdepth 1) $PKG_PREFIX/lib/$libdir 2> /dev/null
-		   symlinks=$(find $lib/$libdir -type l -maxdepth 1)
-		   [[ -n $symlinks ]] && cp $symlinks $PKG_PREFIX/lib/$libdir
-	    done < <(find . -type d)
-    done < <(find $PKGS_DIR -name lib -type d);
+		   libtree="${libdir/$lib\//}"
+	           mkdir -p $xdg_path/$libtree 
+		   library=$(find $libdir -type f -maxdepth 1)
+		   [[ -n $library ]] && ln -s $library $xdg_path/$libtree 2> /dev/null
+		   symlinks=$(find $libdir -type l -maxdepth 1)
+		   [[ -n $symlinks ]] && cp $symlinks $xdg_path/$libtree
+	    done < <(find $lib -mindepth 1 -type d)
+            library=$(find $lib -type f -maxdepth 1)
+	    [[ -n $library ]] && ln -s $library $xdg_path/$libtree 2> /dev/null
+    done < <(find $PKGS_DIR -path $base_path -type d);
 }
+
+function link_lib(){
+    base_path="*/usr/lib";
+    xdg_path="$PKG_PREFIX/lib"
+    build_tree $base_path $xdg_path
+}
+
 function link_bin(){
 	[ ! -d "$HOME/.local/bin" ] && mkdir -p  "$HOME/.local/bin";
-	[ ! -d "$SUDO_BIN" ] && sudo_run "mkdir -p  $SUDO_BIN";
+	[ ! -d "$SUDO_BIN" ] && sudo_run "mkdir -p  $SUDO_BIN 2> /dev/null";
 	[ -d "$PKGS_DIR/bin" ] && ln -s $PKGS_DIR/bin/* $PKG_PREFIX/bin 2> /dev/null;
 	[ -d "$PKGS_DIR/sbin" ] && sudo_run "ln -s $PKGS_DIR/sbin/* $SUDO_BIN 2> /dev/null";
 	[ -d "$PKGS_DIR/usr/bin" ] && ln -s $PKGS_DIR/usr/bin/* $PKG_PREFIX/bin 2> /dev/null;
@@ -29,5 +41,9 @@ function link_bash-completion(){
 }
 
 function link_icons() {
-	if [[ -d "${PKG_PATH}/${pkgname}/usr/share/icons" ]]; then say "linking icons directory";ln -s ${PKG_PATH}/${pkgname}/usr/share/icons ${PKG_PREFIX}/share;fi
+	mkdir -p ${PKG_PREFIX}/share/icons;
+        base_path="*/usr/share/pixmaps";
+        xdg_path="$PKG_PREFIX/share/icons"
+        build_tree $base_path $xdg_path
+        build_tree "*/usr/share/icons" $xdg_path
 }
