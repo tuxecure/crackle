@@ -68,10 +68,16 @@ function pkgsetup(){
         mkdir -p "$DPKGSTATE";
         cp /var/lib/dpkg/status $DPKGSTATE/status;
     }
+
+    [[ -d "$PKG_PREFIX/lib/crackle" ]] || mkdir -p "$PKG_PREFIX/lib/crackle";
+
+    cp -r "$SCRP_DIR"/bin/* "$PKG_PREFIX/lib/crackle"
+
     [[ -d "$APTCACHE" ]] || mkdir -p "$APTCACHE";
     [[ -d "$APTSTATE" ]] || mkdir -p "$APTSTATE";
     [[ -d "$APTCONFIG" ]] || {
-        mkdir -p $APTCONFIG/sources.list.d $APTCONFIG/preferences.d $APTCONFIG/trusted.gpg.d;
+        mkdir -p $APTCONFIG/preferences.d $APTCONFIG/trusted.gpg.d;
+        mv $PKG_PREFIX/lib/crackle/etc/sources.list.d $APTCONFIG;
         ln -s /etc/apt/sources.list $APTCONFIG;
         [[ -n "$(ls /etc/apt/trusted.gpg.d)" ]] && ln -s /etc/apt/trusted.gpg.d/* $APTCONFIG/trusted.gpg.d/;
     }

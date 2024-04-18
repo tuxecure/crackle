@@ -202,9 +202,6 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
 	sudo -k;
     }
 
-    [[ -d "$PKG_PREFIX/lib/crackle" ]] || mkdir -p "$PKG_PREFIX/lib/crackle";
-
-    cp -r "$SCRP_DIR"/bin/* "$PKG_PREFIX/lib/crackle"
     if ! check_cmd patchelf; then "$SCRP_DIR"/crackle install patchelf; fi
     [ ! -d $SCRP_DIR/.git ] && rm -r $SCRP_DIR;
     say "Setup complete!";
