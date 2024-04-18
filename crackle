@@ -309,7 +309,8 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
     sudo_run "find $SUDO_BIN -xtype l -exec rm {} +";
     sudo_run "find $SUDO_CONFIG -xtype l -exec rm {} +";
     find "${XDG_DATA_HOME:-$HOME/.local/share}" -xtype l -exec rm {} + 2> /dev/null;
-    rm ${PKG_PREFIX}/share/applications/crackle.*.desktop
+    desktopfiles=$(ls ${PKG_PREFIX}/share/applications/crackle.*.desktop);
+    [[ -n $desktopfiles ]] && rm ${PKG_PREFIX}/share/applications/crackle.*.desktop
     sed -i '/cracklerc/d' $HOME/.bashrc
     sed -i '/cracklerc/d' $HOME/.profile
     find "$CRACKLECMP" -xtype l -exec rm {} +;
