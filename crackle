@@ -85,6 +85,7 @@ if [ -z "$operation" -o "$operation" = "help" ]; then
 	echo 'available commands:
 	- crackle setup
 	- crackle debug
+	- crackle sudo $PKG
 	- crackle install $PKG
 	- crackle reinstall $PKG
 	- crackle download $PKG
@@ -101,7 +102,7 @@ if [ -z "$operation" -o "$operation" = "help" ]; then
 fi
 
 case $operation in
-	"install"|"reinstall"|"download"|"crack"|"remove"|"search"|"show"|"remove")[ -z "$PKG" ] && err "missing argument";;
+	"install"|"reinstall"|"download"|"crack"|"remove"|"search"|"show"|"remove"|"sudo")[ -z "$PKG" ] && err "missing argument";;
 	"setup"|"debug"|"clean"|"update"|"nuke"|"list");;
 	"click")[ -z "$PKG" ] && err "missing argument";build_click;;
 	*) err 'available operations (setup|debug|install $PKG|download $PKG|crack $PKG|remove $PKG|clean|search $PKG|show $PKG|update|remove $PKG)';;
@@ -258,6 +259,16 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
     $APT_GET clean;
     say "Done"!
     exit 0;
+}
+
+[[ "$operation" = "sudo" ]] && {
+    for pkg in "${PKG[@]}"
+    do
+	    bin_path=$(which $pkg)
+	    real_path=$(realpath $bin_path)
+	    sudo_run "ln -s $real_path $SUDO_BIN/$pkg"
+	    [[ -d $PKG_PATH/$pkg ]] && touch $PKG_PATH/$pkg/$pkg.sudo
+    done;
 }
 
 # reinstall a package
