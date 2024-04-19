@@ -282,12 +282,12 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
     for pkg in "${PKG[@]}"
     do
 	    [ -d $PKG_PATH/$pkg ] && say "removing $pkg";
-	    [[ -d "$PKG_PATH/$pkg/sbin" || -d "$PKG_PATH/$pkg/usr/sbin" ]] && sbin="true";
+	    [[ -d "$PKG_PATH/$pkg/sbin" || -d "$PKG_PATH/$pkg/usr/sbin" || -f "$PKG_PATH/$pkg/$pkg.sudo" ]] && sbin="true";
 	    [ -d $PKG_PATH/$pkg ] && rm -r $PKG_PATH/$pkg;
 	    [ "$sbin" = "true" ] && sudo_run "find $SUDO_BIN -xtype l -exec rm {} +";
             [ "$sbin" = "true" ] && sudo_run "find $SUDO_CONFIG -xtype l -exec rm {} +";
             [ "$sbin" = "true" ] && sudo -k;
-            [ "$sbin" = "true" ] && unset $sbin;
+            [ "$sbin" = "true" ] && sbin="";
 	    [ -f ${PKG_PREFIX}/share/applications/crackle.${pkg}.desktop ] && rm ${PKG_PREFIX}/share/applications/crackle.${pkg}.desktop
     done;
     find "$PKG_PREFIX/bin" -xtype l -exec rm {} +;
