@@ -62,6 +62,18 @@ function pkgstatus(){
 	[ ! $pkgstatus = "(none)" ] && stat "Apt: $1 is already the newest version \($pkgstatus\)";
 }
 
+function setup_repos(){
+	while read repo
+	do
+	      REPOS=$(basename $repo)
+	      if [[ -f "${PKG_PREFIX}/lib/crackle/${REPOS%.*}" ]]; then
+	      	source "${PKG_PREFIX}/lib/crackle/${REPOS%.*}";
+	      	setup_${REPOS%.*};
+	      fi
+        done < <(find $APTCONFIG/sources.list.d -name "*.list")
+
+}
+
 function pkgsetup(){
     say "configuring crackle";
     [[ -d "$DPKGSTATE" ]] || {
@@ -78,6 +90,9 @@ function pkgsetup(){
     [[ -d "$APTCONFIG" ]] || {
         mkdir -p $APTCONFIG/preferences.d $APTCONFIG/trusted.gpg.d;
         mv $PKG_PREFIX/lib/crackle/etc/sources.list.d $APTCONFIG;
+
+	setup_repos;
+
         ln -s /etc/apt/sources.list $APTCONFIG;
         [[ -n "$(ls /etc/apt/trusted.gpg.d)" ]] && ln -s /etc/apt/trusted.gpg.d/* $APTCONFIG/trusted.gpg.d/;
     }
