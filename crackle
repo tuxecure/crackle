@@ -97,13 +97,14 @@ if [ -z "$operation" -o "$operation" = "help" ]; then
 	- crackle search $PKG
 	- crackle show $PKG
 	- crackle update
+	- crackle upgrade
 	- crackle nuke'
 	exit 0
 fi
 
 case $operation in
 	"install"|"reinstall"|"download"|"crack"|"remove"|"search"|"show"|"remove"|"sudo")[ -z "$PKG" ] && err "missing argument";;
-	"setup"|"debug"|"clean"|"update"|"nuke"|"list");;
+	"setup"|"debug"|"clean"|"update"|"upgrade"|"nuke"|"list");;
 	"click")[ -z "$PKG" ] && err "missing argument";build_click;;
 	*) err 'available operations (setup|debug|install $PKG|download $PKG|crack $PKG|remove $PKG|clean|search $PKG|show $PKG|update|remove $PKG)';;
 esac
@@ -212,6 +213,22 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
 [ "$operation" = "update" ] && {
         wget -q --spider https://ubports.com || err "no internet connection, please run crackle update later to fetch the latest package lists";
         $APT_GET "$operation"
+        exit 0;
+}
+
+# Upgrades the installed packages
+[ "$operation" = "upgrade" ] && {
+        wget -q --spider https://ubports.com || err "no internet connection, please run crackle upgrade later to fetch the latest upgrades";
+        say "calculating upgrade....."
+        while read pkg
+	do
+             PKGS_DIR=$PKG_PATH/$pkg
+	     installed=$(cat $PKGS_DIR/$pkg.version);
+	     candidate=$($APT_CACHE policy $pkg|awk '/Candidate/{print $2}');
+	     [[ ! "$installed" = "$candidate" ]] && upgradable+=($pkg)
+	done < <(ls $PKG_PATH)
+	[[ -n "$upgradable" ]] && crackle install $upgradable
+	[[ -z "$upgradable" ]] && stat "all packages are up to date"
         exit 0;
 }
 

@@ -34,6 +34,8 @@ crackle
 	sudo $BIN
 	list
 	clean
+	update
+	upgrade
 	setup
 	debug
 	nuke
