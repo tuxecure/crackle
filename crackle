@@ -318,8 +318,8 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
     [[ -n $desktopfiles ]] && rm ${PKG_PREFIX}/share/applications/crackle.*.desktop
     sed -i '/cracklerc/d' $HOME/.bashrc
     sed -i '/cracklerc/d' $HOME/.profile
-    sudo_run 'sed -i /PATH/d /root/.profile'
-    sudo_run 'sed -i /cracklerc/d /root/.profile'
+    sudo_run "sed -i /PATH/d /root/.profile"
+    sudo_run "sed -i /cracklerc/d /root/.profile"
     find "$CRACKLECMP" -xtype l -exec rm {} +;
     sudo -k
     exit 0;
