@@ -32,6 +32,7 @@ crackle
 	show $PKG
 	remove $PKG
 	sudo $BIN
+	sudok $BIN
 	list
 	clean
 	update
@@ -48,6 +49,7 @@ Crackle specific commands:
 - `debug`: Shows some debugging information. Doesn't do any changes to the system.
 - `crack`: this will extract the package `$PKG` and it's dependencies to `$HOME/packages/$PKG` for easy inspection, usefull to see the file tree or navigate through the various files associated with the package or its dependencies
 - `sudo`: this will make a symlink of the binary $BIN to `/root/.local/bin` for use with `sudo -i $BIN`
+- `sudok`: this will remove the symlink of the binary $BIN from `/root/.local/bin`
 - `click`: this will build a click package from the downloaded deb packages
 - `reinstall`: this is equivalent to `apt install --reinstall $PKG`
 - `nuke`: Automagically remove everything crackle related from the system
