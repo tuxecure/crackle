@@ -1,4 +1,15 @@
 #!/usr/bin/env bash
+function link_path(){
+	pkg_path="$1";
+	xdg_path="$2"
+	while read file_path
+	do
+		sbin=$(basename $pkg_path)
+		file=$(basename $file_path);
+		[[ ! -f "$xdg_path/$file" && ! $sbin = "sbin" ]] && ln -s $file_path $xdg_path;
+		[[ ! -f "$xdg_path/$file" && $sbin = "sbin" ]] &&  sudo_run "ln -s $file_path $xdg_path";
+	done < <(find $pkg_path -type f -maxdepth 1)
+}
 function build_tree(){
     base_path="$1";
     xdg_path="$2"
@@ -8,13 +19,11 @@ function build_tree(){
 	    do
 		   libtree="${libdir/$lib\//}"
 	           mkdir -p $xdg_path/$libtree 
-		   library=$(find $libdir -type f -maxdepth 1)
-		   [[ -n $library ]] && ln -s $library $xdg_path/$libtree 2> /dev/null
+		   link_path $libdir $xdg_path/$libtree
 		   symlinks=$(find $libdir -type l -maxdepth 1)
 		   [[ -n $symlinks ]] && cp $symlinks $xdg_path/$libtree
 	    done < <(find $lib -mindepth 1 -type d)
-            library=$(find $lib -type f -maxdepth 1)
-	    [[ -n $library ]] && ln -s $library $xdg_path/$libtree 2> /dev/null
+	    link_path $library $xdg_path/$libtree
     done < <(find $PKGS_DIR -path $base_path -type d);
 }
 
@@ -27,17 +36,17 @@ function link_lib(){
 function link_bin(){
 	[ ! -d "$HOME/.local/bin" ] && mkdir -p  "$HOME/.local/bin";
 	[ ! -d "$SUDO_BIN" ] && sudo_run "mkdir -p  $SUDO_BIN";
-	[ -d "$PKGS_DIR/bin" ] && ln -s $PKGS_DIR/bin/* $PKG_PREFIX/bin 2> /dev/null;
-	[ -d "$PKGS_DIR/sbin" ] && sudo_run "ln -s $PKGS_DIR/sbin/* $SUDO_BIN";
-	[ -d "$PKGS_DIR/usr/bin" ] && ln -s $PKGS_DIR/usr/bin/* $PKG_PREFIX/bin 2> /dev/null;
-	[ -d "$PKGS_DIR/usr/sbin" ] && sudo_run "ln -s $PKGS_DIR/usr/sbin/* $SUDO_BIN";
-	[ -d "$PKGS_DIR/usr/games" ] && ln -s $PKGS_DIR/usr/games/* $PKG_PREFIX/bin 2> /dev/null;
+	[ -d "$PKGS_DIR/bin" ] && link_path $PKGS_DIR/bin $PKG_PREFIX/bin;
+	[ -d "$PKGS_DIR/sbin" ] && link_path $PKGS_DIR/sbin $SUDO_BIN;
+	[ -d "$PKGS_DIR/usr/bin" ] && link_path $PKGS_DIR/usr/bin $PKG_PREFIX/bin;
+	[ -d "$PKGS_DIR/usr/sbin" ] && link_path $PKGS_DIR/usr/sbin $SUDO_BIN;
+	[ -d "$PKGS_DIR/usr/games" ] && link_path $PKGS_DIR/usr/games $PKG_PREFIX/bin;
 	sudo -k;
 }
 
 function link_bash-completion(){
-	[ -d "$PKGS_DIR/etc/bash_completion.d" ] && ln -s "$PKGS_DIR"/etc/bash_completion.d/* ${XDG_DATA_HOME:-$HOME/.local/share}/bash-completion/completions 2> /dev/null;
-	[ -d "$PKGS_DIR/usr/share/bash-completion/completions" ] && ln -s "$PKGS_DIR"/usr/share/bash-completion/completions/* ${XDG_DATA_HOME:-$HOME/.local/share}/bash-completion/completions 2> /dev/null;
+	[ -d "$PKGS_DIR/etc/bash_completion.d" ] && link_path "$PKGS_DIR"/etc/bash_completion.d/* ${XDG_DATA_HOME:-$HOME/.local/share}/bash-completion/completions;
+	[ -d "$PKGS_DIR/usr/share/bash-completion/completions" ] && link_path "$PKGS_DIR"/usr/share/bash-completion/completions/* ${XDG_DATA_HOME:-$HOME/.local/share}/bash-completion/completions;
 }
 
 function link_icons() {
