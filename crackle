@@ -103,7 +103,7 @@ if [ -z "$operation" -o "$operation" = "help" ]; then
 fi
 
 case $operation in
-	"install"|"reinstall"|"download"|"crack"|"remove"|"search"|"show"|"remove"|"sudo")[ -z "$PKG" ] && err "missing argument";;
+	"install"|"reinstall"|"download"|"crack"|"remove"|"search"|"show"|"remove"|"sudo"|"sudok")[ -z "$PKG" ] && err "missing argument";;
 	"setup"|"debug"|"clean"|"update"|"upgrade"|"nuke"|"list");;
 	"click")[ -z "$PKG" ] && err "missing argument";build_click;;
 	*) err 'available operations (setup|debug|install $PKG|download $PKG|crack $PKG|remove $PKG|clean|search $PKG|show $PKG|update|remove $PKG)';;
@@ -275,6 +275,7 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
     exit 0;
 }
 
+# enable use of a binary with sudo -i $BIN
 [[ "$operation" = "sudo" ]] && {
     for pkg in "${PKG[@]}"
     do
@@ -283,6 +284,20 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
 	    sudo_run "ln -s $real_path $SUDO_BIN/$pkg"
 	    [[ -d $PKG_PATH/$pkg ]] && touch $PKG_PATH/$pkg/$pkg.sudo
     done;
+    exit 0;
+}
+
+# diable use of a binary with sudo -i $BIN
+[[ "$operation" = "sudok" ]] && {
+    for pkg in "${PKG[@]}"
+    do
+            say "this action requires sudo access"
+	    set -x
+	    bin_path=$(sudo -i which $pkg)
+	    set +x
+	    [[ -f $bin_path ]] && sudo_run "rm $bin_path";
+    done;
+    exit 0;
 }
 
 # reinstall a package
