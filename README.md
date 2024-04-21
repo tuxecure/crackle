@@ -31,6 +31,7 @@ crackle
 	search $PKG
 	show $PKG
 	remove $PKG
+	sudo $BIN
 	list
 	clean
 	setup
@@ -44,6 +45,7 @@ Crackle specific commands:
 - `setup`: Automagically configures and installs/upgrades crackle
 - `debug`: Shows some debugging information. Doesn't do any changes to the system.
 - `crack`: this will extract the package `$PKG` and it's dependencies to `$HOME/packages/$PKG` for easy inspection, usefull to see the file tree or navigate through the various files associated with the package or its dependencies
+- `sudo`: this will make a symlink of the binary $BIN to `/root/.local/bin` for use with `sudo -i $BIN`
 - `click`: this will build a click package from the downloaded deb packages
 - `reinstall`: this is equivalent to `apt install --reinstall $PKG`
 - `nuke`: Automagically remove everything crackle related from the system
@@ -52,7 +54,7 @@ Crackle specific commands:
 
 the following are the limitations of crackle:
 - crackle doesn't work on systems with a readwrite rootfs
-- crackle does not resolve dependencies, dependencies have to removed by name.
+- crackle does not resolve dependencies when removing packages, dependencies have to be removed by name.
 - crackle doesn't know how to deal with all packages, so it may be hit or miss please report packages that don't work on [GitLab](https://gitlab.com/tuxecure/crackle-apt/crackle)
 - crackle needs to set up the correct environment in order for packages to find their files and libraries as such it is sometimes required to log off and back for them to work as intended
 

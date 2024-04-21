@@ -85,7 +85,7 @@ if [ -z "$operation" -o "$operation" = "help" ]; then
 	echo 'available commands:
 	- crackle setup
 	- crackle debug
-	- crackle sudo $PKG
+	- crackle sudo $BIN
 	- crackle install $PKG
 	- crackle reinstall $PKG
 	- crackle download $PKG
