@@ -225,7 +225,7 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
              PKGS_DIR=$PKG_PATH/$pkg
 	     installed=$(cat $PKGS_DIR/$pkg.version);
 	     candidate=$($APT_CACHE policy $pkg|awk '/Candidate/{print $2}');
-	     [[ ! "$installed" = "$candidate" ]] && upgradable+=($pkg)
+	     [[ ! "$installed" = "$candidate" ]] && upgradable+=" "$pkg
 	done < <(ls $PKG_PATH)
 	[[ -n "$upgradable" ]] && crackle install $upgradable
 	[[ -z "$upgradable" ]] && stat "all packages are up to date"
