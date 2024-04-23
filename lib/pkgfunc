@@ -88,8 +88,9 @@ function pkgsetup(){
     [[ -d "$APTCACHE" ]] || mkdir -p "$APTCACHE";
     [[ -d "$APTSTATE" ]] || mkdir -p "$APTSTATE";
     [[ -d "$APTCONFIG" ]] || {
-        mkdir -p $APTCONFIG/preferences.d $APTCONFIG/trusted.gpg.d;
+        mkdir -p $APTCONFIG/trusted.gpg.d;
         mv $PKG_PREFIX/lib/crackle/etc/sources.list.d $APTCONFIG;
+        mv $PKG_PREFIX/lib/crackle/etc/preferences.d $APTCONFIG;
 
 	setup_repos;
 
