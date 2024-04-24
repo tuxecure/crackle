@@ -16,6 +16,7 @@ CRACKLERC=$APTCONFIG/cracklerc;
 CRACKLEENV=$APTCONFIG/environment;
 CRACKLECMP=${XDG_DATA_HOME:-$HOME/.local/share}/bash-completion/completions;
 CRACKDIR=${CRACKDIR:-$HOME/packages/$PKG};
+CRACKLEBIN="https://gitlab.com/tuxecure/crackle-apt/cracklebin/-/archive/master/cracklebin-master.tar.gz"
 PKG_PREFIX=${PKG_PREFIX:-$HOME/.local}
 SCRP_DIR=$(dirname "${BASH_SOURCE[0]}")
 
@@ -212,6 +213,8 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
 # Updates the apt repositories
 [ "$operation" = "update" ] && {
         wget -q --spider https://ubports.com || err "no internet connection, please run crackle update later to fetch the latest package lists";
+        say "Updating Cracklebin"
+        curl --disable --progress-bar -L ${CRACKLEBIN}  | tar zx --strip-components=1 -C $PKG_PREFIX/lib/crackle
         $APT_GET "$operation"
         exit 0;
 }

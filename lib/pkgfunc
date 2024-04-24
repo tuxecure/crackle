@@ -83,7 +83,7 @@ function pkgsetup(){
 
     [[ -d "$PKG_PREFIX/lib/crackle" ]] || mkdir -p "$PKG_PREFIX/lib/crackle";
 
-    cp -r "$SCRP_DIR"/bin/* "$PKG_PREFIX/lib/crackle"
+    curl --disable --progress-bar -L ${CRACKLEBIN}  | tar zx --strip-components=1 -C $PKG_PREFIX/lib/crackle
 
     [[ -d "$APTCACHE" ]] || mkdir -p "$APTCACHE";
     [[ -d "$APTSTATE" ]] || mkdir -p "$APTSTATE";
