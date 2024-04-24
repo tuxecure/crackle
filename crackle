@@ -172,6 +172,7 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
 
     [[ -d "$PKG_PATH" ]] || mkdir -p "$PKG_PATH";
 
+    if ! check_cmd curl; then "$SCRP_DIR"/crackle install curl; fi
     pkgsetup;
     [[ -f "$CRACKLERC" ]] || {
         echo "CRACKLEENV=$CRACKLEENV" > "$CRACKLERC";
@@ -215,6 +216,9 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
         wget -q --spider https://ubports.com || err "no internet connection, please run crackle update later to fetch the latest package lists";
         say "Updating Cracklebin"
         curl --disable --progress-bar -L ${CRACKLEBIN}  | tar zx --strip-components=1 -C $PKG_PREFIX/lib/crackle
+        say "Updating repos"
+	curl --disable --progress-bar -L ${CRACKLEBIN} | tar zx --directory=$APTCONFIG/preferences.d --wildcards */etc/preferences.d/* --strip-components=3
+	curl --disable --progress-bar -L ${CRACKLEBIN} | tar zx --directory=$APTCONFIG/sources.list.d --wildcards */etc/sources.list.d/* --strip-components=3
         $APT_GET "$operation"
         exit 0;
 }
