@@ -41,7 +41,7 @@ function build_click () {
 function prep_build () {
 	[ -d "${INSTALL_DIR}" ] && rm -r ${INSTALL_DIR}
 	mkdir -p ${CLICK_LD_LIBRARY_PATH} ${CLICK_PATH} ${INSTALL_DIR}
-	fetch_desktop ${PKG} ${INSTALL_DIR};
+	fetch_desktop ${INSTALL_DIR} ${INSTALL_DIR};
 	mod_desktop
 	cp ${ROOT}/pkg.d/* ${ROOT}/apparmor.json ${ROOT}/manifest.json ${BUILD_DIR}/ || exit 1
 	sed -i "s/@pkg@/${PKG}/" ${BUILD_DIR}/manifest.json

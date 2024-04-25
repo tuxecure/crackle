@@ -21,7 +21,7 @@ function pkg_install () {
 		source "${PKG_PREFIX}/lib/crackle/${pkgname}";
 		install_${pkgname};
 	fi
-	fetch_desktop ${pkgname} ${PKG_PREFIX}/share/applications
+	fetch_desktop ${PKG_PATH}/${pkgname} ${PKG_PREFIX}/share/applications
         link_icons;
 	link_bash-completion;
 }
@@ -110,11 +110,12 @@ function pkgsetup(){
 }
 
 function fetch_desktop() {
+	PKG_DIR=$1
 	PKG_DESKTOP=$2
 	while read desktop
 	do
 		desktopname=$(basename $desktop)
 	     	${SCRP_DIR}/desktop_trunc $desktop > ${PKG_DESKTOP}/crackle.${desktopname}
 	     	echo "X-Ubuntu-Touch=true" >>  ${PKG_DESKTOP}/crackle.${desktopname}
-        done < <(find $PKG_PATH/$1 -name *.desktop)
+        done < <(find $PKG_DIR -name *.desktop)
 }
