@@ -213,6 +213,7 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
 
 # Updates the apt repositories
 [ "$operation" = "update" ] && {
+	say "checking connectivity"
         wget -q --spider https://ubports.com || err "no internet connection, please run crackle update later to fetch the latest package lists";
         say "Updating Cracklebin"
         curl --disable --progress-bar -L ${CRACKLEBIN}  | tar zx --strip-components=1 -C $PKG_PREFIX/lib/crackle

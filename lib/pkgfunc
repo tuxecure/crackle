@@ -75,27 +75,34 @@ function setup_repos(){
 }
 
 function pkgsetup(){
-    say "configuring crackle";
+    say "Configuring crackle";
+
     [[ -d "$DPKGSTATE" ]] || {
         mkdir -p "$DPKGSTATE";
         cp /var/lib/dpkg/status $DPKGSTATE/status;
     }
 
-    [[ -d "$PKG_PREFIX/lib/crackle" ]] || mkdir -p "$PKG_PREFIX/lib/crackle";
-
-    curl --disable --progress-bar -L ${CRACKLEBIN}  | tar zx --strip-components=1 -C $PKG_PREFIX/lib/crackle
-
     [[ -d "$APTCACHE" ]] || mkdir -p "$APTCACHE";
     [[ -d "$APTSTATE" ]] || mkdir -p "$APTSTATE";
+
     [[ -d "$APTCONFIG" ]] || {
         mkdir -p $APTCONFIG/sources.list.d $APTCONFIG/preferences.d $APTCONFIG/trusted.gpg.d;
 
         ln -s /etc/apt/sources.list $APTCONFIG;
         [[ -n "$(ls /etc/apt/trusted.gpg.d)" ]] && ln -s /etc/apt/trusted.gpg.d/* $APTCONFIG/trusted.gpg.d/;
     }
-	curl --disable --progress-bar -L ${CRACKLEBIN} | tar zx --directory=$APTCONFIG/preferences.d --wildcards */etc/preferences.d/* --strip-components=3
-	curl --disable --progress-bar -L ${CRACKLEBIN} | tar zx --directory=$APTCONFIG/sources.list.d --wildcards */etc/sources.list.d/* --strip-components=3
-	setup_repos;
+
+    wget -q --spider https://ubports.com || err "no internet connection, please run crackle update later to fetch the latest package lists";
+    curl --disable --progress-bar -L ${CRACKLEBIN} | tar zx --directory=$APTCONFIG/preferences.d --wildcards */etc/preferences.d/* --strip-components=3
+    curl --disable --progress-bar -L ${CRACKLEBIN} | tar zx --directory=$APTCONFIG/sources.list.d --wildcards */etc/sources.list.d/* --strip-components=3
+
+    say "Updating cracklebin"
+
+    [[ -d "$PKG_PREFIX/lib/crackle" ]] || mkdir -p "$PKG_PREFIX/lib/crackle";
+
+    curl --disable --progress-bar -L ${CRACKLEBIN}  | tar zx --strip-components=1 -C $PKG_PREFIX/lib/crackle
+    setup_repos;
+
     [ -d "$APTSTATE/lists" ] || {
         say "Fetching package lists...";
         ensure "$SCRP_DIR"/crackle update
