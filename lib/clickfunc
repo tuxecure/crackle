@@ -42,7 +42,7 @@ function prep_build () {
 	[ -d "${INSTALL_DIR}" ] && rm -r ${INSTALL_DIR}
 	mkdir -p ${CLICK_LD_LIBRARY_PATH} ${CLICK_PATH} ${INSTALL_DIR}
 	fetch_desktop ${PKG} ${INSTALL_DIR};
-	mod_desktop ${INSTALL_DIR}/${PKG}.desktop;
+	mod_desktop
 	cp ${ROOT}/pkg.d/* ${ROOT}/apparmor.json ${ROOT}/manifest.json ${BUILD_DIR}/ || exit 1
 	sed -i "s/@pkg@/${PKG}/" ${BUILD_DIR}/manifest.json
 	cp ${BUILD_DIR}/*.json ${INSTALL_DIR}
@@ -50,8 +50,9 @@ function prep_build () {
 }
 
 mod_desktop(){
-	sed -i "/Icon=/d" $1
-	sed -i "/Exec=/d" $1
-	sed -i "/^Categories=/i Exec=${PKG}.sh" $1;
+	desktopfile=$(find ${INSTALL_DIR} -maxdepth 1 -name *.desktop)
+	sed -i "/Icon=/d" $desktopfile
+	sed -i "/Exec=/d" $desktopfile
+	sed -i "/^Categories=/i Exec=${PKG}.sh" $desktopfile;
 }
 
