@@ -168,11 +168,11 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
     [[ -z "$(ls $SCRP_DIR/bin)" && $(basename $SCRP_DIR) != "bin" ]] && err "submodule missing";
     bashrc=$(grep crackle "$HOME"/.bashrc);
     profile=$(grep crackle "$HOME"/.profile);
+    [[ -f '/root/.profile' ]] ||  sudo_run "touch /root/.profile";
     rootprofile=$(grep crackle /root/.profile);
 
     [[ -d "$PKG_PATH" ]] || mkdir -p "$PKG_PATH";
 
-    if ! check_cmd curl; then "$SCRP_DIR"/crackle install curl; fi
     pkgsetup;
     [[ -f "$CRACKLERC" ]] || {
         echo "CRACKLEENV=$CRACKLEENV" > "$CRACKLERC";
@@ -215,11 +215,15 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
 [ "$operation" = "update" ] && {
 	say "checking connectivity"
         wget -q --spider https://ubports.com || err "no internet connection, please run crackle update later to fetch the latest package lists";
-        say "Updating Cracklebin"
-        curl --disable --progress-bar -L ${CRACKLEBIN}  | tar zx --strip-components=1 -C $PKG_PREFIX/lib/crackle
-        say "Updating repos"
-	curl --disable --progress-bar -L ${CRACKLEBIN} | tar zx --directory=$APTCONFIG/preferences.d --wildcards */etc/preferences.d/* --strip-components=3
-	curl --disable --progress-bar -L ${CRACKLEBIN} | tar zx --directory=$APTCONFIG/sources.list.d --wildcards */etc/sources.list.d/* --strip-components=3
+        
+        if check_cmd curl; then say "Updating Cracklebin"; fi
+        if check_cmd curl; then curl --disable --progress-bar -L ${CRACKLEBIN}  | tar zx --strip-components=1 -C $PKG_PREFIX/lib/crackle; fi
+        
+        if check_cmd curl; then say "Updating repos"; fi
+        if check_cmd curl; then curl --disable --progress-bar -L ${CRACKLEBIN} | tar zx --directory=$APTCONFIG/preferences.d --wildcards */etc/preferences.d/* --strip-components=3; fi
+	
+        if check_cmd curl; then curl --disable --progress-bar -L ${CRACKLEBIN} | tar zx --directory=$APTCONFIG/sources.list.d --wildcards */etc/sources.list.d/* --strip-components=3; fi
+	
         $APT_GET "$operation"
         exit 0;
 }
