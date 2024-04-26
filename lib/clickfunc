@@ -54,5 +54,6 @@ mod_desktop(){
 	sed -i "/Icon=/d" $desktopfile
 	sed -i "/Exec=/d" $desktopfile
 	sed -i "/^Categories=/i Exec=${PKG}.sh" $desktopfile;
+	mv $desktopfile ${INSTALL_DIR}/${PKG}.desktop
 }
 
