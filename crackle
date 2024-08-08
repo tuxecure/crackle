@@ -24,7 +24,6 @@ SCRP_DIR=$(dirname "${BASH_SOURCE[0]}")
 SUDO_CONFIG=/root/.config
 SUDO_BIN=/root/.local/bin
 SUDO_STATE=/root/.local/state
-set -x
 # invalidate cached credentials to ensure sudo asks for the password the first time it is used by crackle
 if [[ -z "$CI" ]]; then sudo -k; fi
 
