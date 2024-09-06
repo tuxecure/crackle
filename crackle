@@ -86,6 +86,7 @@ if [ -z "$operation" -o "$operation" = "help" ]; then
 	- crackle setup
 	- crackle debug
 	- crackle sudo $BIN
+	- crackle sudok $BIN
 	- crackle install $PKG
 	- crackle reinstall $PKG
 	- crackle download $PKG
@@ -106,7 +107,7 @@ case $operation in
 	"install"|"reinstall"|"download"|"crack"|"remove"|"search"|"show"|"remove"|"sudo"|"sudok")[ -z "$PKG" ] && err "missing argument";;
 	"setup"|"debug"|"clean"|"update"|"upgrade"|"nuke"|"list");;
 	"click")[ -z "$PKG" ] && err "missing argument";build_click;;
-	*) err 'available operations (setup|debug|install $PKG|download $PKG|crack $PKG|remove $PKG|clean|search $PKG|show $PKG|update|remove $PKG)';;
+	*) err 'available operations (setup|debug|sudo $BIN|sudok $BIN|install $PKG|reinstall $PKG|download $PKG|crack $PKG|remove $PKG|list|clean|click $PKG|search $PKG|show $PKG|update|upgrade|nuke)';;
 esac
 
 # Aliases for commands
