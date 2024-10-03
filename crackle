@@ -327,6 +327,10 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
 	    [ -d $PKG_PATH/$pkg ] && say "removing $pkg";
 	    [[ -d "$PKG_PATH/$pkg/sbin" || -d "$PKG_PATH/$pkg/usr/sbin" || -f "$PKG_PATH/$pkg/$pkg.sudo" ]] && sbin="true";
 	    [ -d $PKG_PATH/$pkg ] && rm -r $PKG_PATH/$pkg;
+	    if [ -f "${PKG_PREFIX}/lib/crackle/${pkgname}" ]; then
+		source "${PKG_PREFIX}/lib/crackle/${pkgname}";
+		remove_${pkgname};
+	    fi
 	    [ "$sbin" = "true" ] && sudo_run "find $SUDO_BIN -xtype l -exec rm {} +";
             [ "$sbin" = "true" ] && sudo_run "find $SUDO_CONFIG -xtype l -exec rm {} +";
             [ "$sbin" = "true" ] && sudo -k;
