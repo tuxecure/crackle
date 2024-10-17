@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
 if [ $(rorw) = "ro" ]; then
 	set -x
-	sudo -k mount -o remount,rw /
+	sudo -K
+	sudo mount -t tmpfs tmpfs /var/lib/apt
+	sudo mount -t tmpfs tmpfs /var/cache/apt
+	sudo mount -o remount,rw /
+	sudo -K
 elif [ $(rorw) = "rw" ]; then
 	set -x
 	sudo -k mount -o remount,ro /
