@@ -5,6 +5,13 @@ BEGIN {
 	ARGV[1]="/proc/mounts";
 }
 {
-	if ( $2 == "/" && $3 != "rootfs" )
-		print $4
+	if ( $2 == "/" && $3 != "rootfs" && $4 == "rw" ) {
+		print "remounting rootfs as readonly";
+		system("sudo -K");
+		status=system("set -x; sudo mount -o remount,ro /");
+		system("sudo -K");
+		if ( status !=0 ) {
+			exit 1;
+		}
+	}
 }

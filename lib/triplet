@@ -29,9 +29,8 @@ check_release(){
     fi
 }
 checkro() {
-    if [[ $(rorw) = "rw" && $(lsb_release -cs) = "focal" ]]; then
-        echo "remounting rootfs as readonly....";
-        remount || rm_rorw;
+    if [[ $(lsb_release -cs) = "focal" ]]; then
+        rorw || rm_rorw;
     elif [[ ! $(lsb_release -cs) = "focal" ]]; then
         err "$(lsb_release -cs) is not supported";
     fi
