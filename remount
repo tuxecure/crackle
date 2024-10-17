@@ -6,19 +6,19 @@ BEGIN {
 }
 {
 	if ( $2 == "/" && $3 != "rootfs" ) {
-			if ( $4 == "ro" ) {
-					print "remounting rootfs as readwrite";
-					system("sudo -K");
-					system("set -x; sudo mount -t tmpfs tmpfs /var/lib/apt");
-					system("set -x; sudo mount -t tmpfs tmpfs /var/cache/apt");
-					system("set -x; sudo mount -o remount,rw /");
-					system("sudo -K");
-			}
-			if ( $4 == "rw" ) {
-					print "remounting rootfs as readonly";
-					system("sudo -K");
-					system("set -x; sudo mount -o remount,ro /");
-					system("sudo -K");
-			}
+		if ( $4 == "ro" ) {
+			print "remounting rootfs as readwrite";
+			system("sudo -K");
+			system("set -x; sudo mount -t tmpfs tmpfs /var/lib/apt");
+			system("set -x; sudo mount -t tmpfs tmpfs /var/cache/apt");
+			system("set -x; sudo mount -o remount,rw /");
+			system("sudo -K");
+		}
+		if ( $4 == "rw" ) {
+			print "remounting rootfs as readonly";
+			system("sudo -K");
+			system("set -x; sudo mount -o remount,ro /");
+			system("sudo -K");
+		}
 	}
 }
