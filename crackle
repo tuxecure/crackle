@@ -228,6 +228,8 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
         if check_cmd curl; then curl --disable --progress-bar -L ${CRACKLEBIN} | tar zx --directory=$APTCONFIG/preferences.d --wildcards */etc/preferences.d/* --strip-components=3; fi
 	
         if check_cmd curl; then curl --disable --progress-bar -L ${CRACKLEBIN} | tar zx --directory=$APTCONFIG/sources.list.d --wildcards */etc/sources.list.d/* --strip-components=3; fi
+
+        sed -i "s|\$HOME|$HOME|g" $APTCONFIG/sources.list.d/*
 	
         $APT_GET "$operation"
         exit 0;
