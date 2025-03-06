@@ -70,9 +70,10 @@ load_lib pkgfunc;
 load_lib linkfunc;
 load_lib clickfunc;
 
-if [[ "$CI" = true && ! -d /root/.config/crackle ]]; then  pkgsetup; fi
+if [[ "$CI" = true && ! -d $HOME/.config/crackle ]]; then  pkgsetup; fi
 
 # click config
+if [[ -z "$ROOT" ]]; then
 ROOT=${ROOT:-$(pwd)}
 ARCH=${ARCH:-$(dpkg --print-architecture)}
 ARCH_TRIPLET=${ARCH_TRIPLET:-$(arch_triplet)}
@@ -80,6 +81,7 @@ BUILD_DIR=${BUILD_DIR:-${ROOT}/build}
 INSTALL_DIR=${INSTALL_DIR:-${ROOT}/install}
 CLICK_LD_LIBRARY_PATH=${CLICK_LD_LIBRARY_PATH:-${INSTALL_DIR}/lib/${ARCH_TRIPLET}}
 CLICK_PATH=${CLICK_PATH:-${CLICK_LD_LIBRARY_PATH}/bin}
+fi
 
 # Help
 if [ -z "$operation" -o "$operation" = "help" ]; then
