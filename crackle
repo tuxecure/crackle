@@ -208,7 +208,6 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
 	sudo -k;
     }
 
-    if ! check_cmd patchelf; then "$SCRP_DIR"/crackle install patchelf; fi
     [ ! -d $SCRP_DIR/.git ] && rm -r $SCRP_DIR;
     say "Setup complete!";
     exit 0;
@@ -217,22 +216,22 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
 # Updates the apt repositories
 [ "$operation" = "update" ] && {
 	say "checking connectivity"
-        wget -q --spider https://ubports.com || err "no internet connection, please run crackle update later to fetch the latest package lists";
-        
-        if [[ -z "$CI" ]]; then
-            if check_cmd curl; then say "Updating Cracklebin"; fi
-            if check_cmd curl; then curl --disable --progress-bar -L ${CRACKLEBIN}  | tar zx --strip-components=1 -C $PKG_PREFIX/lib/crackle; fi
-        fi
-        
-        if check_cmd curl; then say "Updating repos"; fi
-        if check_cmd curl; then curl --disable --progress-bar -L ${CRACKLEBIN} | tar zx --directory=$APTCONFIG/preferences.d --wildcards */etc/preferences.d/* --strip-components=3; fi
+    wget -q --spider https://ubports.com || err "no internet connection, please run crackle update later to fetch the latest package lists";
+    
+    if [[ -z "$CI" ]]; then
+        if check_cmd curl; then say "Updating Cracklebin"; fi
+        if check_cmd curl; then curl --disable --progress-bar -L ${CRACKLEBIN}  | tar zx --strip-components=1 -C $PKG_PREFIX/lib/crackle; fi
+    fi
+    
+    if check_cmd curl; then say "Updating repos"; fi
+    if check_cmd curl; then curl --disable --progress-bar -L ${CRACKLEBIN} | tar zx --directory=$APTCONFIG/preferences.d --wildcards */etc/preferences.d/* --strip-components=3; fi
 	
-        if check_cmd curl; then curl --disable --progress-bar -L ${CRACKLEBIN} | tar zx --directory=$APTCONFIG/sources.list.d --wildcards */etc/sources.list.d/* --strip-components=3; fi
+    if check_cmd curl; then curl --disable --progress-bar -L ${CRACKLEBIN} | tar zx --directory=$APTCONFIG/sources.list.d --wildcards */etc/sources.list.d/* --strip-components=3; fi
 
-        sed -i "s|\$HOME|$HOME|g" $APTCONFIG/sources.list.d/*
+    if [[ -d "$APTCONFIG/sources.list.d" ]]; then sed -i "s|\$HOME|$HOME|g" $APTCONFIG/sources.list.d/*; fi
 	
-        $APT_GET "$operation"
-        exit 0;
+    $APT_GET "$operation"
+    exit 0;
 }
 
 # Upgrades the installed packages

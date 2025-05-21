@@ -99,6 +99,8 @@ function pkgsetup(){
 
     if ! check_cmd curl; then "$SCRP_DIR"/crackle install curl; fi
 
+    if ! check_cmd patchelf; then "$SCRP_DIR"/crackle install patchelf; fi
+
     say "Setting up repos"
     wget -q --spider https://ubports.com || err "no internet connection, please run crackle update later to fetch the latest package lists";
     curl --disable --progress-bar -L ${CRACKLEBIN} | tar zx --directory=$APTCONFIG/preferences.d --wildcards */etc/preferences.d/* --strip-components=3
@@ -111,10 +113,8 @@ function pkgsetup(){
     curl --disable --progress-bar -L ${CRACKLEBIN}  | tar zx --strip-components=1 -C $PKG_PREFIX/lib/crackle
     setup_repos;
 
-    [ -d "$APTSTATE/lists" ] || {
-        say "Fetching package lists...";
-        ensure "$SCRP_DIR"/crackle update
-    }
+    say "Updating package lists...";
+    ensure "$SCRP_DIR"/crackle update
 }
 
 function fetch_desktop() {
