@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 function link_path(){
 	pkg_path="$1";
-	xdg_path="$2"
+	xdg_lib_path="$2"
 	while read file_path
 	do
 		sbin=$(basename $pkg_path)
 		file=$(basename $file_path);
-		[[ ! -f "$xdg_path/$file" && ! $sbin = "sbin" ]] && ln -s $file_path $xdg_path;
-		[[ ! -f "$xdg_path/$file" && $sbin = "sbin" ]] &&  sudo_run "ln -s $file_path $xdg_path";
+		[[ ! -f "$xdg_lib_path/$file" && ! $sbin = "sbin" ]] && ln -s $file_path $xdg_lib_path;
+		[[ ! -f "$xdg_lib_path/$file" && $sbin = "sbin" ]] &&  sudo_run "ln -s $file_path $xdg_lib_path";
 	done < <(find $pkg_path -type f -maxdepth 1)
 }
 function build_tree(){
@@ -23,7 +23,7 @@ function build_tree(){
 		   symlinks=$(find $libdir -type l -maxdepth 1)
 		   [[ -n $symlinks ]] && cp $symlinks $xdg_path/$libtree
 	    done < <(find $lib -mindepth 1 -type d)
-	    link_path $library $xdg_path/$libtree
+	    link_path $lib $xdg_path/$libtree
     done < <(find $PKGS_DIR -path $base_path -type d);
 }
 
