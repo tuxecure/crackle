@@ -93,13 +93,13 @@ function pkgsetup(){
     }
 
     [ -d "$APTSTATE/lists" ] || {
-        say "Fetching package lists...";
-        ensure "$SCRP_DIR"/crackle update
+        if ! check_cmd curl; then
+            say "Fetching package lists...";
+            ensure "$SCRP_DIR"/crackle update
+        fi
     }
 
     if ! check_cmd curl; then "$SCRP_DIR"/crackle install curl; fi
-
-    if ! check_cmd patchelf; then "$SCRP_DIR"/crackle install patchelf; fi
 
     say "Setting up repos"
     wget -q --spider https://ubports.com || err "no internet connection, please run crackle update later to fetch the latest package lists";
@@ -115,6 +115,8 @@ function pkgsetup(){
 
     say "Updating package lists...";
     ensure "$SCRP_DIR"/crackle update
+
+    if ! check_cmd patchelf; then "$SCRP_DIR"/crackle install patchelf; fi
 }
 
 function fetch_desktop() {
