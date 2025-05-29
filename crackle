@@ -331,6 +331,8 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
 	    [ -d $PKG_PATH/$pkg ] && say "removing $pkg";
 	    [[ -d "$PKG_PATH/$pkg/sbin" || -d "$PKG_PATH/$pkg/usr/sbin" || -f "$PKG_PATH/$pkg/$pkg.sudo" ]] && sbin="true";
 	    [ -d $PKG_PATH/$pkg ] && rm -r $PKG_PATH/$pkg;
+		find "$PKG_PREFIX/lib" -xtype l -exec rm {} +;
+		find "$PKG_PREFIX/lib" -type d -empty -delete;
 	    if [ -f "${PKG_PREFIX}/lib/crackle/${pkgname}" ]; then
 		source "${PKG_PREFIX}/lib/crackle/${pkgname}";
 		remove_${pkgname};
@@ -365,6 +367,8 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
     [[ -f "$CRACKLECMP/crackle" ]] && rm $CRACKLECMP/crackle;
     [[ -d "$PKG_PREFIX/lib/crackle" ]] && rm -r $PKG_PREFIX/lib/crackle;
     find "$PKG_PREFIX/bin" -xtype l -exec rm {} +;
+    find "$PKG_PREFIX/lib" -xtype l -exec rm {} +;
+	find "$PKG_PREFIX/lib" -type d -empty -delete;
     sudo_run "find $SUDO_BIN -xtype l -exec rm {} +";
     sudo_run "find $SUDO_CONFIG -xtype l -exec rm {} +";
     find "${XDG_DATA_HOME:-$HOME/.local/share}" -xtype l -exec rm {} + 2> /dev/null;
