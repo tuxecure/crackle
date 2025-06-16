@@ -20,6 +20,11 @@ SUDO_CONFIG=/root/.config
 SUDO_BIN=/root/.local/bin
 SUDO_STATE=/root/.local/state
 
+# Set up aliases for apt commands
+APTCONF="-o Dir::Etc=$APTCONFIG";
+APT_GET="apt-get -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE $APTCONF"
+APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc=$APTCONFIG"
+
 function pkgsetup(){
     [[ -d "$DPKGSTATE" ]] || {
         mkdir -p "$DPKGSTATE";
@@ -31,10 +36,52 @@ function pkgsetup(){
 
     [[ -d "$APTCONFIG" ]] || {
         mkdir -p $APTCONFIG/sources.list.d $APTCONFIG/preferences.d $APTCONFIG/trusted.gpg.d;
-
         ln -s /etc/apt/sources.list $APTCONFIG;
         [[ -n "$(ls /etc/apt/trusted.gpg.d)" ]] && ln -s /etc/apt/trusted.gpg.d/* $APTCONFIG/trusted.gpg.d/;
     }
+}
+
+urldecode() { : "${*//+/ }"; echo -e "${_//%/\\x}"; }
+
+function get_pkg_info () {
+    pkg="$(basename "$1")";
+    pkgname="${pkg%%_*}";
+    pkgversion="${pkg%_*}";
+    pkgversion="${pkgversion#*_}";
+    pkgversion="$(urldecode $pkgversion)";
+}
+
+function link_path(){
+    pkg_path="$1";
+    xdg_lib_path="$2"
+    while read file_path
+    do
+        ln -s $file_path $xdg_lib_path;
+    done < <(find $pkg_path -type f -maxdepth 1)
+}
+
+function bin_install () {
+    PKGS_DIR=${PKG_PATH}/${pkgname}
+    mkdir -p ${PKGS_DIR} $PKG_PREFIX/bin;
+    dpkg-deb -x "${package}" "${PKGS_DIR}";
+    [ -d "$PKGS_DIR/usr/bin" ] && link_path $PKGS_DIR/usr/bin $PKG_PREFIX/bin;
+}
+
+function setup_curlxz () {
+    $APT_GET update
+    $APT_GET install --download-only curl xz-utils;
+    while read package
+    do
+        get_pkg_info $package;
+        bin_install;
+    done < <(ls "$APTCACHE"/archives/*.deb);
+}
+
+function setup_home-manager (){
+    sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install) --no-daemon
+    nix-channel --add https://github.com/nix-community/home-manager/archive/master.tar.gz home-manager
+    nix-channel --update
+    nix-shell '<home-manager>' -A install
 }
 
 function pkgunset(){
@@ -42,45 +89,7 @@ function pkgunset(){
     find "$PKG_PREFIX/bin" -xtype l -exec rm {} +;
 }
 
-function link_path(){
-	pkg_path="$1";
-	xdg_lib_path="$2"
-	while read file_path
-	do
-		ln -s $file_path $xdg_lib_path;
-	done < <(find $pkg_path -type f -maxdepth 1)
-}
-
-function pkg_crack () {
-	PKGS_DIR=${PKG_PATH}/${pkgname}
-    mkdir -p ${PKGS_DIR} $PKG_PREFIX/bin;
-    dpkg-deb -x "${package}" "${PKGS_DIR}";
-	[ -d "$PKGS_DIR/usr/bin" ] && link_path $PKGS_DIR/usr/bin $PKG_PREFIX/bin;
-}
-
-urldecode() { : "${*//+/ }"; echo -e "${_//%/\\x}"; }
-
-function get_pkg_info () {
-	pkg="$(basename "$1")";
-	pkgname="${pkg%%_*}";
-	pkgversion="${pkg%_*}";
-	pkgversion="${pkgversion#*_}";
-	pkgversion="$(urldecode $pkgversion)";
-}
-
 pkgsetup;
-APTCONF="-o Dir::Etc=$APTCONFIG";
-APT_GET="apt-get -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE $APTCONF"
-APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc=$APTCONFIG"
-$APT_GET update
-$APT_GET install --download-only curl xz-utils;
-while read package
-do
-    get_pkg_info $package;
-    pkg_crack;
-done < <(ls "$APTCACHE"/archives/*.deb);
-sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install) --no-daemon
-nix-channel --add https://github.com/nix-community/home-manager/archive/master.tar.gz home-manager
-nix-channel --update
-nix-shell '<home-manager>' -A install
+setup_curlxz;
+setup_home-manager;
 pkgunset;
