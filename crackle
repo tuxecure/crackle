@@ -1,8 +1,4 @@
 #!/usr/bin/env bash
-# input
-operation=${1};
-PKG=("${@:2}")
-
 # Configuration for Apt
 APTCACHE=${APTCACHE:-${XDG_CACHE_HOME:-$HOME/.cache}/apt};
 APTSTATE=${APTSTATE:-${XDG_STATE_HOME:-$HOME/.local/state}/apt};
@@ -18,367 +14,73 @@ CRACKLECMP=${XDG_DATA_HOME:-$HOME/.local/share}/bash-completion/completions;
 CRACKDIR=${CRACKDIR:-$HOME/packages/$PKG};
 CRACKLEBIN="https://gitlab.com/tuxecure/crackle-apt/cracklebin/-/archive/master/cracklebin-master.tar.gz"
 PKG_PREFIX=${PKG_PREFIX:-$HOME/.local}
-SCRP_DIR=$(dirname "${BASH_SOURCE[0]}")
 
 # Configuration for Sudo -i
 SUDO_CONFIG=/root/.config
 SUDO_BIN=/root/.local/bin
 SUDO_STATE=/root/.local/state
-if [[ -n "$ROOT" ]]; then CI=true; fi
-# invalidate cached credentials to ensure sudo asks for the password the first time it is used by crackle
-if [[ -z "$CI" ]]; then sudo -k; fi
 
-# check if the files differ, if yes overwrite the old version
-upd() {
-    lib=$(basename $1)
-    if [[ ! -f "$2/$lib" && -d "$2" ]]; then
-	if [[ $(basename $(dirname $1)) = "completions" ]] ; then
-		say "Setting up bash_completions..." >&2
-	else
-		say "Installing $lib..." >&2
-	fi
-	cp $1 $2
-    elif ! diff -q $1 $2; then
-	if [[ $(basename $(dirname $1)) = "completions" ]] ; then
-		say "Updating bash_completions..." >&2
-	else
-		say "Updating $lib..." >&2
-	fi
-	cp $1 $2
-    fi
+function pkgsetup(){
+    [[ -d "$DPKGSTATE" ]] || {
+        mkdir -p "$DPKGSTATE";
+        cp /var/lib/dpkg/status $DPKGSTATE/status;
+    }
+
+    [[ -d "$APTCACHE" ]] || mkdir -p "$APTCACHE";
+    [[ -d "$APTSTATE" ]] || mkdir -p "$APTSTATE";
+
+    [[ -d "$APTCONFIG" ]] || {
+        mkdir -p $APTCONFIG/sources.list.d $APTCONFIG/preferences.d $APTCONFIG/trusted.gpg.d;
+
+        ln -s /etc/apt/sources.list $APTCONFIG;
+        [[ -n "$(ls /etc/apt/trusted.gpg.d)" ]] && ln -s /etc/apt/trusted.gpg.d/* $APTCONFIG/trusted.gpg.d/;
+    }
 }
 
-say() {
-    printf '%s\n' "$1"
+function pkgunset(){
+    rm -r $APTCACHE $APTSTATE $APTCONFIG $PKG_PATH;
+    find "$PKG_PREFIX/bin" -xtype l -exec rm {} +;
 }
 
-# load libraries
-if [[ -f "$PKG_PREFIX/lib/triplet" ]]; then
-    [[ $(basename $SCRP_DIR) != "bin" ]] && upd $SCRP_DIR/lib/triplet $PKG_PREFIX/lib
-    source "$PKG_PREFIX/lib/triplet";
-else
-    source "$SCRP_DIR/lib/triplet";
-fi
+function link_path(){
+	pkg_path="$1";
+	xdg_lib_path="$2"
+	while read file_path
+	do
+		ln -s $file_path $xdg_lib_path;
+	done < <(find $pkg_path -type f -maxdepth 1)
+}
 
-if [[ -z "$CI" ]]; then check_release "focal"; fi
+function pkg_crack () {
+	PKGS_DIR=${PKG_PATH}/${pkgname}
+    mkdir -p ${PKGS_DIR} $PKG_PREFIX/bin;
+    dpkg-deb -x "${package}" "${PKGS_DIR}";
+	[ -d "$PKGS_DIR/usr/bin" ] && link_path $PKGS_DIR/usr/bin $PKG_PREFIX/bin;
+}
 
-if [[ -z "$CI" ]]; then checkpath; fi
-# Root check
-if [[ -z "$CI" ]]; then root_check; fi
+urldecode() { : "${*//+/ }"; echo -e "${_//%/\\x}"; }
 
-load_lib pkgfunc;
-load_lib linkfunc;
-load_lib clickfunc;
+function get_pkg_info () {
+	pkg="$(basename "$1")";
+	pkgname="${pkg%%_*}";
+	pkgversion="${pkg%_*}";
+	pkgversion="${pkgversion#*_}";
+	pkgversion="$(urldecode $pkgversion)";
+}
 
-if [[ "$CI" = true && ! -d $HOME/.config/crackle ]]; then  pkgsetup; fi
-
-# click config
-if [[ -z "$ROOT" ]]; then
-ROOT=${ROOT:-$(pwd)}
-ARCH=${ARCH:-$(dpkg --print-architecture)}
-ARCH_TRIPLET=${ARCH_TRIPLET:-$(arch_triplet)}
-BUILD_DIR=${BUILD_DIR:-${ROOT}/build}
-INSTALL_DIR=${INSTALL_DIR:-${ROOT}/install}
-CLICK_LD_LIBRARY_PATH=${CLICK_LD_LIBRARY_PATH:-${INSTALL_DIR}/lib/${ARCH_TRIPLET}}
-CLICK_PATH=${CLICK_PATH:-${CLICK_LD_LIBRARY_PATH}/bin}
-fi
-
-# Help
-if [ -z "$operation" -o "$operation" = "help" ]; then
-	echo 'available commands:
-	- crackle setup
-	- crackle debug
-	- crackle sudo $BIN
-	- crackle sudok $BIN
-	- crackle install $PKG
-	- crackle reinstall $PKG
-	- crackle download $PKG
-	- crackle crack $PKG
-	- crackle remove $PKG
-	- crackle list
-	- crackle clean
-	- crackle click $PKG
-	- crackle search $PKG
-	- crackle show $PKG
-	- crackle update
-	- crackle upgrade
-	- crackle nuke'
-	exit 0
-fi
-
-case $operation in
-	"install"|"reinstall"|"download"|"crack"|"remove"|"search"|"show"|"remove"|"sudo"|"sudok")[ -z "$PKG" ] && err "missing argument";;
-	"setup"|"debug"|"clean"|"update"|"upgrade"|"nuke"|"list");;
-	"click")[ -z "$PKG" ] && err "missing argument";build_click;;
-	*) err 'available operations (setup|debug|sudo $BIN|sudok $BIN|install $PKG|reinstall $PKG|download $PKG|crack $PKG|remove $PKG|list|clean|click $PKG|search $PKG|show $PKG|update|upgrade|nuke)';;
-esac
-
-# Aliases for commands
-if [[ -z "$CI" ]]; then APTCONF="-o Dir::Etc=$APTCONFIG"; else APTCONF="-o Dir::Etc=$APTCONFIG -y"; fi
+pkgsetup;
+APTCONF="-o Dir::Etc=$APTCONFIG";
 APT_GET="apt-get -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE $APTCONF"
 APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc=$APTCONFIG"
-
-# View information about Crackle, don't do anything
-[ "$operation" = "debug" ] && {
-        echo "CRACKLE CONFIG"
-	echo "PKG_PATH: '$PKG_PATH'"
-	echo "PKG_PREFIX: '$PKG_PREFIX'"
-	echo "PKGS_DIR: '$PKGS_DIR'"
-	echo "CRACKLERC: '$CRACKLERC'"
-	echo "CRACKLEENV: '$CRACKLEENV'"
-	echo "CRACKLECMP: '$CRACKLECMP'"
-	echo "CRACKDIR: '$CRACKDIR'"
-	echo "APT CONFIG"
-	echo "APTCONFIG: '$APTCONFIG'"
-	echo "APTCACHE: '$APTCONFIG'"
-	echo "APTSTATE: '$APTSTATE'"
-	echo "APT_GET: '$APT_GET'"
-	echo "APT_CACHE: '$APT_CACHE'"
-	echo "CLICK CONFIG"
-	echo "ROOT: '$ROOT'"
-	echo "ARCH: '$ARCH'"
-	echo "ARCH_TRIPLET: '$ARCH_TRIPLET'"
-	echo "BUILD_DIR: '$BUILD_DIR'"
-	echo "INSTALL_DIR: '$INSTALL_DIR'"
-	echo "CLICK_LD_LIBRARY_PATH: '$CLICK_LD_LIBRARY_PATH'"
-	echo "CLICK_PATH: '$CLICK_PATH'"
-	exit 0;
-}
-
-# Cleans up a package's luggage
-[ "$operation" = "clean" ] && {
-    $APT_GET "$operation";
-    find "$PKG_PATH" -xtype l -exec rm {} +;
-    find "$PKG_PREFIX/bin" -xtype l -exec rm {} +;
-    find "$PKG_PREFIX/lib" -xtype l -exec rm {} +;
-    find "${XDG_DATA_HOME:-$HOME/.local/share}/bash-completion/completions" -xtype l -exec rm {} +;
-    exit 0;
-}
-
-# list installed packages
-[[ "$operation" = "list" ]] && {
-	while read package
-	do
-		version=$(cat $PKG_PATH/$package/$package.version)
-		echo $package $version;
-	done < <(ls $PKG_PATH);
-	exit 0;
-}
-
-# Installs/updates Crackle into ~/.local ~/.config and ~/.cache
-[ "$operation" = "setup" ] && {
-    [[ $(basename $SCRP_DIR) = "bin" ]] && upgrade_crackle;
-    [[ -z "$(ls $SCRP_DIR/bin)" && $(basename $SCRP_DIR) != "bin" ]] && err "submodule missing";
-    bashrc=$(grep crackle "$HOME"/.bashrc);
-    profile=$(grep crackle "$HOME"/.profile);
-    [[ -f '/root/.profile' ]] ||  sudo_run "touch /root/.profile";
-    rootprofile=$(grep crackle /root/.profile);
-
-    [[ -d "$PKG_PATH" ]] || mkdir -p "$PKG_PATH";
-
-    pkgsetup;
-    [[ -f "$CRACKLERC" ]] || {
-        echo "CRACKLEENV=$CRACKLEENV" > "$CRACKLERC";
-        echo "PKG_PREFIX=$PKG_PREFIX" >> "$CRACKLERC";
-	[ -d $CRACKLEENV ] || mkdir $CRACKLEENV;
-        cat "$SCRP_DIR"/cracklerc >> "$CRACKLERC";
-    }
-    install_libs;
-    install_bins;
-
-    _crackleconf -v start="PKG_PREFIX=" "$CRACKLERC" > $SCRP_DIR/cracklerc.tmp
-    if ! diff -q "$SCRP_DIR"/cracklerc "$SCRP_DIR/cracklerc.tmp"; then
-        echo "CRACKLEENV=$CRACKLEENV" > "$CRACKLERC";
-        echo "PKG_PREFIX=$PKG_PREFIX" >> "$CRACKLERC";
-	say "updating cracklerc..." >&2
-        cat "$SCRP_DIR"/cracklerc >> "$CRACKLERC";
-    fi
-    rm $SCRP_DIR/cracklerc.tmp
-    [[ -z "$bashrc" ]] && {
-        say "Amending ~/.bashrc...";
-        _crackleconf -v start="#cracklerc" "$SCRP_DIR"/crackle.conf >> "$HOME"/.bashrc;
-    }
-    [[ -z "$profile" ]] && {
-        say "Amending ~/.profile...";
-        _crackleconf -v start="#cracklerc" "$SCRP_DIR"/crackle.conf >> "$HOME"/.profile;
-    }
-    [[ -z "$rootprofile" ]] && {
-        say "Amending /root/.profile...";
-        _crackleconf -v start="#rootprofile" "$SCRP_DIR"/crackle.conf | sudo_run "tee --append /root/.profile > /dev/null";
-	sudo -k;
-    }
-
-    [ ! -d $SCRP_DIR/.git ] && rm -r $SCRP_DIR;
-    say "Setup complete!";
-    exit 0;
-}
-
-# Updates the apt repositories
-[ "$operation" = "update" ] && {
-	say "checking connectivity"
-    wget -q --spider https://ubports.com || err "no internet connection, please run crackle update later to fetch the latest package lists";
-    
-    if [[ -z "$CI" ]]; then
-        if check_cmd curl; then say "Updating Cracklebin"; fi
-        if check_cmd curl; then curl --disable --progress-bar -L ${CRACKLEBIN}  | tar zx --strip-components=1 -C $PKG_PREFIX/lib/crackle; fi
-    fi
-    
-    if check_cmd curl; then say "Updating repos"; fi
-    if check_cmd curl; then curl --disable --progress-bar -L ${CRACKLEBIN} | tar zx --directory=$APTCONFIG/preferences.d --wildcards */etc/preferences.d/* --strip-components=3; fi
-	
-    if check_cmd curl; then curl --disable --progress-bar -L ${CRACKLEBIN} | tar zx --directory=$APTCONFIG/sources.list.d --wildcards */etc/sources.list.d/* --strip-components=3; fi
-
-    if [[ -d "$APTCONFIG/sources.list.d" ]]; then sed -i "s|\$HOME|$HOME|g" $APTCONFIG/sources.list.d/*; fi
-	
-    $APT_GET "$operation"
-    exit 0;
-}
-
-# Upgrades the installed packages
-[ "$operation" = "upgrade" ] && {
-        wget -q --spider https://ubports.com || err "no internet connection, please run crackle upgrade later to fetch the latest upgrades";
-        say "calculating upgrade....."
-        while read pkg
-	do
-             PKGS_DIR=$PKG_PATH/$pkg
-	     installed=$(cat $PKGS_DIR/$pkg.version);
-	     candidate=$($APT_CACHE policy $pkg|awk '/Candidate/{print $2}');
-	     [[ ! "$installed" = "$candidate" ]] && upgradable+=" "$pkg
-	done < <(ls $PKG_PATH)
-	[[ -n "$upgradable" ]] && crackle install $upgradable
-	[[ -z "$upgradable" ]] && stat "all packages are up to date"
-        exit 0;
-}
-
-# Downloads a package for installation
-[ "$operation" = "download" ] && {
-	$APT_GET "$operation" ${PKG[@]};
-        exit 0;
-}
-
-# View information about a package
-[[ "$operation" = "search" || "$operation" = "show" ]] && {
-        [[ "${#PKG[@]}" -gt 1 ]] && err "too many arguments";
-        $APT_CACHE "$operation" "$PKG";
-        exit 0;
-}
-
-# Install a package for the user
-[[ "$operation" = "install" || "$operation" = "crack" ]] && {
-    if [[ "$operation" = "crack" ]]; then
-        dir="$CRACKDIR";
-    else
-        dir="$PKG_PATH";
-    fi
-    [[ "$operation" = "crack" && ! -d "$dir" ]] && mkdir -p "$dir";
-    [ "$operation" = "install" ] && {
-        [ -d "$PKG_PATH" ] || err "$PKG_PATH does not exist, please run crackle setup first";
-	if ! check_cmd rorw; then err "programs I install won't be executable now, please adjust your PATH variable"; fi
-	for pkg in "${PKG[@]}"
-	do
-	    say "Fetching package: $pkg";
-	    pkgstatus $pkg;
-	done;
-    }
-    ensure $APT_GET install --download-only $(pkg_arch);
-    while read package
-    do
-        get_pkg_info $package;
-        pkg_crack;
-        [[ "$operation" = "install" ]] && pkg_install;
-    done < <(ls "$APTCACHE"/archives/*.deb);
-    say "Cleaning packages..";
-    $APT_GET clean;
-    say "Done"!
-    exit 0;
-}
-
-# enable use of a binary with sudo -i $BIN
-[[ "$operation" = "sudo" ]] && {
-    for pkg in "${PKG[@]}"
-    do
-	    bin_path=$(which $pkg)
-	    real_path=$(realpath $bin_path)
-	    sudo_run "ln -s $real_path $SUDO_BIN/$pkg"
-	    [[ -d $PKG_PATH/$pkg ]] && touch $PKG_PATH/$pkg/$pkg.sudo
-    done;
-    exit 0;
-}
-
-# diable use of a binary with sudo -i $BIN
-[[ "$operation" = "sudok" ]] && {
-    for pkg in "${PKG[@]}"
-    do
-            say "this action requires sudo access"
-	    set -x
-	    bin_path=$(sudo -i which $pkg)
-	    set +x
-	    [[ -f $bin_path ]] && sudo_run "rm $bin_path";
-    done;
-    exit 0;
-}
-
-# reinstall a package
-[[ "$operation" = "reinstall" ]] && {
-    crackle remove ${PKG[@]};
-    crackle install ${PKG[@]};
-}
-
-# remove a package
-[[ "$operation" = "remove" ]] && {
-    for pkg in "${PKG[@]}"
-    do
-	    [ -d $PKG_PATH/$pkg ] && say "removing $pkg";
-	    [[ -d "$PKG_PATH/$pkg/sbin" || -d "$PKG_PATH/$pkg/usr/sbin" || -f "$PKG_PATH/$pkg/$pkg.sudo" ]] && sbin="true";
-	    [ -d $PKG_PATH/$pkg ] && rm -r $PKG_PATH/$pkg;
-		find "$PKG_PREFIX/lib" -xtype l -exec rm {} +;
-		find "$PKG_PREFIX/lib" -type d -empty -delete;
-	    if [ -f "${PKG_PREFIX}/lib/crackle/${pkgname}" ]; then
-		source "${PKG_PREFIX}/lib/crackle/${pkgname}";
-		remove_${pkgname};
-	    fi
-	    [ "$sbin" = "true" ] && sudo_run "find $SUDO_BIN -xtype l -exec rm {} +";
-            [ "$sbin" = "true" ] && sudo_run "find $SUDO_CONFIG -xtype l -exec rm {} +";
-            [ "$sbin" = "true" ] && sudo -k;
-            [ "$sbin" = "true" ] && sbin="";
-	    [ -f ${PKG_PREFIX}/share/applications/crackle.${pkg}.desktop ] && rm ${PKG_PREFIX}/share/applications/crackle.${pkg}.desktop
-    done;
-    find "$PKG_PREFIX/bin" -xtype l -exec rm {} +;
-    find "${XDG_DATA_HOME:-$HOME/.local/share}" -xtype l -exec rm {} + 2> /dev/null;
-    find "$CRACKLECMP" -xtype l -exec rm {} +;
-    say "Done";
-    exit 0;
-}
-
-# remove crackle from the system
-[[ "$operation" = "nuke" ]] && {
-    [[ -d "$APTCACHE" ]] && rm -r "$APTCACHE";
-    [[ -d "$APTSTATE" ]] && rm -r "$APTSTATE";
-    [[ -d "$PKG_PATH" ]] && rm -r "$PKG_PATH";
-    [[ -d "$APTCONFIG" ]] && rm -r "$APTCONFIG";
-    [[ -f "$PKG_PREFIX/bin/crackle" ]] && rm $PKG_PREFIX/bin/crackle;
-    [[ -f "$PKG_PREFIX/lib/triplet" ]] && rm $PKG_PREFIX/lib/triplet;
-    [[ -f "$PKG_PREFIX/lib/pkgfunc" ]] && rm $PKG_PREFIX/lib/pkgfunc;
-    [[ -f "$PKG_PREFIX/bin/_crackleopts" ]] && rm $SCRP_DIR/_crackleopts;
-    [[ -f "$PKG_PREFIX/bin/_crackleconf" ]] && rm $SCRP_DIR/_crackleconf;
-    [[ -f "$PKG_PREFIX/bin/arch_triplet" ]] && rm $SCRP_DIR/arch_triplet;
-    [[ -f "$PKG_PREFIX/bin/rorw" ]] && rm $SCRP_DIR/rorw;
-    [[ -f "$PKG_PREFIX/bin/remount" ]] && rm $SCRP_DIR/remount;
-    [[ -f "$CRACKLECMP/crackle" ]] && rm $CRACKLECMP/crackle;
-    [[ -d "$PKG_PREFIX/lib/crackle" ]] && rm -r $PKG_PREFIX/lib/crackle;
-    find "$PKG_PREFIX/bin" -xtype l -exec rm {} +;
-    find "$PKG_PREFIX/lib" -xtype l -exec rm {} +;
-	find "$PKG_PREFIX/lib" -type d -empty -delete;
-    sudo_run "find $SUDO_BIN -xtype l -exec rm {} +";
-    sudo_run "find $SUDO_CONFIG -xtype l -exec rm {} +";
-    find "${XDG_DATA_HOME:-$HOME/.local/share}" -xtype l -exec rm {} + 2> /dev/null;
-    desktopfiles=$(find ${PKG_PREFIX}/share/applications -path "/crackle.*.desktop");
-    [[ -n $desktopfiles ]] && rm ${PKG_PREFIX}/share/applications/crackle.*.desktop
-    sed -i '/cracklerc/d' $HOME/.bashrc
-    sed -i '/cracklerc/d' $HOME/.profile
-    sudo_run "sed -i /PATH/d /root/.profile"
-    sudo_run "sed -i /cracklerc/d /root/.profile"
-    find "$CRACKLECMP" -xtype l -exec rm {} +;
-    sudo -k
-    exit 0;
-}
+$APT_GET update
+$APT_GET install --download-only curl xz-utils;
+while read package
+do
+    get_pkg_info $package;
+    pkg_crack;
+done < <(ls "$APTCACHE"/archives/*.deb);
+sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install) --no-daemon
+nix-channel --add https://github.com/nix-community/home-manager/archive/master.tar.gz home-manager
+nix-channel --update
+nix-shell '<home-manager>' -A install
+pkgunset;

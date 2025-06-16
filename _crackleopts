@@ -1,6 +1,0 @@
-#!/usr/bin/awk -f
-BEGIN {
-	c="crackle"
-	while(c|getline) { if ( $3 ) print $3 }
-	close(c);
-}

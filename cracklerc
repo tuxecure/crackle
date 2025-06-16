@@ -1,6 +1,0 @@
-export LD_LIBRARY_PATH=${PKG_PREFIX}/lib/aarch64-linux-gnu:${PKG_PREFIX}/lib:$LD_LIBRARY_PATH
-readarray -t environments < <(ls "$CRACKLEENV");
-for environment in ${environments[@]}
-do
-[ -f "$CRACKLEENV/$environment" ] && . $CRACKLEENV/$environment
-done;
