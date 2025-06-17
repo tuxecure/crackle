@@ -11,8 +11,6 @@ APTCONFIG=${APTCONFIG:-${XDG_CONFIG_HOME:-$HOME/.config}/crackle};
 # Configuration for Crackle
 PKG_PATH=${PKG_PATH:-${XDG_DATA_HOME:-$HOME/.local/share}/crackle};
 PKGS_DIR=${PKGS_DIR:-$PKG_PATH/$PKG};
-CRACKLERC=$APTCONFIG/cracklerc;
-CRACKLEENV=$APTCONFIG/environment;
 CRACKLECMP=${XDG_DATA_HOME:-$HOME/.local/share}/bash-completion/completions;
 CRACKDIR=${CRACKDIR:-$HOME/packages/$PKG};
 CRACKLEBIN="https://gitlab.com/tuxecure/crackle-apt/cracklebin/-/archive/master/cracklebin-master.tar.gz"
