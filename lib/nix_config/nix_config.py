@@ -251,7 +251,7 @@ def delete_packages(packages : list, package_type : str = "home", filename : str
         else:
             restore_success, restore_error = _restore_config_file()
             if not restore_success:
-                return packages_deleted, [output , simple_error.insert(0, restore_error), full_error] # make sure we know
+                return packages_deleted, [output , simple_error.insert(0, "failed to restore you're {filename} probably does not exist create it please!".format(filename=filename)), full_error.insert(-1, restore_error)] # make sure we know
             return packages_deleted, [output , simple_error, full_error]
     else:
         print("failed to backup too risky to run without, exiting.")
