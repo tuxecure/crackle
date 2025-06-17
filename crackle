@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+operation=${1};
 # Configuration for Apt
 APTCACHE=${APTCACHE:-${XDG_CACHE_HOME:-$HOME/.cache}/apt};
 APTSTATE=${APTSTATE:-${XDG_STATE_HOME:-$HOME/.local/state}/apt};
@@ -77,6 +78,14 @@ function setup_curlxz () {
     done < <(ls "$APTCACHE"/archives/*.deb);
 }
 
+check_cmd() {
+    command -v "$1" > /dev/null 2>&1
+}
+
+check_path() {
+    if ! check_cmd curl; then export PATH=$HOME/.local/bin:$PATH; fi
+}
+
 function setup_home-manager (){
     sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install) --no-daemon
     nix-channel --add https://github.com/nix-community/home-manager/archive/master.tar.gz home-manager
@@ -89,7 +98,70 @@ function pkgunset(){
     find "$PKG_PREFIX/bin" -xtype l -exec rm {} +;
 }
 
-pkgsetup;
-setup_curlxz;
-setup_home-manager;
-pkgunset;
+function setup() {
+    pkgsetup;
+    setup_curlxz;
+    check_path;
+    setup_home-manager;
+    pkgunset;
+}
+
+function clean() {
+    nix-collect-garbage;
+}
+
+function update() {
+    nix-channel --update;
+    home-manager switch;
+}
+
+# View information about Crackle, don't do anything
+function debug(){
+    echo "CRACKLE CONFIG"
+	echo "PKG_PATH: '$PKG_PATH'"
+	echo "PKG_PREFIX: '$PKG_PREFIX'"
+	echo "PKGS_DIR: '$PKGS_DIR'"
+	echo "CRACKLERC: '$CRACKLERC'"
+	echo "CRACKLEENV: '$CRACKLEENV'"
+	echo "CRACKLECMP: '$CRACKLECMP'"
+	echo "CRACKDIR: '$CRACKDIR'"
+	echo "APT CONFIG"
+	echo "APTCONFIG: '$APTCONFIG'"
+	echo "APTCACHE: '$APTCONFIG'"
+	echo "APTSTATE: '$APTSTATE'"
+	echo "APT_GET: '$APT_GET'"
+	echo "APT_CACHE: '$APT_CACHE'"
+	echo "CLICK CONFIG"
+	echo "ROOT: '$ROOT'"
+	echo "ARCH: '$ARCH'"
+	echo "ARCH_TRIPLET: '$ARCH_TRIPLET'"
+	echo "BUILD_DIR: '$BUILD_DIR'"
+	echo "INSTALL_DIR: '$INSTALL_DIR'"
+	echo "CLICK_LD_LIBRARY_PATH: '$CLICK_LD_LIBRARY_PATH'"
+	echo "CLICK_PATH: '$CLICK_PATH'"
+	exit 0;
+}
+
+# Help
+if [ -z "$operation" -o "$operation" = "help" ]; then
+	echo 'available commands:
+	- crackle setup
+	- crackle debug
+	- crackle sudo $BIN
+	- crackle sudok $BIN
+	- crackle click $PKG
+	- crackle clean
+	- crackle update'
+	exit 0
+fi
+
+case $operation in
+	"sudo")[ -z "$PKG" ] && err "missing argument";;
+	"sudok")[ -z "$PKG" ] && err "missing argument";;
+    "setup") setup;;
+    "clean") clean;;
+    "update") update;;
+    "debug") debug;;
+	"click")[ -z "$PKG" ] && err "missing argument";build_click;;
+	*) err 'available operations (setup|debug|sudo $BIN|sudok $BIN|click $PKG|clean|update)';;
+esac
