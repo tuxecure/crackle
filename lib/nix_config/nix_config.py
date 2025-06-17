@@ -114,6 +114,7 @@ def _restore_config_file(filename: str) -> tuple[bool, str]:
     except Exception as e:
         # Catch any other unexpected errors during the file operations
         return False, f"Error restoring '{filename}' from '{backup_path}': {e}"
+    return False, "UNKNOWN FAILURE"
 
 #### END restore config file ####
 
