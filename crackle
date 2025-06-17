@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
+# input
 operation=${1};
+PKG=("${@:2}")
 # Configuration for Apt
 APTCACHE=${APTCACHE:-${XDG_CACHE_HOME:-$HOME/.cache}/apt};
 APTSTATE=${APTSTATE:-${XDG_STATE_HOME:-$HOME/.local/state}/apt};
@@ -25,6 +27,23 @@ SUDO_STATE=/root/.local/state
 APTCONF="-o Dir::Etc=$APTCONFIG";
 APT_GET="apt-get -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE $APTCONF"
 APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc=$APTCONFIG"
+
+# say something
+say() {
+    printf '%s\n' "$1"
+}
+
+# error out
+err() {
+    say "Crackle: $1" >&2
+    exit 100
+}
+
+# say something and quit the script
+stat() {
+    say "$1" >&2
+    exit 0
+}
 
 function pkgsetup(){
     [[ -d "$DPKGSTATE" ]] || {
@@ -115,6 +134,37 @@ function update() {
     home-manager switch;
 }
 
+sudo_run() {
+    say "this action requires sudo access"
+	set -x
+	sudo $1
+	set +x
+}
+
+# enable use of a binary with sudo -i $BIN
+function enable_sudo(){
+    for pkg in "${PKG[@]}"
+    do
+	    bin_path=$(which $pkg)
+	    real_path=$(realpath $bin_path)
+	    sudo_run "ln -s $real_path $SUDO_BIN/$pkg"
+    done;
+    exit 0;
+}
+
+# disable use of a binary with sudo -i $BIN
+function disable_sudo{
+    for pkg in "${PKG[@]}"
+    do
+            say "this action requires sudo access"
+	    set -x
+	    bin_path=$(sudo -i which $pkg)
+	    set +x
+	    [[ -f $bin_path ]] && sudo_run "rm $bin_path";
+    done;
+    exit 0;
+}
+
 # View information about Crackle, don't do anything
 function debug(){
     echo "CRACKLE CONFIG"
@@ -156,8 +206,8 @@ if [ -z "$operation" -o "$operation" = "help" ]; then
 fi
 
 case $operation in
-	"sudo")[ -z "$PKG" ] && err "missing argument";;
-	"sudok")[ -z "$PKG" ] && err "missing argument";;
+	"sudo")[ -z "$PKG" ] && err "missing argument";enable_sudo;;
+	"sudok")[ -z "$PKG" ] && err "missing argument";disable_sudo;;
     "setup") setup;;
     "clean") clean;;
     "update") update;;
