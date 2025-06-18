@@ -71,7 +71,7 @@ function pkgsetup(){
     }
 }
 
-urldecode() { : "${*//+/ }"; echo -e "${_//%/\\x}"; }
+function urldecode() { : "${*//+/ }"; echo -e "${_//%/\\x}"; }
 
 # get info of the deb package
 function get_pkg_info () {
