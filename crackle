@@ -26,6 +26,17 @@ APTCONF="-o Dir::Etc=$APTCONFIG";
 APT_GET="apt-get -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE $APTCONF"
 APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc=$APTCONFIG"
 
+# click config
+if [[ -z "$ROOT" ]]; then
+ROOT=${ROOT:-$(pwd)}
+ARCH=${ARCH:-$(dpkg --print-architecture)}
+ARCH_TRIPLET=${ARCH_TRIPLET:-$(arch_triplet)}
+BUILD_DIR=${BUILD_DIR:-${ROOT}/build}
+INSTALL_DIR=${INSTALL_DIR:-${ROOT}/install}
+CLICK_LD_LIBRARY_PATH=${CLICK_LD_LIBRARY_PATH:-${INSTALL_DIR}/lib/${ARCH_TRIPLET}}
+CLICK_PATH=${CLICK_PATH:-${CLICK_LD_LIBRARY_PATH}/bin}
+fi
+
 # say something
 say() {
     printf '%s\n' "$1"
