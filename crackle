@@ -15,6 +15,7 @@ CRACKLECMP=${XDG_DATA_HOME:-$HOME/.local/share}/bash-completion/completions;
 CRACKDIR=${CRACKDIR:-$HOME/packages/$PKG};
 CRACKLEBIN="https://gitlab.com/tuxecure/crackle-apt/cracklebin/-/archive/master/cracklebin-master.tar.gz"
 PKG_PREFIX=${PKG_PREFIX:-$HOME/.local}
+SCRP_DIR=$(dirname "${BASH_SOURCE[0]}")
 
 # Configuration for Sudo -i
 SUDO_CONFIG=/root/.config
@@ -36,6 +37,36 @@ INSTALL_DIR=${INSTALL_DIR:-${ROOT}/install}
 CLICK_LD_LIBRARY_PATH=${CLICK_LD_LIBRARY_PATH:-${INSTALL_DIR}/lib/${ARCH_TRIPLET}}
 CLICK_PATH=${CLICK_PATH:-${CLICK_LD_LIBRARY_PATH}/bin}
 fi
+
+# check if the files differ, if yes overwrite the old version
+function upd() {
+    lib=$(basename $1)
+    if [[ ! -f "$2/$lib" && -d "$2" ]]; then
+	if [[ $(basename $(dirname $1)) = "completions" ]] ; then
+		say "Setting up bash_completions..." >&2
+	else
+		say "Installing $lib..." >&2
+	fi
+	cp $1 $2
+    elif ! diff -q $1 $2; then
+	if [[ $(basename $(dirname $1)) = "completions" ]] ; then
+		say "Updating bash_completions..." >&2
+	else
+		say "Updating $lib..." >&2
+	fi
+	cp $1 $2
+    fi
+}
+
+# load libraries
+function load_library(){
+    if [[ -f "$PKG_PREFIX/lib/$1" ]]; then
+        [[ $(basename $SCRP_DIR) != "bin" ]] && upd $SCRP_DIR/lib/$1 $PKG_PREFIX/lib
+        source "$PKG_PREFIX/lib/$1";
+    else
+        source "$SCRP_DIR/lib/$1";
+    fi
+}
 
 # say something
 say() {
@@ -233,7 +264,7 @@ case $operation in
     "clean") clean;;
     "update") update;;
     "debug") debug;;
-	"click")[ -z "$PKG" ] && err "missing argument";build_click;;
+	"click")[ -z "$PKG" ] && err "missing argument";load_library clickfunc;build_click;;
 	"help")show_help;;
 	*) show_help;;
 esac

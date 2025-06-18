@@ -1,19 +1,43 @@
 #!/usr/bin/env bash
+
+function pkg_arch() {
+	for pkg in "${PKG[@]}"
+	do
+		if [[ "${pkg}" == *":all" ]]; then
+			dpkgs+="${pkg} "
+		else
+			dpkgs+="${pkg}":"${ARCH} "
+		fi
+	done
+	echo ${dpkgs};
+}
+
+# extract deb file to a directory
+function extract_deb() {
+    while read package
+    do
+        say "extracting $package";
+        dpkg-deb -x "${package}" "${BUILD_DIR}";
+    done < <(ls "$APTCACHE"/archives/*.deb);
+}
+
+function prepare_apt() {
+    pkgsetup;
+    [ -d "${APTSTATE}/lists" ] || {
+        say "Fetching package lists...";
+        mkdir -p ${APTSTATE}/lists/partial ${APTCACHE}/archives/partial;
+        $APT_GET update;
+    }
+    $APT_GET install --download-only $(pkg_arch);
+}
+
 function build_click () {
     if ! check_cmd click; then err "missing click"; fi
     cd ${ROOT};
     [[ ! -f "manifest.json" && ! -f "manifest.json.in" ]] && err "missing manifest.json";
     [ -d "${BUILD_DIR}" ] && rm -r ${BUILD_DIR}
-    [ -d "${APTSTATE}/lists" ] || {
-        say "Fetching package lists...";
-        mkdir -p ${APTSTATE}/lists/partial ${APTCACHE}/archives/partial;
-        ensure "$SCRP_DIR"/crackle update;
-    }
-    if [[ -z ${TARBALL} ]]; then
-	    CRACKDIR=${BUILD_DIR} ensure ${SCRP_DIR}/crackle crack ${PKG[@]};
-    else
-	    wget "${TARBALL}" -O - | tar -xjvf - -C "${BUILD_DIR}";
-    fi
+    prepare_apt;
+    extract_deb;
     if [ ! -f "manifest.json.in" ]; then
         say "Preparing build environment..."
         prep_build;
@@ -35,6 +59,7 @@ function build_click () {
         say "Building click...";
         click build ${INSTALL_DIR}
     fi
+    pkgunset;
     exit 0;
 }
 
