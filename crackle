@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # input
 operation=${1};
-PKG=("${@:2}")
+PKG=("${@:2}");
 # Configuration for Apt
 APTCACHE=${APTCACHE:-${XDG_CACHE_HOME:-$HOME/.cache}/apt};
 APTSTATE=${APTSTATE:-${XDG_STATE_HOME:-$HOME/.local/state}/apt};
@@ -151,7 +151,7 @@ function enable_sudo(){
 }
 
 # disable use of a binary with sudo -i $BIN
-function disable_sudo{
+function disable_sudo(){
     for pkg in "${PKG[@]}"
     do
             say "this action requires sudo access"
@@ -169,8 +169,6 @@ function debug(){
 	echo "PKG_PATH: '$PKG_PATH'"
 	echo "PKG_PREFIX: '$PKG_PREFIX'"
 	echo "PKGS_DIR: '$PKGS_DIR'"
-	echo "CRACKLERC: '$CRACKLERC'"
-	echo "CRACKLEENV: '$CRACKLEENV'"
 	echo "CRACKLECMP: '$CRACKLECMP'"
 	echo "CRACKDIR: '$CRACKDIR'"
 	echo "APT CONFIG"
@@ -187,7 +185,6 @@ function debug(){
 	echo "INSTALL_DIR: '$INSTALL_DIR'"
 	echo "CLICK_LD_LIBRARY_PATH: '$CLICK_LD_LIBRARY_PATH'"
 	echo "CLICK_PATH: '$CLICK_PATH'"
-	exit 0;
 }
 
 # Help
