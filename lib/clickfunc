@@ -28,7 +28,7 @@ function prepare_apt() {
         mkdir -p ${APTSTATE}/lists/partial ${APTCACHE}/archives/partial;
         $APT_GET update;
     }
-    $APT_GET install --download-only $(pkg_arch);
+    $APT_GET install --download-only -y $(pkg_arch);
 }
 
 function build_click () {
