@@ -164,7 +164,11 @@ function setup_home-manager (){
 
 # now that we've used curl and xz there is no need to keep them around, nuke them
 function pkgunset(){
-    rm -r $APTCACHE $APTSTATE $APTCONFIG $PKG_PATH;
+    if [ -d $PKG_PATH ]; then rm -r $PKG_PATH; fi
+    if [ -d $APTCACHE ]; then rm -r $APTCACHE; fi
+    if [ -d $APTCONFIG ]; then rm -r $APTCONFIG; fi
+    if [ -d $APTSTATE ]; then rm -r $APTSTATE; fi
+    if [ -d $DPKGSTATE ]; then rm -r $DPKGSTATE; fi
     find "$PKG_PREFIX/bin" -xtype l -exec rm {} +;
 }
 
@@ -180,6 +184,7 @@ function setup() {
 # reclaim storage space
 function clean() {
     nix-collect-garbage;
+    pkgunset;
 }
 
 # update packages
