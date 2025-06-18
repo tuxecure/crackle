@@ -36,7 +36,7 @@ function build_click () {
     cd ${ROOT};
     [[ ! -f "manifest.json" && ! -f "manifest.json.in" ]] && err "missing manifest.json";
     [ -d "${BUILD_DIR}" ] && rm -r ${BUILD_DIR}
-    prepare_apt;
+    ensure prepare_apt;
     extract_deb;
     if [ ! -f "manifest.json.in" ]; then
         say "Preparing build environment..."
@@ -80,5 +80,16 @@ mod_desktop(){
 	sed -i "/Exec=/d" $desktopfile
 	sed -i "/^Categories=/i Exec=${PKG}.sh" $desktopfile;
 	mv $desktopfile ${INSTALL_DIR}/${PKG}.desktop
+}
+
+function fetch_desktop() {
+	PKG_DIR=$1
+	PKG_DESKTOP=$2
+	while read desktop
+	do
+		desktopname=$(basename $desktop)
+		${SCRP_DIR}/desktop_trunc $desktop > ${PKG_DESKTOP}/crackle.${desktopname}
+		echo "X-Ubuntu-Touch=true" >>  ${PKG_DESKTOP}/crackle.${desktopname}
+        done < <(find $PKG_DIR -name *.desktop)
 }
 

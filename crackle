@@ -85,6 +85,13 @@ stat() {
     exit 0
 }
 
+# Run a command that should never fail. If the command fails execution
+# will immediately terminate with an error showing the failing
+# command.
+ensure() {
+    if ! "$@"; then exit 1; fi
+}
+
 # set up files and directories for the functioning of apt on a ro rootfs
 function pkgsetup(){
     [[ -d "$DPKGSTATE" ]] || {
