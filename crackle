@@ -27,17 +27,6 @@ APTCONF="-o Dir::Etc=$APTCONFIG";
 APT_GET="apt-get -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE $APTCONF"
 APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc=$APTCONFIG"
 
-# click config
-if [[ -z "$ROOT" ]]; then
-ROOT=${ROOT:-$(pwd)}
-ARCH=${ARCH:-$(dpkg --print-architecture)}
-ARCH_TRIPLET=${ARCH_TRIPLET:-$(arch_triplet)}
-BUILD_DIR=${BUILD_DIR:-${ROOT}/build}
-INSTALL_DIR=${INSTALL_DIR:-${ROOT}/install}
-CLICK_LD_LIBRARY_PATH=${CLICK_LD_LIBRARY_PATH:-${INSTALL_DIR}/lib/${ARCH_TRIPLET}}
-CLICK_PATH=${CLICK_PATH:-${CLICK_LD_LIBRARY_PATH}/bin}
-fi
-
 # check if the files differ, if yes overwrite the old version
 function upd() {
     lib=$(basename $1)
@@ -183,14 +172,7 @@ function debug(){
 	echo "APTSTATE: '$APTSTATE'"
 	echo "APT_GET: '$APT_GET'"
 	echo "APT_CACHE: '$APT_CACHE'"
-	echo "CLICK CONFIG"
-	echo "ROOT: '$ROOT'"
-	echo "ARCH: '$ARCH'"
-	echo "ARCH_TRIPLET: '$ARCH_TRIPLET'"
-	echo "BUILD_DIR: '$BUILD_DIR'"
-	echo "INSTALL_DIR: '$INSTALL_DIR'"
-	echo "CLICK_LD_LIBRARY_PATH: '$CLICK_LD_LIBRARY_PATH'"
-	echo "CLICK_PATH: '$CLICK_PATH'"
+	echo "DPKGSTATE: '$DPKGSTATE'"
 }
 
 # Help
@@ -213,7 +195,7 @@ case $operation in
     "clean") clean;;
     "update") update;;
     "debug") debug;;
-	"click")[ -z "$PKG" ] && err "missing argument";load_library clickfunc;build_click;;
+	"click")[ -z "$PKG" ] && err "missing argument";load_library clickfunc;[ $PKG = "debug" ] && debug;build_click;;
 	"help")show_help;;
 	*) show_help;;
 esac
