@@ -81,18 +81,21 @@ check_path() {
 # set up nix home manager
 function setup_home-manager (){
     [ ! -d /nix ] && err "please test this on the latest focal development update"
-    sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install) --no-daemon
-    . /home/phablet/.nix-profile/etc/profile.d/nix.sh
-    nix-channel --add https://github.com/nix-community/home-manager/archive/master.tar.gz home-manager
-    nix-channel --update
-    nix-shell '<home-manager>' -A install
+    if ! check_cmd nix; then sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install) --no-daemon; fi
+    if ! check_cmd nix; then . /home/phablet/.nix-profile/etc/profile.d/nix.sh; fi
+    if ! check_cmd home-manager; then
+        nix-channel --add https://github.com/nix-community/home-manager/archive/master.tar.gz home-manager
+        nix-channel --update
+        nix-shell '<home-manager>' -A install
+    fi
 }
 
 # set up nix home-manager, leave no trace of apt config
 function setup() {
-    pkgsetup;
-    setup_curlxz;
+    if ! check_cmd nix; then pkgsetup; fi
+    if ! check_cmd nix; then setup_curlxz; fi
     check_path;
     setup_home-manager;
-    pkgunset;
+    if ! check_cmd nix; then pkgunset; fi
+    stat "set up complete";
 }

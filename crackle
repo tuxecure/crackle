@@ -52,6 +52,23 @@ function load_library(){
     fi
 }
 
+function install_crackle() {
+   mkdir -p $PKG_PREFIX/bin $CRACKLECMP
+   # install the bins
+   upd $SCRP_DIR/arch_triplet $PKG_PREFIX/bin;
+   upd $SCRP_DIR/crackle $PKG_PREFIX/bin
+   upd $SCRP_DIR/desktop_trunc $PKG_PREFIX/bin
+   upd $SCRP_DIR/_crackleopts $PKG_PREFIX/bin;
+   upd $SCRP_DIR/remount $PKG_PREFIX/bin;
+   # install the libs
+   upd $SCRP_DIR/lib/basefunc $PKG_PREFIX/lib;
+   upd $SCRP_DIR/lib/clickfunc $PKG_PREFIX/lib;
+   upd $SCRP_DIR/lib/setupfunc $PKG_PREFIX/lib;
+   upd $SCRP_DIR/lib/sudofunc $PKG_PREFIX/lib;
+   # setup bash completion
+   upd $SCRP_DIR/share/bash-completion/completions/crackle $CRACKLECMP;
+}
+
 load_library basefunc;
 
 # reclaim storage space
@@ -114,7 +131,7 @@ function show_help(){
 case $operation in
 	"sudo")[ -z "$PKG" ] && err "missing argument";load_library sudofunc;[ $PKG = "debug" ] && debug;enable_sudo;;
 	"sudok")[ -z "$PKG" ] && err "missing argument";load_library sudofunc;[ $PKG = "debug" ] && debug;disable_sudo;;
-    "setup") load_library setupfunc;setup;;
+    "setup") install_crackle;load_library setupfunc;setup;;
     "clean") clean;;
     "update") update;;
     "debug") debug;;
