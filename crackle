@@ -22,6 +22,12 @@ APTCONF="-o Dir::Etc=$APTCONFIG";
 APT_GET="apt-get -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE $APTCONF"
 APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc=$APTCONFIG"
 
+# root check
+if [[ "$EUID" -eq 0 ]]; then
+    echo  "Crackle: please don't run me as root"
+    exit 100
+fi
+
 # check if the files differ, if yes overwrite the old version
 function upd() {
     lib=$(basename $1)
