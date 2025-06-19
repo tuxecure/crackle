@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+
+# Configuration for Sudo -i
+SUDO_CONFIG=/root/.config
+SUDO_BIN=/root/.local/bin
+SUDO_STATE=/root/.local/state
+
+# run command as sudo and show what command will be run
+sudo_run() {
+    say "this action requires sudo access"
+	set -x
+	sudo $1
+	set +x
+}
+
+# enable use of a binary with sudo -i $BIN
+function enable_sudo(){
+    for pkg in "${PKG[@]}"
+    do
+	    bin_path=$(which $pkg)
+	    real_path=$(realpath $bin_path)
+	    sudo_run "ln -s $real_path $SUDO_BIN/$pkg"
+    done;
+    exit 0;
+}
+
+# disable use of a binary with sudo -i $BIN
+function disable_sudo(){
+    for pkg in "${PKG[@]}"
+    do
+            say "this action requires sudo access"
+	    set -x
+	    bin_path=$(sudo -i which $pkg)
+	    set +x
+	    [[ -f $bin_path ]] && sudo_run "rm $bin_path";
+    done;
+    exit 0;
+}
