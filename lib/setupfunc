@@ -6,9 +6,6 @@ function urldecode() { : "${*//+/ }"; echo -e "${_//%/\\x}"; }
 function get_pkg_info () {
     pkg="$(basename "$1")";
     pkgname="${pkg%%_*}";
-    pkgversion="${pkg%_*}";
-    pkgversion="${pkgversion#*_}";
-    pkgversion="$(urldecode $pkgversion)";
 }
 
 # link files from ~/.local/share/crackle into ~/.local
