@@ -53,7 +53,7 @@ function load_library(){
 }
 
 function install_crackle() {
-   mkdir -p $PKG_PREFIX/bin $CRACKLECMP
+   mkdir -p $PKG_PREFIX/bin $PKG_PREFIX/lib $CRACKLECMP
    if [[ ! $SCRP_DIR = $PKG_PREFIX/bin ]]; then
        # install the bins
        upd $SCRP_DIR/arch_triplet $PKG_PREFIX/bin;
