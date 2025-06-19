@@ -54,36 +54,10 @@ function load_library(){
 
 load_library basefunc;
 
-# set up files and directories for the functioning of apt on a ro rootfs
-function pkgsetup(){
-    [[ -d "$DPKGSTATE" ]] || {
-        mkdir -p "$DPKGSTATE";
-        cp /var/lib/dpkg/status $DPKGSTATE/status;
-    }
-
-    [[ -d "$APTCACHE" ]] || mkdir -p "$APTCACHE";
-    [[ -d "$APTSTATE" ]] || mkdir -p "$APTSTATE";
-
-    [[ -d "$APTCONFIG" ]] || {
-        mkdir -p $APTCONFIG/sources.list.d $APTCONFIG/preferences.d $APTCONFIG/trusted.gpg.d;
-        ln -s /etc/apt/sources.list $APTCONFIG;
-        [[ -n "$(ls /etc/apt/trusted.gpg.d)" ]] && ln -s /etc/apt/trusted.gpg.d/* $APTCONFIG/trusted.gpg.d/;
-    }
-}
-
-# now that we've used curl and xz there is no need to keep them around, nuke them
-function pkgunset(){
-    if [ -d $PKG_PATH ]; then rm -r $PKG_PATH; fi
-    if [ -d $APTCACHE ]; then rm -r $APTCACHE; fi
-    if [ -d $APTCONFIG ]; then rm -r $APTCONFIG; fi
-    if [ -d $APTSTATE ]; then rm -r $APTSTATE; fi
-    if [ -d $DPKGSTATE ]; then rm -r $DPKGSTATE; fi
-    find "$PKG_PREFIX/bin" -xtype l -exec rm {} +;
-}
-
 # reclaim storage space
 function clean() {
     nix-collect-garbage;
+    load_library setupfunc;
     pkgunset;
 }
 
