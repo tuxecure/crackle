@@ -32,13 +32,31 @@ function extract_deb() {
     done < <(ls "$APTCACHE"/archives/*.deb);
 }
 
+function setup_repos(){
+    say "Setting up repos"
+    wget -q --spider https://ubports.com || err "no internet connection, please run crackle update later to fetch the latest package lists";
+    curl --disable --progress-bar -L ${CRACKLEBIN} | tar zx --directory=$APTCONFIG/preferences.d --wildcards */etc/preferences.d/* --strip-components=3
+    curl --disable --progress-bar -L ${CRACKLEBIN} | tar zx --directory=$APTCONFIG/sources.list.d --wildcards */etc/sources.list.d/* --strip-components=3
+    [[ -d "$PKG_PREFIX/lib/crackle" ]] || mkdir -p "$PKG_PREFIX/lib/crackle";
+    curl --disable --progress-bar -L ${CRACKLEBIN}  | tar zx --strip-components=1 -C $PKG_PREFIX/lib/crackle
+    while read repo
+    do
+        REPOS=$(basename $repo)
+        if [[ -f "${PKG_PREFIX}/lib/crackle/${REPOS%.*}" ]]; then
+            source "${PKG_PREFIX}/lib/crackle/${REPOS%.*}";
+            setup_${REPOS%.*};
+        fi
+    done < <(find $APTCONFIG/sources.list.d -name "*.list")
+    sed -i "s|\$HOME|$HOME|g" $APTCONFIG/sources.list.d/*;
+}
+
 function prepare_apt() {
     pkgsetup;
-    [ -d "${APTSTATE}/lists" ] || {
-        say "Fetching package lists...";
-        mkdir -p ${APTSTATE}/lists/partial ${APTCACHE}/archives/partial;
-        $APT_GET update;
-    }
+    load_library setupfunc;
+    setup_curlxz;
+    $APT_GET clean;
+    setup_repos;
+    $APT_GET update;
     $APT_GET install --download-only -y $(pkg_arch);
 }
 
