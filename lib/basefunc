@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+# say something
+say() {
+    printf '%s\n' "$1"
+}
+
+# error out
+err() {
+    say "Crackle: $1" >&2
+    exit 100
+}
+
+# say something and quit the script
+stat() {
+    say "$1" >&2
+    exit 0
+}
+
+# Run a command that should never fail. If the command fails execution
+# will immediately terminate with an error showing the failing
+# command.
+ensure() {
+    if ! "$@"; then exit 1; fi
+}
+
+# check if a command is available
+check_cmd() {
+    command -v "$1" > /dev/null 2>&1
+}
