@@ -3,13 +3,13 @@ _crackle()
 {
     local cur prev
     cur="${COMP_WORDS[COMP_CWORD]}"
-    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    prev="${COMP_WORDS[1]}"
     case $COMP_CWORD in
 	    1) COMPREPLY=( $(compgen -W "$(_crackleopts)" -- ${cur}) );;
 	    *);;
     esac
     case $prev in
-	    install|download|crack|show) COMPREPLY=( $( apt-cache --no-generate pkgnames "$cur" 2> /dev/null ) );;
+	    click) COMPREPLY=( $( apt-cache --no-generate pkgnames "$cur" 2> /dev/null ) );;
     esac
 
     return 0
