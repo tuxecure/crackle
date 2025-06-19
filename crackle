@@ -84,11 +84,25 @@ function debug(){
 	echo "DPKGSTATE: '$DPKGSTATE'"
 }
 
+function crack() {
+    load_library setupfunc;
+    pkgsetup;
+    load_library clickfunc;
+    setup_curlxz;
+    $APT_GET clean;
+    setup_repos;
+    $APT_GET update;
+    $APT_GET install --download-only ${PKG[@]};
+    extract_deb_to ${CRACKDIR};
+    pkgunset;
+}
+
 # Help
 function show_help(){
 	echo 'available commands:
 	- crackle setup
 	- crackle debug
+	- crackle crack
 	- crackle sudo $BIN
 	- crackle sudok $BIN
 	- crackle click $PKG
@@ -104,6 +118,7 @@ case $operation in
     "clean") clean;;
     "update") update;;
     "debug") debug;;
+    "crack") crack;;
 	"click")[ -z "$PKG" ] && err "missing argument";load_library clickfunc;[ $PKG = "debug" ] && debug;build_click;;
 	"help")show_help;;
 	*) show_help;;

@@ -24,11 +24,12 @@ function pkg_arch() {
 }
 
 # extract deb file to a directory
-function extract_deb() {
+function extract_deb_to() {
+    PKGS_DIR=$1
     while read package
     do
         say "extracting $package";
-        dpkg-deb -x "${package}" "${BUILD_DIR}";
+        dpkg-deb -x "${package}" "${PKGS_DIR}";
     done < <(ls "$APTCACHE"/archives/*.deb);
 }
 
@@ -66,7 +67,7 @@ function build_click () {
     [[ ! -f "manifest.json" && ! -f "manifest.json.in" ]] && err "missing manifest.json";
     [ -d "${BUILD_DIR}" ] && rm -r ${BUILD_DIR}
     ensure prepare_apt;
-    extract_deb;
+    extract_deb_to ${BUILD_DIR};
     if [ ! -f "manifest.json.in" ]; then
         say "Preparing build environment..."
         prep_build;
