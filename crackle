@@ -31,19 +31,19 @@ APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc
 function upd() {
     lib=$(basename $1)
     if [[ ! -f "$2/$lib" && -d "$2" ]]; then
-	if [[ $(basename $(dirname $1)) = "completions" ]] ; then
-		say "Setting up bash_completions..." >&2
-	else
-		say "Installing $lib..." >&2
-	fi
-	cp $1 $2
+        if [[ $(basename $(dirname $1)) = "completions" ]] ; then
+            say "Setting up bash_completions..." >&2
+        else
+            say "Installing $lib..." >&2
+        fi
+        cp $1 $2
     elif ! diff -q $1 $2; then
-	if [[ $(basename $(dirname $1)) = "completions" ]] ; then
-		say "Updating bash_completions..." >&2
-	else
-		say "Updating $lib..." >&2
-	fi
-	cp $1 $2
+        if [[ $(basename $(dirname $1)) = "completions" ]] ; then
+            say "Updating bash_completions..." >&2
+        else
+            say "Updating $lib..." >&2
+        fi
+        cp $1 $2
     fi
 }
 
