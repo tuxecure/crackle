@@ -37,7 +37,8 @@ crackle
 Crackle commands:
 - `setup`: Automagically configures and installs crackle, nix and home-manager
 - `debug`: Shows some debugging information. Doesn't do any changes to the system.
-- `debug`: Shows some debugging information. Doesn't do any changes to the system.
+- `click debug`: Shows some debugging information about the click configuration. Doesn't do any changes to the system.
+- `sudo debug`: Shows some debugging information about the sudo configuration. Doesn't do any changes to the system.
 - `crack`: this will extract the package `$PKG` and it's dependencies to `$HOME/packages/$PKG` for easy inspection, usefull to see the file tree or navigate through the various files associated with the package or its dependencies
 - `sudo`: this will make a symlink of the binary $BIN to `/root/.local/bin` for use with `sudo -i $BIN` or if avaialble `/snap/bin` for use with `sudo $BIN`
 - `sudok`: this will remove the symlink of the binary $BIN created by `crackle sudo $BIN`
