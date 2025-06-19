@@ -1,6 +1,6 @@
 # Crackle
 
-> **NOTE** if you were using crackle before v0.3.0 you will need to nuke your crackle install first before installing v0.3.0.
+> **NOTE** if you were using crackle before v0.5 you will need to nuke your crackle install first before installing
 
 A project started by Fuseteam, inspired by [Pacstall](https://github.com/pacstall/pacstall), and [nyaa](https://git.kreatea.space/kreato-linux/nyaa)
 
