@@ -92,6 +92,7 @@ function setup_home-manager (){
 
 # set up nix home-manager, leave no trace of apt config
 function setup() {
+    if ! rorw; then err "Readwrite rootfs is not supported"; fi
     if ! check_cmd nix; then pkgsetup; fi
     if ! check_cmd nix; then setup_curlxz; fi
     check_path;
