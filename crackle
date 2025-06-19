@@ -112,8 +112,8 @@ function show_help(){
 }
 
 case $operation in
-	"sudo")[ -z "$PKG" ] && err "missing argument";load_library sudofunc;enable_sudo;;
-	"sudok")[ -z "$PKG" ] && err "missing argument";load_library sudofunc;disable_sudo;;
+	"sudo")[ -z "$PKG" ] && err "missing argument";load_library sudofunc;[ $PKG = "debug" ] && debug;enable_sudo;;
+	"sudok")[ -z "$PKG" ] && err "missing argument";load_library sudofunc;[ $PKG = "debug" ] && debug;disable_sudo;;
     "setup") load_library setupfunc;setup;;
     "clean") clean;;
     "update") update;;

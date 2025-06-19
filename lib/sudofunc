@@ -5,8 +5,31 @@ SUDO_CONFIG=/root/.config
 SUDO_BIN=/root/.local/bin
 SUDO_STATE=/root/.local/state
 
+function config_sudo() {
+    [[ -f /root/.profile ]] || sudo_run "touch /root/.profile";
+    rootprofile=$(grep bin /root/.profile)
+    [[ -z "$rootprofile" ]] && echo PATH="$SUDO_BIN:$PATH" | sudo_run "tee --append /root/.profile > /dev/null";
+    [[ ! -d "$SUDO_BIN" ]] && sudo_run "mkdir -p $SUDO_BIN";
+}
+
+function unconfig_sudo() {
+    [[ -f /root/.profile ]] && rootprofile=$(grep bin /root/.profile)
+    [[ -n "$rootprofile" ]] && sudo_run "rm /root/.profile";
+    [[ -d "$SUDO_BIN" ]] && sudo_run "rm -r $SUDO_BIN";
+    [ -d /snap/bin ] && SUDO_BIN=/snap/bin
+}
+
+function sudo_clean() {
+    say "this action requires sudo access";
+	set -x;
+    [[ -d /root/.local/bin ]] && sudo find "/root/.local/bin" -xtype l -exec rm {} +;
+    [[ -d /snap/bin ]] && sudo find "/snap/bin" -xtype l -exec rm {} +;
+    set +x;
+    sudo -k;
+}
+
 # run command as sudo and show what command will be run
-sudo_run() {
+function sudo_run() {
     say "this action requires sudo access"
 	set -x
 	sudo $1
@@ -15,12 +38,15 @@ sudo_run() {
 
 # enable use of a binary with sudo -i $BIN
 function enable_sudo(){
+    [ ! -d /snap/bin ] && config_sudo;
+    [ -d /snap/bin ] && unconfig_sudo;
     for pkg in "${PKG[@]}"
     do
-	    bin_path=$(which $pkg)
-	    real_path=$(realpath $bin_path)
-	    sudo_run "ln -s $real_path $SUDO_BIN/$pkg"
+	    bin_path=$(which $pkg);
+	    real_path=$(realpath $bin_path);
+	    [ ! -f $SUDO_BIN/$pkg ] && sudo_run "ln -s $real_path $SUDO_BIN/$pkg";
     done;
+    sudo -k;
     exit 0;
 }
 
@@ -28,11 +54,19 @@ function enable_sudo(){
 function disable_sudo(){
     for pkg in "${PKG[@]}"
     do
-            say "this action requires sudo access"
-	    set -x
-	    bin_path=$(sudo -i which $pkg)
-	    set +x
-	    [[ -f $bin_path ]] && sudo_run "rm $bin_path";
+        say "this action requires sudo access"
+        bin_path=$(sudo -i which $pkg)
+        [[ -f $bin_path ]] && sudo_run "rm $bin_path";
     done;
+    sudo -k;
+    exit 0;
+}
+
+# View information about Crackle, don't do anything
+function debug(){
+    echo "SUDO CONFIG";
+	echo "SUDO_CONFIG: '$SUDO_CONFIG'";
+	echo "SUDO_BIN: '$SUDO_BIN'";
+	echo "SUDO_STATE: '$SUDO_STATE'";
     exit 0;
 }
