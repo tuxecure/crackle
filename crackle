@@ -137,14 +137,16 @@ function crack() {
 # Help
 function show_help(){
 	echo 'available commands:
-	- crackle setup
-	- crackle debug
-	- crackle crack
 	- crackle sudo $BIN
 	- crackle sudok $BIN
-	- crackle click $PKG
+	- crackle setup
 	- crackle clean
-	- crackle update'
+	- crackle update
+	- crackle debug
+	- crackle list
+	- crackle crack
+	- crackle click $PKG
+	- crackle help'
 	exit 0
 }
 
