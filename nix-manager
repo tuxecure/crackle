@@ -1,0 +1,14 @@
+#!/usr/bin/python3
+import sys, os
+home = os.getenv('HOME')
+sys.path.append(home + '/.local/lib')
+from nix_config import config
+import argparse
+
+package = config.read_packages("/home/phablet/.config/home-manager/home.nix", "home")
+
+parser = argparse.ArgumentParser()
+parser.add_argument("list")
+args = parser.parse_args()
+if args.list:
+    print(package)

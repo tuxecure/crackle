@@ -59,7 +59,7 @@ function load_library(){
 }
 
 function install_crackle() {
-   mkdir -p $PKG_PREFIX/bin $PKG_PREFIX/lib $CRACKLECMP
+   mkdir -p $PKG_PREFIX/bin $PKG_PREFIX/lib/nix_config $CRACKLECMP
    if [[ ! $SCRP_DIR = $PKG_PREFIX/bin ]]; then
        # install the bins
        upd $SCRP_DIR/arch_triplet $PKG_PREFIX/bin;
@@ -68,8 +68,14 @@ function install_crackle() {
        upd $SCRP_DIR/_crackleopts $PKG_PREFIX/bin;
        upd $SCRP_DIR/remount $PKG_PREFIX/bin;
        upd $SCRP_DIR/rorw $PKG_PREFIX/bin;
+       upd $SCRP_DIR/nix-manager $PKG_PREFIX/bin;
        # install the libs
        upd $SCRP_DIR/lib/basefunc $PKG_PREFIX/lib;
+       upd $SCRP_DIR/lib/nix_config/__init__.py $PKG_PREFIX/lib/nix_config;
+       upd $SCRP_DIR/lib/nix_config/config.py $PKG_PREFIX/lib/nix_config;
+       upd $SCRP_DIR/lib/nix_config/nix_config.py $PKG_PREFIX/lib/nix_config;
+       upd $SCRP_DIR/lib/nix_config/nix_interact.py $PKG_PREFIX/lib/nix_config;
+       upd $SCRP_DIR/lib/nix_config/openprocess.py $PKG_PREFIX/lib/nix_config;
        upd $SCRP_DIR/lib/clickfunc $PKG_PREFIX/lib;
        upd $SCRP_DIR/lib/setupfunc $PKG_PREFIX/lib;
        upd $SCRP_DIR/lib/sudofunc $PKG_PREFIX/lib;
@@ -91,6 +97,11 @@ function clean() {
 function update() {
     nix-channel --update;
     home-manager switch;
+}
+
+# list installed packages
+function list() {
+    nix-manager list
 }
 
 # View information about Crackle, don't do anything
@@ -144,6 +155,7 @@ case $operation in
     "clean") clean;;
     "update") update;;
     "debug") debug;;
+    "list") list;;
     "crack") crack;;
 	"click")[ -z "$PKG" ] && err "missing argument";load_library clickfunc;[ $PKG = "debug" ] && debug;build_click;;
 	"help")show_help;;
