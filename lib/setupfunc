@@ -93,10 +93,20 @@ function setup_home-manager (){
 # set up nix home-manager, leave no trace of apt config
 function setup() {
     check_path;
-    if ! rorw; then err "Readwrite rootfs is not supported"; fi
-    if ! check_cmd nix; then pkgsetup; fi
-    if ! check_cmd nix; then setup_curlxz; fi
-    setup_home-manager;
-    if [ -d $APTCACHE ]; then pkgunset; fi
+    if ! rorw;
+    then
+        if check_cmd apt;
+        then
+            load_library sudofunc;
+            sudo_run 'apt install curl xz-utils';
+        else
+            err 'only debian based systems are currently supported';
+        fi
+    else
+        if ! check_cmd nix; then pkgsetup; fi
+        if ! check_cmd nix; then setup_curlxz; fi
+        setup_home-manager;
+        if [ -d $APTCACHE ]; then pkgunset; fi
+    fi
     stat "set up complete";
 }
