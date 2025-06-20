@@ -3,12 +3,23 @@ import sys, os
 home = os.getenv('HOME')
 sys.path.append(home + '/.local/lib')
 from nix_config import config
-import argparse
+from sys import argv
 
-package = config.read_packages("/home/phablet/.config/home-manager/home.nix", "home")
+config_file = "/home/phablet/.config/home-manager/home.nix"
+package = config.read_packages( config_file, "home")
 
-parser = argparse.ArgumentParser()
-parser.add_argument("list")
-args = parser.parse_args()
-if args.list:
+if len(argv) > 1 and argv[1] == 'list':
+    operation = argv[1]
+elif len(argv) > 2:
+    operation = argv[1]
+    pkg = argv[2]
+else:
+    print('argument missing')
+    exit(1)
+
+if operation == 'list':
     print(package)
+elif operation == 'install':
+    config.add_packages( config_file, ['pkgs.' + pkg], 'home' )
+elif operation == 'remove':
+    config.delete_packages( config_file, ['pkgs.' + pkg], 'home' )

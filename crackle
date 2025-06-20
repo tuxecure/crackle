@@ -104,6 +104,24 @@ function list() {
     nix-manager list
 }
 
+# install packages
+function install() {
+    for pkg in ${PKG[@]}
+    do
+        nix-manager install $pkg
+    done
+    home-manager switch
+}
+
+# remove packages
+function remove() {
+    for pkg in ${PKG[@]}
+    do
+        nix-manager remove $pkg
+    done
+    home-manager switch
+}
+
 # View information about Crackle, don't do anything
 function debug(){
     echo "CRACKLE CONFIG"
@@ -141,6 +159,8 @@ function show_help(){
 	- crackle sudok $BIN
 	- crackle setup
 	- crackle clean
+	- crackle install
+	- crackle remove
 	- crackle update
 	- crackle debug
 	- crackle list
@@ -155,6 +175,8 @@ case $operation in
 	"sudok")[ -z "$PKG" ] && err "missing argument";load_library sudofunc;[ $PKG = "debug" ] && debug;disable_sudo;;
     "setup") install_crackle;load_library setupfunc;setup;;
     "clean") clean;;
+    "install") install;;
+    "remove") remove;;
     "update") update;;
     "debug") debug;;
     "list") list;;
