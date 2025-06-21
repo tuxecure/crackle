@@ -80,7 +80,7 @@ check_path() {
 
 # set up nix home manager
 function setup_home-manager (){
-    [ ! -d /nix ] && err "please test this on the latest focal development update"
+    [[ ! -d "/nix" && "$rootfs" = "ro" ]] && err "please test this on the latest focal development update"
     if ! check_cmd nix; then sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install) --no-daemon; fi
     if ! check_cmd nix; then . /home/phablet/.nix-profile/etc/profile.d/nix.sh; fi
     if ! check_cmd home-manager; then
@@ -93,7 +93,8 @@ function setup_home-manager (){
 # set up nix home-manager, leave no trace of apt config
 function setup() {
     check_path;
-    if ! rorw;
+    rootfstat=$(rorw);
+    if [[ "$rootfstat" = "rw" ]];
     then
         if check_cmd apt;
         then
@@ -105,8 +106,8 @@ function setup() {
     else
         if ! check_cmd nix; then pkgsetup; fi
         if ! check_cmd nix; then setup_curlxz; fi
-        setup_home-manager;
         if [ -d $APTCACHE ]; then pkgunset; fi
     fi
+    setup_home-manager;
     stat "set up complete";
 }
