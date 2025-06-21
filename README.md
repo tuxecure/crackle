@@ -4,7 +4,7 @@
 
 A project started by Fuseteam, inspired by [Pacstall](https://github.com/pacstall/pacstall), and [nyaa](https://git.kreatea.space/kreato-linux/nyaa)
 
-Crackle is a client which makes possible to setup nix home manager on ubuntu touch, by utilizing the [XDG Base Directory specification](https://www.freedesktop.org/software/systemd/man/file-hierarchy.html#Home%20Directory).
+Crackle is a client which makes possible to setup nix home manager on Ubuntu Touch, by utilizing the [XDG Base Directory specification](https://www.freedesktop.org/software/systemd/man/file-hierarchy.html#Home%20Directory).
  
 ## Installation
 
@@ -32,7 +32,11 @@ crackle
 	- sudok $BIN
 	- click $PKG
 	- clean
+	- install
+	- remove
 	- update
+	- list
+	- help
 ```
 Crackle commands:
 - `setup`: Automagically configures and installs crackle, nix and home-manager
@@ -44,13 +48,15 @@ Crackle commands:
 - `sudok`: this will remove the symlink of the binary $BIN created by `crackle sudo $BIN`
 - `click`: this will build a click package from the downloaded deb packages
 - `clean`: run `nix-collect-garbage` and removed all apt related directories and broken symlinks
+- `install`: adds (a) package(s) to `~/.config/home-manager/home.nix` and runs `home-manager switch` to activate the package(s)
+- `remove`: remove (a) package(s) to `~/.config/home-manager/home.nix` and runs `home-manager switch` to remove the package(s)
 - `update`: run `nix-channel --update` to get the latest updates from the nix cache and runs `home-manager switch` to activate the newer version
+- `help`: shows the available commands of crackle
 
 ## Limitations
 
 the following are the limitations of crackle:
-- crackle may not work as expected on systems with a readwrite rootfs
-- expects `apt` for the installation of curl and xz, needed for setting up nix, on readonly rootfs systems
+- expects `apt` for the installation of curl and xz, needed for setting up nix
 
 ## Support
 
@@ -58,10 +64,4 @@ Support, question and suggestions for crackle can be filed on [GitLab](https://g
 
 ## Status
 
-Crackle should be considered Beta, there may be some lingers bugs and/or edge cases.
-
-## Configuration
-
-The installed packages will be found under `~/$HOME/.local/share/crackle`, modify the runtime configuration to change this, or pass in the `$CRACKLERC` variable to override.
-
-Note that the configuration location for packages by default is in `$XDG_CONFIG_HOME/crackle`, as expected. The same goes for this package, found under `$XDG_CONFIG_HOME/.config/crackle/cracklerc`
+Crackle should be considered Beta, there may be some lingering bugs and/or edge cases.
