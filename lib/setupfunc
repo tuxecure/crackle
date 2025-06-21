@@ -106,8 +106,8 @@ function setup() {
     else
         if ! check_cmd nix; then pkgsetup; fi
         if ! check_cmd nix; then setup_curlxz; fi
-        if [ -d $APTCACHE ]; then pkgunset; fi
     fi
     setup_home-manager;
+    if [ -d $APTCACHE ]; then pkgunset; fi
     stat "set up complete";
 }
