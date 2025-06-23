@@ -36,6 +36,7 @@ crackle
 	- remove
 	- update
 	- list
+	- nuke
 	- help
 ```
 Crackle commands:
@@ -51,6 +52,8 @@ Crackle commands:
 - `install`: adds (a) package(s) to `~/.config/home-manager/home.nix` and runs `home-manager switch` to activate the package(s)
 - `remove`: remove (a) package(s) to `~/.config/home-manager/home.nix` and runs `home-manager switch` to remove the package(s)
 - `update`: run `nix-channel --update` to get the latest updates from the nix cache and runs `home-manager switch` to activate the newer version
+- `list`: list installed applications
+- `nuke`: Automagically removes everything crackle installed from the system
 - `help`: shows the available commands of crackle
 
 ## Limitations

@@ -166,8 +166,32 @@ function show_help(){
 	- crackle list
 	- crackle crack
 	- crackle click $PKG
+	- crackle nuke
 	- crackle help'
 	exit 0
+}
+
+function nuke(){
+    nix-channel --remove home-manager;
+    nix-channel --remove nixpkgs;
+    nix-channel --update;
+    load_library sudofunc;
+    sudo_run "rm -rf /nix";
+    rm -rf ~/.config/home-manager;
+    rm -rf ~/.local/share/home-manager;
+    rm -rf ~/.nix-profile ~/.nix-defexpr ~/.nix-channels ~/.nix-command-errors.log ~/.cache/nix ~/.local/share/nix ~/.local/state/nix/;
+    rm -r $PKG_PREFIX/lib/nix_config $CRACKLECMP;
+    rm $PKG_PREFIX/bin/arch_triplet;
+    rm $PKG_PREFIX/bin/crackle;
+    rm $PKG_PREFIX/bin/desktop_trunc;
+    rm $PKG_PREFIX/bin/_crackleopts;
+    rm $PKG_PREFIX/bin/remount;
+    rm $PKG_PREFIX/bin/rorw;
+    rm $PKG_PREFIX/bin/nix-manager;
+    rm $PKG_PREFIX/lib/basefunc;
+    rm $PKG_PREFIX/lib/clickfunc;
+    rm $PKG_PREFIX/lib/setupfunc;
+    rm $PKG_PREFIX/lib/sudofunc;
 }
 
 case $operation in
@@ -182,6 +206,7 @@ case $operation in
     "list") list;;
     "crack") crack;;
 	"click")[ -z "$PKG" ] && err "missing argument";load_library clickfunc;[ $PKG = "debug" ] && debug;build_click;;
+	"nuke")nuke;;
 	"help")show_help;;
 	*) show_help;;
 esac
