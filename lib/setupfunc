@@ -12,7 +12,11 @@ function pkgsetup(){
 
     [[ -d "$APTCONFIG" ]] || {
         mkdir -p $APTCONFIG/sources.list.d $APTCONFIG/preferences.d $APTCONFIG/trusted.gpg.d;
-        ln -s /etc/apt/sources.list $APTCONFIG;
+        if [[ $(lsb_release -cs) = "focal" ]]; then
+            ln -s /etc/apt/sources.list $APTCONFIG;
+        elif [[ $(lsb_release -cs) = "noble" ]];then
+            ln -s /etc/apt/sources.list.d/* $APTCONFIG/sources.list.d;
+        fi
         [[ -n "$(ls /etc/apt/trusted.gpg.d)" ]] && ln -s /etc/apt/trusted.gpg.d/* $APTCONFIG/trusted.gpg.d/;
     }
 }
