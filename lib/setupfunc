@@ -84,7 +84,7 @@ function setup_home-manager (){
     if ! check_cmd nix; then
         sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install) --no-daemon --no-channel-add;
         . $HOME/.nix-profile/etc/profile.d/nix.sh
-        nix-channel --add https://nixos.org/channels/nixpkgs-25.05-darwin nixpkgs
+        nix-channel --add https://nixos.org/channels/nixos-25.05 nixpkgs
         nix-channel --update
     fi
     if ! check_cmd home-manager; then
