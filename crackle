@@ -175,8 +175,13 @@ function nuke(){
     nix-channel --remove home-manager;
     nix-channel --remove nixpkgs;
     nix-channel --update;
-    load_library sudofunc;
-    sudo_run "rm -rf /nix";
+    rootfstat=$(rorw);
+    if [[ "$rootfstat" = "rw" ]]; then
+        rm -rf /nix;
+    else
+        load_library sudofunc;
+        sudo_run "rm -rf /nix/*";
+    fi
     rm -rf ~/.config/home-manager;
     rm -rf ~/.local/share/home-manager;
     rm -rf ~/.nix-profile ~/.nix-defexpr ~/.nix-channels ~/.nix-command-errors.log ~/.cache/nix ~/.local/share/nix ~/.local/state/nix/;
