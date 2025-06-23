@@ -5,7 +5,7 @@ sys.path.append(home + '/.local/lib')
 from nix_config import config
 from sys import argv
 
-config_file = "/home/phablet/.config/home-manager/home.nix"
+config_file = home + "/.config/home-manager/home.nix"
 package = config.read_packages( config_file, "home")
 
 if len(argv) > 1 and argv[1] == 'list':
