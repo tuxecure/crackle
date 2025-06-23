@@ -103,7 +103,9 @@ function setup() {
         if check_cmd apt;
         then
             load_library sudofunc;
-            sudo_run 'apt install curl xz-utils';
+            if ! check_cmd curl; then pkgs="curl"; fi
+            if ! check_cmd xz; then pkgs+=" xz-utils"; fi
+            if [[ -n "$pkgs" ]]; then sudo_run 'apt install curl xz-utils'; fi
         else
             err 'only debian based systems are currently supported';
         fi
