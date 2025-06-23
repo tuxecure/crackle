@@ -81,10 +81,14 @@ check_path() {
 # set up nix home manager
 function setup_home-manager (){
     [[ ! -d "/nix" && "$rootfs" = "ro" ]] && err "please test this on the latest focal development update"
-    if ! check_cmd nix; then sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install) --no-daemon; fi
-    if ! check_cmd nix; then . /home/phablet/.nix-profile/etc/profile.d/nix.sh; fi
+    if ! check_cmd nix; then
+        sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install) --no-daemon --no-channel-add;
+        . $HOME/.nix-profile/etc/profile.d/nix.sh
+        nix-channel --add https://nixos.org/channels/nixpkgs-25.05-darwin nixpkgs
+        nix-channel --update
+    fi
     if ! check_cmd home-manager; then
-        nix-channel --add https://github.com/nix-community/home-manager/archive/master.tar.gz home-manager
+        nix-channel --add https://github.com/nix-community/home-manager/archive/release-25.05.tar.gz home-manager
         nix-channel --update
         nix-shell '<home-manager>' -A install
     fi
