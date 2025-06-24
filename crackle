@@ -120,6 +120,7 @@ function remove() {
         nix-manager remove $pkg
     done
     home-manager switch
+    nix-collect-garbage
 }
 
 # View information about Crackle, don't do anything
