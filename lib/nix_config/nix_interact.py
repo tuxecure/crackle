@@ -2,7 +2,7 @@
 
 import os
 import copy
-from openprocess import openprocess
+from nix_config.openprocess import openprocess
 
 #### START apply config #### 
 
@@ -26,7 +26,9 @@ def apply_config() -> tuple:
 
     simple_error : list = []
 
-    output : list, full_error : list = openprocess("home-manager build")
+    output , full_error = openprocess("home-manager build")
+    output : list
+    full_error : list
 
     # Iterate through the full_error to find and extract simple error
     for line in full_error:

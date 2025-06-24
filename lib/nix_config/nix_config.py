@@ -3,8 +3,9 @@
 import shutil
 import os
 import filecmp # For comparing file contents (if file has not changed why bother applying it)
-import config, nix_interact
-from openprocess import openprocess
+from nix_config import config, nix_interact
+from nix_config.openprocess import openprocess
+from typing import Tuple
 
 #### START get config path ####
 
@@ -25,7 +26,7 @@ def get_config_path() -> str:
 
     config_path = "/home/{user}/.config/home-manager/home.nix".format(user=openprocess("whoami")[0][0])
     if os.path.exists(config_path):
-        return config
+        return config_path
     print("config file not found at path {config}".format(config=config))
     return None # everything else has error checks that will catch this
 
@@ -55,14 +56,16 @@ def _backup_config_file(filename : str) -> tuple:
               error message detailing the failure.
     """
 
-    backup_path = filename + ".backup" # /path/to/home.nix + .backup = /path/to/home.nix.backup
+    source_file_path = filename
+    destination_file_path = filename + ".backup" # /path/to/home.nix + .backup = /path/to/home.nix.backup
     try:
-        if filecmp.cmp(source_file_path, destination_file_path, shallow=False):
-        return True , "SUCCESS"
-        else:
-            os.remove(destination_file_path)
-            shutil.copy2(source_file_path, destination_file_path)
-            return True, "SUCCESS"
+        if os.path.exists(destination_file_path):
+            if filecmp.cmp(source_file_path, destination_file_path, shallow=False):
+                return True , "SUCCESS"
+            else:
+                os.remove(destination_file_path)
+        shutil.copy2(source_file_path, destination_file_path)
+        return True, "SUCCESS"
     except Exception as e:
         print(f"Error copying file {source_file_path} to {destination_file_path}: {e}")
         return False, e
@@ -72,7 +75,7 @@ def _backup_config_file(filename : str) -> tuple:
 
 #### START restore config file ####
 
-def _restore_config_file(filename: str) -> tuple[bool, str]:
+def _restore_config_file(filename: str) -> Tuple[bool, str]:
     """
     Restores a configuration file from its backup.
 
@@ -129,7 +132,7 @@ def read_packages(package_type : str = "home", filename : str = get_config_path(
 #### START add packages ####
 
 def add_packages(packages : list, overwrite : bool = False, package_type : str = "home", filename : str = get_config_path()) -> list:
-     """
+    """
     Adds specified software packages to a configuration file, ensuring system
     stability through backup and restore mechanisms.
 
@@ -179,13 +182,16 @@ def add_packages(packages : list, overwrite : bool = False, package_type : str =
     backup_success, backup_error = _backup_config_file(filename)
     if backup_success:
         packages_added = config.add_packages(filename, packages, package_type, overwrite)
-        output : list ,simple_error : list , full_error : list = nix_interact.apply_config()
+        output , simple_error , full_error = nix_interact.apply_config()
+        output : list
+        simple_error : list
+        full_error : list
         if not full_error:
             return packages_added, [output, simple_error, full_error]
         else:
-            restore_success, restore_error = _restore_config_file()
+            restore_success, restore_error = _restore_config_file(filename)
             if not restore_success:
-                return packages_added, [output , simple_error.insert(0, "failed to restore you're {filename}.backup probably does not exist!"..format(filename=filename)), full_error.insert(-1, restore_error)] # make sure we know
+                return packages_added, [output , simple_error.insert(0, "failed to restore you're {filename}.backup probably does not exist!".format(filename=filename)), full_error.insert(-1, restore_error)] # make sure we know
             return packages_added, [output , simple_error, full_error]
     else:
         print("failed to backup too risky to run without, exiting.")
@@ -239,17 +245,20 @@ def delete_packages(packages : list, package_type : str = "home", filename : str
                   command, or specific errors related to backup failures.
     """
 
-     if not filename:
+    if not filename:
         return packages_deleted , [[] ,["failed to find config file"], []]
     packages_deleted : list = []
     backup_success, backup_error = _backup_config_file(filename)
     if backup_success:
         packages_deleted = config.delete_packages(filename, packages, package_type)
-        output : list ,simple_error : list , full_error : list = nix_interact.apply_config()
+        output ,simple_error ,full_error = nix_interact.apply_config()
+        output : list
+        simple_error : list
+        full_error : list
         if not full_error:
             return packages_deleted, [output, simple_error, full_error]
         else:
-            restore_success, restore_error = _restore_config_file()
+            restore_success, restore_error = _restore_config_file(filename)
             if not restore_success:
                 return packages_deleted, [output , simple_error.insert(0, "failed to restore you're {filename}.backup probably does not exist!".format(filename=filename)), full_error.insert(-1, restore_error)] # make sure we know
             return packages_deleted, [output , simple_error, full_error]
