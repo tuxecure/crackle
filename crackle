@@ -23,7 +23,7 @@ APT_GET="apt-get -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE $APTCONF"
 APT_CACHE="apt-cache -o Dir::Cache=$APTCACHE -o Dir::State=$APTSTATE -o Dir::Etc=$APTCONFIG"
 
 # root check
-if [[ "$EUID" -eq 0 ]]; then
+if [[ "$EUID" -eq 0 && -z "$ROOT" ]]; then
     echo  "Crackle: please don't run me as root"
     exit 100
 fi
