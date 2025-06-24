@@ -22,7 +22,7 @@ def apply_config() -> tuple:
               of the command.
     """
 
-    error_prefix : str = "error: attribute"
+    error_prefix : str = "error: "
 
     simple_error : list = []
 

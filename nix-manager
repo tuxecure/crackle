@@ -2,11 +2,12 @@
 import sys, os
 home = os.getenv('HOME')
 sys.path.append(home + '/.local/lib')
-from nix_config import config
+import nix_config.nix_config as config
+import nix_config.nix_interact
+from nix_config.openprocess import openprocess
 from sys import argv
 
-config_file = home + "/.config/home-manager/home.nix"
-package = config.read_packages( config_file, "home")
+package = config.read_packages()
 
 if len(argv) > 1 and argv[1] == 'list':
     operation = argv[1]
@@ -23,6 +24,23 @@ if operation == 'list':
         pkg='.'.join(pkg[1:])
         print(pkg)
 elif operation == 'install':
-    config.add_packages( config_file, ['pkgs.' + pkg], 'home' )
+    print('Installing '+ pkg + '...')
+    added, [stdout, simple_errors, full_errors] = config.add_packages( ['pkgs.' + pkg] )
+    if simple_errors:
+        for err in full_errors:
+            print(err)
+    else:
+        print('...')
+        openprocess('home-manager switch')
+        print('Done!')
+
 elif operation == 'remove':
-    config.delete_packages( config_file, ['pkgs.' + pkg], 'home' )
+    print('Removing '+ pkg + '...')
+    removed, [stdout, simple_errors, full_errors] = config.delete_packages( ['pkgs.' + pkg] )
+    if simple_errors:
+        for err in full_errors:
+            print(err)
+    else:
+        print('...')
+        openprocess('home-manager switch')
+        print('Done!')

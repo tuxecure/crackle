@@ -110,7 +110,6 @@ function install() {
     do
         nix-manager install $pkg
     done
-    home-manager switch
 }
 
 # remove packages
@@ -119,7 +118,6 @@ function remove() {
     do
         nix-manager remove $pkg
     done
-    home-manager switch
     nix-collect-garbage
 }
 

@@ -186,7 +186,7 @@ def add_packages(packages : list, overwrite : bool = False, package_type : str =
         output : list
         simple_error : list
         full_error : list
-        if not full_error:
+        if not simple_error:
             return packages_added, [output, simple_error, full_error]
         else:
             restore_success, restore_error = _restore_config_file(filename)
@@ -255,7 +255,7 @@ def delete_packages(packages : list, package_type : str = "home", filename : str
         output : list
         simple_error : list
         full_error : list
-        if not full_error:
+        if not simple_error:
             return packages_deleted, [output, simple_error, full_error]
         else:
             restore_success, restore_error = _restore_config_file(filename)
