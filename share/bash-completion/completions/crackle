@@ -10,6 +10,7 @@ _crackle()
     esac
     case $prev in
 	    click) COMPREPLY=( $( apt-cache --no-generate pkgnames "$cur" 2> /dev/null ) );;
+	    remove) COMPREPLY=( $(compgen -W "$(nix-manager list)" -- ${cur}) );;
     esac
 
     return 0

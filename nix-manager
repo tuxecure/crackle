@@ -18,7 +18,10 @@ else:
     exit(1)
 
 if operation == 'list':
-    print(package)
+    for pkg in package:
+        pkg=pkg.split('.')
+        pkg='.'.join(pkg[1:])
+        print(pkg)
 elif operation == 'install':
     config.add_packages( config_file, ['pkgs.' + pkg], 'home' )
 elif operation == 'remove':
