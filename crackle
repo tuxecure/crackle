@@ -6,7 +6,7 @@ PKG=("${@:2}");
 APTCACHE=${APTCACHE:-${XDG_CACHE_HOME:-$HOME/.cache}/apt};
 APTSTATE=${APTSTATE:-${XDG_STATE_HOME:-$HOME/.local/state}/apt};
 DPKGSTATE=${DPKGSTATE:-${XDG_STATE_HOME:-$HOME/.local/state}/dpkg};
-APTCONFIG=${APTCONFIG:-${XDG_CONFIG_HOME:-$HOME/.config}/crackle};
+APTCONFIG=${APTCONFIG:-${XDG_CONFIG_HOME:-$HOME/.config}/apt};
 
 # Configuration for Crackle
 PKG_PATH=${PKG_PATH:-${XDG_DATA_HOME:-$HOME/.local/share}/crackle};
