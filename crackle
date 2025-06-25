@@ -108,7 +108,7 @@ function list() {
 function install() {
     for pkg in ${PKG[@]}
     do
-        nix-manager install $pkg
+        nix-manager install ${pkg}
     done
 }
 
@@ -116,7 +116,7 @@ function install() {
 function remove() {
     for pkg in ${PKG[@]}
     do
-        nix-manager remove $pkg
+        nix-manager remove ${pkg}
     done
 }
 
@@ -137,6 +137,7 @@ function debug(){
 	echo "DPKGSTATE: '$DPKGSTATE'"
 }
 
+# extract deb package into ${CRACKDIR}
 function crack() {
     load_library setupfunc;
     pkgsetup;
@@ -150,25 +151,7 @@ function crack() {
     pkgunset;
 }
 
-# Help
-function show_help(){
-	echo 'available commands:
-	- crackle sudo $BIN
-	- crackle sudok $BIN
-	- crackle setup
-	- crackle clean
-	- crackle install
-	- crackle remove
-	- crackle update
-	- crackle debug
-	- crackle list
-	- crackle crack
-	- crackle click $PKG
-	- crackle nuke
-	- crackle help'
-	exit 0
-}
-
+# remove everything related to crackle, nix and home-manager
 function nuke(){
     nix-channel --remove home-manager;
     nix-channel --remove nixpkgs;
@@ -195,6 +178,25 @@ function nuke(){
     rm $PKG_PREFIX/lib/clickfunc;
     rm $PKG_PREFIX/lib/setupfunc;
     rm $PKG_PREFIX/lib/sudofunc;
+}
+
+# Help
+function show_help(){
+	echo 'available commands:
+	- crackle sudo $BIN
+	- crackle sudok $BIN
+	- crackle setup
+	- crackle clean
+	- crackle install
+	- crackle remove
+	- crackle update
+	- crackle debug
+	- crackle list
+	- crackle crack
+	- crackle click $PKG
+	- crackle nuke
+	- crackle help'
+	exit 0
 }
 
 case $operation in
