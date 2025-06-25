@@ -118,7 +118,6 @@ function remove() {
     do
         nix-manager remove $pkg
     done
-    nix-collect-garbage
 }
 
 # View information about Crackle, don't do anything
