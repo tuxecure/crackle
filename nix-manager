@@ -12,6 +12,8 @@ package = config.read_packages()
 
 if len(argv) > 1 and argv[1] == 'list':
     operation = argv[1]
+elif len(argv) > 1 and argv[1] == 'clean':
+    operation = argv[1]
 elif len(argv) > 2:
     operation = argv[1]
     pkg = argv[2]
@@ -47,3 +49,6 @@ elif operation == 'remove':
             openprocess('home-manager switch')
         with Spinner(f"Cleaning up", "done!\n"):
             openprocess('nix-collect-garbage')
+elif operation == 'clean':
+    with Spinner(f'Cleaning up', 'done!\n'):
+        openprocess('nix-collect-garbage')
