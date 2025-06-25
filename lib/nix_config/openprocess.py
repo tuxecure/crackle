@@ -1,6 +1,7 @@
 # made by ChromiumOS-Guy (https://github.com/ChromiumOS-Guy)
 
-import subprocess
+import subprocess, time, threading, sys
+from threading import Thread
 
 #### START openprocess ####
 
@@ -55,3 +56,33 @@ def openprocess(command : str) -> tuple:
     return output_lines, error_lines
 
 #### END openprocess ####
+#### START Spinner ####
+class Spinner:
+    def __init__(self, label="Processing", done_msg=""):
+        self.label = label
+        self.done_msg = done_msg
+        self._spinning = False
+        self._thread = None
+
+    def _spin(self):
+        spinner_cycle = ['/', '-', '\\', '|']
+        while self._spinning:
+            for symbol in spinner_cycle:
+                if not self._spinning:
+                    break
+                sys.stdout.write(f'\r{self.label}... {symbol}')
+                sys.stdout.flush()
+                time.sleep(0.1)
+        sys.stdout.write(f'\r{self.label}... {self.done_msg}')
+        sys.stdout.flush()
+
+    def __enter__(self):
+        self._spinning = True
+        self._thread = Thread(target=self._spin)
+        self._thread.start()
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self._spinning = False
+        self._thread.join()
+#### END Spinner ####

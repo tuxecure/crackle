@@ -5,27 +5,10 @@ sys.path.append(home + '/.local/lib')
 import nix_config.nix_config as config
 import nix_config.nix_interact
 from nix_config.openprocess import openprocess
+from nix_config.openprocess import Spinner
 from sys import argv
 
 package = config.read_packages()
-
-import time, threading
-from threading import Thread
-
-# spinner symbols
-spinner_cycle = ['/', '-', '\\', '|']
-
-# control flag
-spinning = True
-
-def spinner(process="Processing",elapse=""):
-    while spinning:
-        for symbol in spinner_cycle:
-            sys.stdout.write(f'\r{process}... {symbol}')
-            sys.stdout.flush()
-            time.sleep(0.1)
-    sys.stdout.write(f'\r{process}...{elapse}')
-    sys.stdout.flush()
 
 if len(argv) > 1 and argv[1] == 'list':
     operation = argv[1]
@@ -42,45 +25,25 @@ if operation == 'list':
         pkg='.'.join(pkg[1:])
         print(pkg)
 elif operation == 'install':
-    spinning=True
-    t = Thread(target=spinner, args=("Installing " + pkg,))
-    t.start()
-    added, [stdout, simple_errors, full_errors] = config.add_packages( ['pkgs.' + pkg] )
-    spinning=False
-    t.join()
+    with Spinner(f"Installing {pkg}"):
+        added, [stdout, simple_errors, full_errors] = config.add_packages( [f'pkgs.{pkg}'] )
     if simple_errors:
         print()
         for err in full_errors:
             print(err)
     else:
-        spinning=True
-        t = Thread(target=spinner, args=("Installing " + pkg +"...", "done!\n"))
-        t.start()
-        openprocess('home-manager switch')
-        spinning=False
-        t.join()
+        with Spinner(f"Installing {pkg}...", "done!\n"):
+            openprocess('home-manager switch')
 
 elif operation == 'remove':
-    spinning=True
-    t = Thread(target=spinner, args=("Removing " + pkg,))
-    t.start()
-    removed, [stdout, simple_errors, full_errors] = config.delete_packages( ['pkgs.' + pkg] )
-    spinning=False
-    t.join()
+    with Spinner(f"Removing {pkg}"):
+        removed, [stdout, simple_errors, full_errors] = config.delete_packages( [f'pkgs.{pkg}'] )
     if simple_errors:
         print()
         for err in full_errors:
             print(err)
     else:
-        spinning=True
-        t = Thread(target=spinner, args=("Removing " + pkg + "...", "done!\n"))
-        t.start()
-        openprocess('home-manager switch')
-        spinning=False
-        t.join()
-        spinning=True
-        t = Thread(target=spinner, args=("Cleaning up", "done!\n"))
-        t.start()
-        openprocess('nix-collect-garbage')
-        spinning=False
-        t.join()
+        with Spinner(f"Removing {pkg}", "done!\n"):
+            openprocess('home-manager switch')
+        with Spinner(f"Cleaning up", "done!\n"):
+            openprocess('nix-collect-garbage')
