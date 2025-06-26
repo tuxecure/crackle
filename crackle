@@ -95,8 +95,7 @@ function clean() {
 
 # update packages
 function update() {
-    nix-channel --update;
-    home-manager switch;
+    nix-manager update
 }
 
 # list installed packages
@@ -155,7 +154,6 @@ function crack() {
 function nuke(){
     nix-channel --remove home-manager;
     nix-channel --remove nixpkgs;
-    nix-channel --update;
     rootfstat=$(rorw);
     if [[ "$rootfstat" = "rw" ]]; then
         rm -rf /nix;

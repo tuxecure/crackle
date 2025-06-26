@@ -14,6 +14,8 @@ if len(argv) > 1 and argv[1] == 'list':
     operation = argv[1]
 elif len(argv) > 1 and argv[1] == 'clean':
     operation = argv[1]
+elif len(argv) > 1 and argv[1] == 'update':
+    operation = argv[1]
 elif len(argv) > 2:
     operation = argv[1]
     pkg = argv[2]
@@ -45,10 +47,14 @@ elif operation == 'remove':
         for err in full_errors:
             print(err)
     else:
-        with Spinner(f"Removing {pkg}", "done!\n"):
+        with Spinner(f"Removing {pkg}...", "done!\n"):
             openprocess('home-manager switch')
         with Spinner(f"Cleaning up", "done!\n"):
             openprocess('nix-collect-garbage')
 elif operation == 'clean':
     with Spinner(f'Cleaning up', 'done!\n'):
         openprocess('nix-collect-garbage')
+elif operation == 'update':
+    with Spinner(f'Updating', 'done!\n'):
+        openprocess('nix-channel --update')
+        openprocess('home-manager switch')
