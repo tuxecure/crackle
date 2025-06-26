@@ -19,6 +19,12 @@ The project is currently a bunch of bash scripts, as such installation relativel
 - ???
 - profit
 
+### One liner
+
+```bash
+wget https://github.com/tuxecure/crackle/releases/latest/download/crackle.zip && unzip crackle.zip -d crackle && crackle/crackle setup
+```
+
 ## Usage
 
 To run the program, specify the operation, and the package to act on.
