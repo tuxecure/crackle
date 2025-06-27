@@ -18,7 +18,7 @@ elif len(argv) > 1 and argv[1] == 'update':
     operation = argv[1]
 elif len(argv) > 2:
     operation = argv[1]
-    pkg = argv[2]
+    pkg = argv[2:]
 else:
     print('argument missing')
     exit(1)
@@ -29,28 +29,30 @@ if operation == 'list':
         pkg='.'.join(pkg[1:])
         print(pkg)
 elif operation == 'install':
-    with Spinner(f"Installing {pkg}"):
-        added, [stdout, simple_errors, full_errors] = config.add_packages( [f'pkgs.{pkg}'] )
+    packages = [f'pkgs.{package}' for package in pkg]
+    with Spinner(f"Installing {', '.join(pkg)}", "done!\n"):
+        added, [stdout, simple_errors, full_errors] = config.add_packages( packages )
     if simple_errors:
         print()
         for err in full_errors:
             print(err)
     else:
-        with Spinner(f"Installing {pkg}...", "done!\n"):
+        with Spinner(f"Activating", "done!\n"):
             openprocess('home-manager switch')
 
 elif operation == 'remove':
-    with Spinner(f"Removing {pkg}"):
-        removed, [stdout, simple_errors, full_errors] = config.delete_packages( [f'pkgs.{pkg}'] )
+    packages = [f'pkgs.{package}' for package in pkg]
+    with Spinner(f"Removing {', '.join(pkg)}", 'done!\n'):
+        removed, [stdout, simple_errors, full_errors] = config.delete_packages( packages )
     if simple_errors:
         print()
         for err in full_errors:
             print(err)
     else:
-        with Spinner(f"Removing {pkg}...", "done!\n"):
+        with Spinner('Deactivating', 'done!\n'):
             openprocess('home-manager switch')
-        with Spinner(f"Cleaning up", "done!\n"):
-            openprocess('nix-collect-garbage')
+        with Spinner('Cleaning up', 'done!\n'):
+            openprocess('nix-collect-garbage -d')
 elif operation == 'clean':
     with Spinner(f'Cleaning up', 'done!\n'):
         openprocess('nix-collect-garbage')

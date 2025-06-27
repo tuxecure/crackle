@@ -105,18 +105,12 @@ function list() {
 
 # install packages
 function install() {
-    for pkg in ${PKG[@]}
-    do
-        nix-manager install ${pkg}
-    done
+    nix-manager install ${PKG[@]}
 }
 
 # remove packages
 function remove() {
-    for pkg in ${PKG[@]}
-    do
-        nix-manager remove ${pkg}
-    done
+    nix-manager remove ${PKG[@]}
 }
 
 # View information about Crackle, don't do anything
