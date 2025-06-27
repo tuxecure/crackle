@@ -95,7 +95,7 @@ function clean() {
 
 # update packages
 function update() {
-    nix-manager update
+    nix-manager update;
 }
 
 # list installed packages

@@ -58,6 +58,7 @@ elif operation == 'clean':
         openprocess('nix-collect-garbage -d')
         openprocess('nix-store --optimise')
 elif operation == 'update':
-    with Spinner(f'Updating', 'done!\n'):
+    with Spinner('Updating', 'done!\n'):
         openprocess('nix-channel --update')
+    with Spinner('Activating', 'done!\n'):
         openprocess('home-manager switch')
