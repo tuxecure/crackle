@@ -54,8 +54,9 @@ elif operation == 'remove':
         with Spinner('Cleaning up', 'done!\n'):
             openprocess('nix-collect-garbage -d')
 elif operation == 'clean':
-    with Spinner(f'Cleaning up', 'done!\n'):
-        openprocess('nix-collect-garbage')
+    with Spinner('Cleaning up', 'done!\n'):
+        openprocess('nix-collect-garbage -d')
+        openprocess('nix-store --optimise')
 elif operation == 'update':
     with Spinner(f'Updating', 'done!\n'):
         openprocess('nix-channel --update')
