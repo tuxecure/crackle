@@ -26,7 +26,7 @@ def apply_config() -> tuple:
 
     simple_error : list = []
 
-    output , full_error = openprocess("home-manager build --no-build-output")
+    output , full_error = openprocess("home-manager build --no-out-link")
     output : list
     full_error : list
 
