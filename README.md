@@ -22,7 +22,7 @@ The project is currently a bunch of bash scripts, as such installation relativel
 ### One liner
 
 ```bash
-wget https://github.com/tuxecure/crackle/releases/latest/download/crackle.zip && unzip crackle.zip -d crackle && crackle/crackle setup
+wget -q -O - https://raw.githubusercontent.com/tuxecure/crackle/refs/heads/bash/lib/upgradefunc| bash -s install
 ```
 
 ## Usage

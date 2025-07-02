@@ -29,3 +29,7 @@ upgrade_crackle() {
 	say "done!"
 }
 
+operation="${1}"
+case $operation in
+	"install")upgrade_crackle;;
+esac
