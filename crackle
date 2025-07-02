@@ -78,6 +78,7 @@ function install_crackle() {
        upd $SCRP_DIR/lib/nix_config/openprocess.py $PKG_PREFIX/lib/nix_config;
        upd $SCRP_DIR/lib/clickfunc $PKG_PREFIX/lib;
        upd $SCRP_DIR/lib/setupfunc $PKG_PREFIX/lib;
+       upd $SCRP_DIR/lib/upgradefunc $PKG_PREFIX/lib;
        upd $SCRP_DIR/lib/sudofunc $PKG_PREFIX/lib;
        # setup bash completion
        upd $SCRP_DIR/share/bash-completion/completions/crackle $CRACKLECMP;
@@ -169,6 +170,7 @@ function nuke(){
     rm $PKG_PREFIX/lib/basefunc;
     rm $PKG_PREFIX/lib/clickfunc;
     rm $PKG_PREFIX/lib/setupfunc;
+    rm $PKG_PREFIX/lib/upgradefunc;
     rm $PKG_PREFIX/lib/sudofunc;
 }
 
