@@ -92,6 +92,8 @@ function setup_crackle() {
         nix-manager update;
     else
         install_crackle;
+        load_library setupfunc;
+        setup;
     fi
 }
 
@@ -206,7 +208,7 @@ function show_help(){
 case $operation in
 	"sudo")[ -z "$PKG" ] && err "missing argument";load_library sudofunc;[ $PKG = "debug" ] && debug;enable_sudo;;
 	"sudok")[ -z "$PKG" ] && err "missing argument";load_library sudofunc;[ $PKG = "debug" ] && debug;disable_sudo;;
-    "setup") setup_crackle;load_library setupfunc;setup;;
+    "setup") setup_crackle;;
     "clean") clean;;
     "install") install;;
     "remove") remove;;
