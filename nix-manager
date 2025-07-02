@@ -52,10 +52,16 @@ elif operation == 'remove':
         with Spinner('Deactivating', 'done!\n'):
             openprocess('home-manager switch')
         with Spinner('Cleaning up', 'done!\n'):
-            openprocess('nix-collect-garbage -d')
+            output , full_error = openprocess('nix-collect-garbage -d')
+            for stdout in output:
+                print(f'\r{stdout}', end='')
+            print()
 elif operation == 'clean':
     with Spinner('Cleaning up', 'done!\n'):
-        openprocess('nix-collect-garbage -d')
+        output , full_error = openprocess('nix-collect-garbage -d')
+        for stdout in output:
+            print(f'\r{stdout}', end='')
+        print()
         openprocess('nix-store --optimise')
 elif operation == 'update':
     with Spinner('Updating', 'done!\n'):
