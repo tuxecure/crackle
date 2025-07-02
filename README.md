@@ -46,7 +46,7 @@ crackle
 	- help
 ```
 Crackle commands:
-- `setup`: Automagically configures and installs crackle, nix and home-manager
+- `setup`: Automagically configures and installs/upgrades crackle, nix and home-manager
 - `debug`: Shows some debugging information. Doesn't do any changes to the system.
 - `click debug`: Shows some debugging information about the click configuration. Doesn't do any changes to the system.
 - `sudo debug`: Shows some debugging information about the sudo configuration. Doesn't do any changes to the system.

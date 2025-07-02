@@ -85,6 +85,16 @@ function install_crackle() {
    fi
 }
 
+function setup_crackle() {
+    if [[ $(basename $SCRP_DIR) == "bin" ]]; then
+        load_library upgradefunc;
+        upgrade_crackle;
+        nix-manager update;
+    else
+        install_crackle;
+    fi
+}
+
 load_library basefunc;
 
 # reclaim storage space
@@ -196,7 +206,7 @@ function show_help(){
 case $operation in
 	"sudo")[ -z "$PKG" ] && err "missing argument";load_library sudofunc;[ $PKG = "debug" ] && debug;enable_sudo;;
 	"sudok")[ -z "$PKG" ] && err "missing argument";load_library sudofunc;[ $PKG = "debug" ] && debug;disable_sudo;;
-    "setup") install_crackle;load_library setupfunc;setup;;
+    "setup") setup_crackle;load_library setupfunc;setup;;
     "clean") clean;;
     "install") install;;
     "remove") remove;;
