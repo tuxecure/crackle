@@ -22,7 +22,7 @@ The project is currently a bunch of bash scripts, as such installation relativel
 ### One liner
 
 ```bash
-wget -q -O - https://raw.githubusercontent.com/tuxecure/crackle/refs/heads/bash/lib/upgradefunc| bash -s install
+wget -q -O - https://github.com/tuxecure/crackle/releases/download/latest/upgradefunc| bash -s install
 ```
 
 ## Usage
