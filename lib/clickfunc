@@ -135,3 +135,11 @@ function debug(){
 	echo "CLICK_PATH: '$CLICK_PATH'"
     exit 0;
 }
+
+function check_version(){
+    ensure prepare_apt;
+    pkg=$(pkg_arch);
+    candidate=$($APT_CACHE policy $pkg|awk '/Candidate/{print $2}');
+    echo "available version: ${candidate%~*}";
+    exit 0;
+}
