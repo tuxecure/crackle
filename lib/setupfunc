@@ -102,6 +102,7 @@ function setup_home-manager (){
 function setup() {
     check_path;
     rootfstat=$(rorw);
+    lsbstat=$(lsb_release -is);
     if [[ "$rootfstat" = "rw" ]];
     then
         if check_cmd apt;
@@ -113,9 +114,12 @@ function setup() {
         else
             err 'only debian based systems are currently supported';
         fi
-    else
+    elif [[ "$lsbstat" = "Ubuntu" ]];
+    then
         if ! check_cmd nix; then pkgsetup; fi
         if ! check_cmd nix; then setup_curlxz; fi
+    else
+        err "$lsbstat is currently not supported";
     fi
     setup_home-manager;
     if [ -d $APTCACHE ]; then pkgunset; fi
