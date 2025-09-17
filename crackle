@@ -217,7 +217,7 @@ case $operation in
     "list") list;;
     "crack") crack;;
 	"click")[ -z "$PKG" ] && err "missing argument";load_library clickfunc;[ $PKG = "debug" ] && debug;build_click;;
-	"version")[ -z "$PKG" ] && err "missing argument";load_library clickfunc;[ $PKG = "debug" ] && debug;check_version;;
+	"bump-version")[ -z "$PKG" ] && err "missing argument";load_library clickfunc;[ $PKG = "debug" ] && debug;bump_version;;
 	"nuke")nuke;;
 	"help")show_help;;
 	*) show_help;;

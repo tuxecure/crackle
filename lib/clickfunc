@@ -58,7 +58,6 @@ function prepare_apt() {
     $APT_GET clean;
     setup_repos;
     ensure $APT_GET update;
-    $APT_GET install --download-only -y $(pkg_arch);
 }
 
 function build_click () {
@@ -67,6 +66,7 @@ function build_click () {
     [[ ! -f "manifest.json" && ! -f "manifest.json.in" ]] && err "missing manifest.json";
     [ -d "${BUILD_DIR}" ] && rm -r ${BUILD_DIR}
     ensure prepare_apt;
+    ensure $APT_GET install --download-only -y $(pkg_arch);
     extract_deb_to ${BUILD_DIR};
     if [ ! -f "manifest.json.in" ]; then
         say "Preparing build environment..."
@@ -136,10 +136,19 @@ function debug(){
     exit 0;
 }
 
-function check_version(){
+function bump_version(){
     ensure prepare_apt;
     pkg=$(pkg_arch);
     candidate=$($APT_CACHE policy $pkg|awk '/Candidate/{print $2}');
-    echo "available version: ${candidate%~*}";
+    candidate_version=${candidate%~*}
+    echo "available version: $candidate_version";
+    current=$(awk '/version/{gsub(/"/, "", $2);print $2}' ${ROOT}/manifest.json);
+    current_version=${current%,*}
+    echo "current version: $current_version";
+    if [ ! $current_version = $candidate_version ];
+    then
+        echo "updating manifest.json";
+        sed -i "s/$current_version/${candidate_version}/" ${ROOT}/manifest.json
+    fi
     exit 0;
 }
