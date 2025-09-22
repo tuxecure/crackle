@@ -141,6 +141,8 @@ function bump_version(){
     pkg=$(pkg_arch);
     candidate=$($APT_CACHE policy $pkg|awk '/Candidate/{print $2}');
     candidate_version=${candidate%~*}
+    candidate_version=${candidate_version%+*}
+    candidate_version=${candidate_version#*:}
     echo "available version: $candidate_version";
     current=$(awk '/version/{gsub(/"/, "", $2);print $2}' ${ROOT}/manifest.json);
     current_version=${current%,*}
