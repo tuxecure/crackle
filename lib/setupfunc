@@ -84,7 +84,6 @@ check_path() {
 
 # set up nix home manager
 function setup_home-manager (){
-    [[ ! -d "/nix" && "$rootfs" = "ro" ]] && err "please test this on the latest focal development update"
     if ! check_cmd nix; then
         sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install) --no-daemon --no-channel-add;
         . $HOME/.nix-profile/etc/profile.d/nix.sh
@@ -102,10 +101,12 @@ function setup_home-manager (){
 function setup() {
     check_path;
     rootfstat=$(rorw);
+    nixdirstat=$(rwnix);
     lsbstat=$(lsb_release -is);
     variant=$(osvariant)
     if [[ "$lsbstat" = "Ubuntu" ]] && [[ "$variant" == "Touch" ]];
     then
+        if [[ ! "$nixdirstat" = "rw" ]]; then err "This version of $lsbstat $variant is not supported"; fi
         if ! check_cmd nix; then pkgsetup; fi
         if ! check_cmd nix; then setup_curlxz; fi
     elif [[ "$rootfstat" = "rw" ]];
