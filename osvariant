@@ -1,0 +1,11 @@
+#!/usr/bin/awk -f
+BEGIN {
+    FS = "=";
+    ARGC=2;
+    ARGV[1]="/etc/os-release";
+}
+{
+    if ( /Touch/ ) {
+        print $2;
+    }
+}
