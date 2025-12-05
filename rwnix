@@ -1,0 +1,11 @@
+#!/usr/bin/awk -f
+BEGIN {
+	FS = "[ ,]"
+	ARGC=2;
+	ARGV[1]="/proc/mounts";
+}
+{
+	if ( $2 == "/nix" ) {
+		print $4;
+	}
+}
