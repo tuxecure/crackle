@@ -126,12 +126,12 @@ function setup() {
     setup_home-manager;
     if [ -d $APTCACHE ]; then
         pkgunset;
-        stat "set up complete!  To ensure that the necessary environment
-        variables are set, either log in again, or type
+        stat "set up complete!  To ensure that the necessary environment variables are set,
+ either log in again, or type
 
-        . /home/phablet/.nix-profile/etc/profile.d/nix.sh
+ . /home/phablet/.nix-profile/etc/profile.d/nix.sh
 
-        in your shell.";
+ in your shell.";
     else
         stat "set up complete!";
     fi
