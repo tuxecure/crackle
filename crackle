@@ -181,13 +181,13 @@ function nuke(){
     rm $PKG_PREFIX/bin/remount;
     rm $PKG_PREFIX/bin/rorw;
     rm $PKG_PREFIX/bin/nix-manager;
+    rm $PKG_PREFIX/bin/osvariant;
+    rm $PKG_PREFIX/bin/rwnix;
     rm $PKG_PREFIX/lib/basefunc;
     rm $PKG_PREFIX/lib/clickfunc;
     rm $PKG_PREFIX/lib/setupfunc;
     rm $PKG_PREFIX/lib/upgradefunc;
     rm $PKG_PREFIX/lib/sudofunc;
-    rm $PKG_PREFIX/lib/osvariant;
-    rm $PKG_PREFIX/lib/rwnix;
 }
 
 # Help
