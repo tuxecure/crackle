@@ -186,6 +186,8 @@ function nuke(){
     rm $PKG_PREFIX/lib/setupfunc;
     rm $PKG_PREFIX/lib/upgradefunc;
     rm $PKG_PREFIX/lib/sudofunc;
+    rm $PKG_PREFIX/lib/osvariant;
+    rm $PKG_PREFIX/lib/rwnix;
 }
 
 # Help
