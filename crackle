@@ -69,6 +69,7 @@ function install_crackle() {
        upd $SCRP_DIR/remount $PKG_PREFIX/bin;
        upd $SCRP_DIR/rorw $PKG_PREFIX/bin;
        upd $SCRP_DIR/nix-manager $PKG_PREFIX/bin;
+       upd $SCRP_DIR/osvariant $PKG_PREFIX/bin;
        # install the libs
        upd $SCRP_DIR/lib/basefunc $PKG_PREFIX/lib;
        upd $SCRP_DIR/lib/nix_config/__init__.py $PKG_PREFIX/lib/nix_config;
