@@ -16,6 +16,7 @@ CRACKDIR=${CRACKDIR:-$HOME/packages/$PKG};
 CRACKLEBIN="https://gitlab.com/tuxecure/crackle-apt/cracklebin/-/archive/master/cracklebin-master.tar.gz"
 PKG_PREFIX=${PKG_PREFIX:-$HOME/.local}
 SCRP_DIR=$(dirname "${BASH_SOURCE[0]}")
+NIX_VERSION="25.11"
 
 # Set up aliases for apt commands
 APTCONF="-o Dir::Etc=$APTCONFIG";
@@ -110,6 +111,8 @@ function clean() {
 
 # update packages
 function update() {
+    nix-channel --add https://nixos.org/channels/nixos-$NIX_VERSION nixpkgs
+    nix-channel --add https://github.com/nix-community/home-manager/archive/release-$NIX_VERSION.tar.gz home-manager
     nix-manager update;
 }
 
