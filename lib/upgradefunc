@@ -32,4 +32,5 @@ upgrade_crackle() {
 operation="${1}"
 case $operation in
 	"install")upgrade_crackle;;
+	"setup")upgrade_crackle;;
 esac
