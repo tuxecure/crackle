@@ -35,7 +35,7 @@ function extract_deb_to() {
 
 function setup_repos(){
     say "Setting up repos"
-    wget -q --spider https://ubports.com || err "no internet connection, please run crackle update later to fetch the latest package lists";
+    wget -q --spider https://devices.ubuntu-touch.io || err "no internet connection, please run crackle update later to fetch the latest package lists";
     curl --disable --progress-bar -L ${CRACKLEBIN} | tar zx --directory=$APTCONFIG/preferences.d --wildcards */etc/preferences.d/* --strip-components=3
     curl --disable --progress-bar -L ${CRACKLEBIN} | tar zx --directory=$APTCONFIG/sources.list.d --wildcards */etc/sources.list.d/* --strip-components=3
     [[ -d "$PKG_PREFIX/lib/crackle" ]] || mkdir -p "$PKG_PREFIX/lib/crackle";
