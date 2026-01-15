@@ -65,7 +65,7 @@ function bin_install () {
 function setup_curlxz () {
     if ! check_cmd curl; then pkgs="curl"; fi
     if ! check_cmd xz; then pkgs+=" xz-utils"; fi
-    $APT_GET update;
+    ensure $APT_GET update;
     ensure $APT_GET install --download-only -y ${pkgs};
     while read package
     do
