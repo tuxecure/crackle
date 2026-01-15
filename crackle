@@ -157,7 +157,7 @@ function crack() {
     $APT_GET clean;
     setup_repos;
     ensure $APT_GET update;
-    $APT_GET install --download-only ${PKG[@]};
+    ensure $APT_GET install --download-only ${PKG[@]};
     extract_deb_to ${CRACKDIR};
     pkgunset;
 }
