@@ -86,7 +86,7 @@ function build_click () {
     [ -d ${BUILD_DIR}/usr/share ] && cp -r ${BUILD_DIR}/usr/share ${INSTALL_DIR}
 [ -d ${BUILD_DIR}/usr/games ] && cp -r ${BUILD_DIR}/usr/games/* ${CLICK_PATH}
     if [ -f "manifest.json" ]; then
-        ROOT=$ROOT ARCH=$ARCH ARCH_TRIPLET=$ARCH_TRIPLET BUILD_DIR=$BUILD_DIR INSTALL_DIR=$INSTALL_DIR CLICK_LD_LIBRARY_PATH=$CLICK_LD_LIBRARY_PATH CLICK_PATH=$CLICK_PATH bash ${BUILD_DIR}/adapt.sh
+        ROOT=$ROOT ARCH=$ARCH ARCH_TRIPLET=$ARCH_TRIPLET BUILD_DIR=$BUILD_DIR INSTALL_DIR=$INSTALL_DIR CLICK_LD_LIBRARY_PATH=$CLICK_LD_LIBRARY_PATH CLICK_PATH=$CLICK_PATH PKG=$PKG SCRP_DIR=$SCRP_DIR bash ${BUILD_DIR}/adapt.sh
 	sed -i "s/@CLICK_ARCH@/${ARCH}/" ${INSTALL_DIR}/manifest.json
     fi
     if [[ -z $CI ]]; then
@@ -100,8 +100,6 @@ function build_click () {
 function prep_build () {
 	[ -d "${INSTALL_DIR}" ] && rm -r ${INSTALL_DIR}
 	mkdir -p ${CLICK_LD_LIBRARY_PATH} ${CLICK_PATH} ${INSTALL_DIR}
-	fetch_desktop ${BUILD_DIR} ${INSTALL_DIR};
-	mod_desktop
 	cp ${ROOT}/pkg.d/* ${ROOT}/apparmor.json ${ROOT}/manifest.json ${BUILD_DIR}/ || exit 1
 	sed -i "s/@pkg@/${PKG}/" ${BUILD_DIR}/manifest.json
 	cp ${BUILD_DIR}/*.json ${INSTALL_DIR}
@@ -109,22 +107,10 @@ function prep_build () {
 }
 
 mod_desktop(){
-	desktopfile=$(find ${INSTALL_DIR} -maxdepth 1 -name *${PKG}.desktop)
-	sed -i "/Icon=/d" $desktopfile
-	sed -i "/Exec=/d" $desktopfile
-	sed -i "/^Categories=/i Exec=${PKG}.sh" $desktopfile;
-	mv $desktopfile ${INSTALL_DIR}/${PKG}.desktop
-}
-
-function fetch_desktop() {
-	PKG_DIR=$1
-	PKG_DESKTOP=$2
-	while read desktop
-	do
-		desktopname=$(basename $desktop)
-		${SCRP_DIR}/desktop_trunc $desktop > ${PKG_DESKTOP}/crackle.${desktopname}
-		echo "X-Ubuntu-Touch=true" >>  ${PKG_DESKTOP}/crackle.${desktopname}
-        done < <(find $PKG_DIR -name *.desktop)
+	${SCRP_DIR}/desktop_trunc $1 > ${INSTALL_DIR}/${PKG}.desktop;
+    sed -i "/Icon=/d"  ${INSTALL_DIR}/${PKG}.desktop;
+    sed -i "/Exec=/d" ${INSTALL_DIR}/${PKG}.desktop;
+	sed -i "/^Categories=/i X-Ubuntu-Touch=true"  ${INSTALL_DIR}/${PKG}.desktop;
 }
 
 # View information about Crackle, don't do anything
