@@ -16,7 +16,7 @@ CRACKDIR=${CRACKDIR:-$HOME/packages/$PKG};
 CRACKLEBIN="https://gitlab.com/tuxecure/crackle-apt/cracklebin/-/archive/master/cracklebin-master.tar.gz"
 PKG_PREFIX=${PKG_PREFIX:-$HOME/.local}
 SCRP_DIR=$(dirname "${BASH_SOURCE[0]}")
-NIX_VERSION="25.11"
+NIX_VERSION="26.05"
 
 # Set up aliases for apt commands
 APTCONF="-o Dir::Etc=$APTCONFIG";
