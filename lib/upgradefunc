@@ -2,7 +2,7 @@
 
 # say something
 say() {
-    printf '%s\n' "$1"
+    printf '\r%s\n' "$1"
 }
 
 # download the latest release of crackle to $HOME/Downloads
