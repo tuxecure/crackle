@@ -242,7 +242,8 @@ def add_packages(
     for package in (
         existing_packages
     ):  # readd existing packages to packages so we won't override them.
-        packages.append(package)
+        if package not in packages:  # skip ones we're already adding to avoid duplicates
+            packages.append(package)
 
     try:
         for package_block in package_blocks:
