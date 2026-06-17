@@ -191,7 +191,8 @@ def add_packages(packages : list, overwrite : bool = False, package_type : str =
         else:
             restore_success, restore_error = _restore_config_file(filename)
             if not restore_success:
-                return packages_added, [output , simple_error.insert(0, "failed to restore you're {filename}.backup probably does not exist!".format(filename=filename)), full_error.insert(-1, restore_error)] # make sure we know
+                simple_error.insert(0, "failed to restore you're {filename}.backup probably does not exist!".format(filename=filename)) # make sure we know
+                full_error.insert(-1, restore_error)
             return packages_added, [output , simple_error, full_error]
     else:
         print("failed to backup too risky to run without, exiting.")
@@ -260,7 +261,8 @@ def delete_packages(packages : list, package_type : str = "home", filename : str
         else:
             restore_success, restore_error = _restore_config_file(filename)
             if not restore_success:
-                return packages_deleted, [output , simple_error.insert(0, "failed to restore you're {filename}.backup probably does not exist!".format(filename=filename)), full_error.insert(-1, restore_error)] # make sure we know
+                simple_error.insert(0, "failed to restore you're {filename}.backup probably does not exist!".format(filename=filename)) # make sure we know
+                full_error.insert(-1, restore_error)
             return packages_deleted, [output , simple_error, full_error]
     else:
         print("failed to backup too risky to run without, exiting.")
