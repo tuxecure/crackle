@@ -1,14 +1,14 @@
 # made by ChromiumOS-Guy (https://github.com/ChromiumOS-Guy)
+# Modified by itisFarzin (https://github.com/itisFarzin)
 
-import os
-import copy
 from nix_config.openprocess import openprocess
 
-#### START apply config #### 
+#### START apply config ####
 
-def apply_config() -> tuple:
+
+def apply_config() -> tuple[list[str], list[str], list[str]]:
     """
-    Applies a configuration by running 'home-manager build' and parses its output, 
+    Applies a configuration by running 'home-manager build' and parses its output,
     it filters the full error output to identify lines starting with
     "error: attribute" and extracts the specific error message following this prefix,
     adding each as an individual entry to 'simple_error'.
@@ -22,20 +22,19 @@ def apply_config() -> tuple:
               of the command.
     """
 
-    error_prefix : str = "error: "
+    error_prefix: str = "error: "
 
-    simple_error : list = []
+    simple_error: list[str] = []
 
-    output , full_error = openprocess("home-manager build --no-out-link")
-    output : list
-    full_error : list
+    output, full_error = openprocess("home-manager build --no-out-link")
 
     # Iterate through the full_error to find and extract simple error
     for line in full_error:
         if error_prefix in line:
             # Append everything after the error_prefix to simple_error
             simple_error.append(line.split(error_prefix, 1)[1].strip())
-    
-    return output , simple_error , full_error
+
+    return output, simple_error, full_error
+
 
 #### END apply config ####
