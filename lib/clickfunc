@@ -51,7 +51,7 @@ function setup_repos(){
 }
 
 function connectivity() {
-    wget -q --spider https://devices.ubuntu-touch.io || err "no internet connection, please run crackle update later to fetch the latest package lists";
+    wget -q --spider https://connectivity-check.ubuntu-touch.io/nm.txt || err "no internet connection, please run crackle update later to fetch the latest package lists";
 }
 
 function prepare_apt() {
